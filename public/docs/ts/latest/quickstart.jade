@@ -1,6 +1,6 @@
 block includes
   include _util-fns
-  - var _Install = 'Install'
+  - var _Install = '설치합니다'
   - var _prereq = 'Node.js'
   - var _angular_browser_uri = '@angular/platform-browser-dynamic'
   - var _angular_core_uri = '@angular/core'
@@ -8,118 +8,110 @@ block includes
   - var _indexHtmlDir = 'project root'
 
 :marked
-  Our QuickStart goal is to build and run a super-simple
-  Angular 2 application in #{_Lang}, and
-  establish a development environment for the remaining documentation samples
-  that also can be the foundation for real world applications.
+  퀵스타트의 목적은 정말 간단한 Angular 2 애플리케이션을 #{_Lang}로 작성하여 실행해보고, 실제 애플리케이션의 토대가 될지도 모르는 문서 샘플들을 위한 개발 환경을 구축해보는 것입니다.
 
 .callout.is-helpful
-  header Don't want #{_Lang}?
+  header #{_Lang}을 원치 않나요?
   p.
-    Although we're getting started in #{_Lang}, you can also write Angular 2 apps
-    in #{_docsFor == 'ts' ? 'Dart' : 'TypeScript'} and JavaScript.
-    Just select either of those languages from the combo-box in the banner.
+    #{_Lang}으로 시작했지만, #{_docsFor == 'ts' ? 'Dart' : 'TypeScript'}과 JavaScript으로도 Angular2 앱을 만들 수 있습니다.
+    배너 위의 콤보 박스에서 원하는 언어를 선택하세요.
 
 h1 Try it!
 p
-  | Try the #[+liveExampleLink2()] which loads the sample app
   +ifDocsFor('ts')
-    | &nbsp;in #[a(href="http://plnkr.co/" title="Plunker" target="_blank") plunker]
-  | &nbsp;and displays the simple message:
+    | #[a(href="http://plnkr.co/" title="Plunker" target="_blank") plunker] 내에서
+  | 샘플 앱을 로드하고 다음과 같은 간단한 메시지를 출력하는 #[+liveExampleLink2()]을 실행해보세요:
 
 figure.image-display
   img(src='/resources/images/devguide/quickstart/my-first-app.png' alt="Output of QuickStart app")
 
-h1 Build this app!
+h1 이 앱을 빌드하세요!
 :marked
-  - [Prerequisite](#prereq): Install #{_prereq}
-  - [Step 1](#create-and-configure): Create the app’s project folder and
-    define package dependencies and special project setup
-  - [Step 2](#root-component): Create the app’s Angular root component
-  - [Step 3](#main): Add `main.#{_docsFor}`, identifying the root component to Angular
-  - [Step 4](#index): Add `index.html`, the web page that hosts the application
-  - [Step 5](#build-and-run): Build and run the app
-  - [Make some changes to the app](#make-some-changes)
-  - [Wrap up](#wrap-up)
+  - [요구사항](#prereq): Install #{_prereq}
+  - [1단계](#create-and-configure): 앱의 프로젝트 폴더를 만들고 패키지 의존성과 특별한 프로젝트 셋업을 정의합니다.
+  - [2단계](#root-component): 앱 내 Angular 최상위 컴포넌트를 만듭니다.
+  - [3단계](#main): Angular에게 최상위 컴포넌트로 인식되는 `main.#{_docsFor}`을 추가합니다.
+  - [4단계](#index): 애플리케이션을 호스트하는 웹 페이지인 `index.html`을 추가합니다.
+  - [5단계](#build-and-run): 앱을 빌드하고 실행합니다.
+  - [앱에 약간의 변화를 줍니다](#make-some-changes)
+  - [정리](#wrap-up)
 
 .l-main-section
-h2#prereq Prerequisite: #{_prereq}
+h2#prereq 요구사항: #{_prereq}
 
 block setup-tooling
   :marked
-    Install **[Node.js® and npm](https://nodejs.org/en/download/)**
-    if they are not already on your machine.
+    만약 아직 설치가 되어 있지 않다면 **[Node.js®와 npm](https://nodejs.org/en/download/)**을 설치하세요.
   .l-sub-section
     :marked
-      **Verify that you are running node `v5.x.x` and npm `3.x.x`**
-      by running `node -v` and `npm -v` in a terminal/console window.
-      Older and newer versions produce errors.
+      터미널 혹은 콘솔 윈도우에서 `node -v` 그리고 `npm -v`을 실행해서
+      **`v5.x.x` 버전의 node 그리고 `3.x.x` 버전의 npm이 설치되어 있는지를 확인하시기 바랍니다.**
+      그보다 이전 그리고 이후 버전은 오류를 발생시킵니다.
 
 block download-source
   .l-main-section
   .callout.is-helpful
-    header Download the source
+    header 소스 코드를 다운로드하세요
     :marked
-      Instead of following each step of these instructions, we can
-      [download the QuickStart source](https://github.com/angular/quickstart/blob/master/README.md)
-      from github and follow its brief instructions.
+      이 페이지의 각 단계에 대한 설명을 따르는 대신에, 
+      github로부터 [퀵스타트 소스 코드를 다운로드](https://github.com/angular/quickstart/blob/master/README.md)하여
+      간단한 설명에 따라 진행하실 수 있습니다.
 
 .l-main-section
 button(class="verbose off md-primary md-button md-ink-ripple", type="button", onclick="verbose(false)").
-  Hide explanations
+  해설을 숨깁니다
 button(class="verbose on md-primary md-button md-ink-ripple", type="button", onclick="verbose(true)").
-  View explanations
+  해설을 보여줍니다
 .l-verbose-section
   :marked
-    *Explanations* describe the concepts and reasons behind the instructions.
-    Explanations have a thin border on the left like *this* block of text.
+    *해설*은 설명 너머의 컨셉과 근거에 대해서 서술합니다.
+    해설 글에는 *이* 텍스트 블록이 그런 것처럼 왼쪽에 얇은 경계선이 존재합니다.
 
-    Click *Hide Explanations* to show only the instructions.
-    Click *View Explanations* to see everything again.
+    *해설을 숨깁니다*를 클릭하면 설명만 보여줍니다.
+    *해설을 보여줍니다*를 클릭하면 모든 것을 다시 보여줍니다.
 
 .l-sub-section
   :marked
-    We'll see many code blocks as we build the QuickStart app. They're all easy to copy and paste:
+    퀵스타트 앱을 만들 것이기에 많은 코드 블록을 보게 될 겁니다. 코드 블록을 복사와 붙여넣기가 쉽도록 다음과 같은 것을 제공합니다:
   code-example(format="nocode").
-    Click the glyph on the right to copy code snippets to the clipboard  ==>
+    클립보드로 코드 조각을 복사하려면 우측의 그림을 클릭하세요.  ==>
 
 .l-main-section
-h2#create-and-configure Step 1: Create and configure the project
+h2#create-and-configure 1단계: 프로젝트를 생성하고 설정합니다
 
-- var _package_and_config_files = _docsFor == 'dart' ? 'pubspec.yaml' : 'package definition and configuration files'
+- var _package_and_config_files = _docsFor == 'dart' ? 'pubspec.yaml' : '패키지 정의와 설정 파일들'
 
 :marked
-  In this step we:
-  * [(a) Create the project folder](#create-the-project-folder)
-  * [(b) Add #{_package_and_config_files}](#add-config-files)
-  * [(c) #{_Install} packages](#install-packages)
+  이 단계에서 우리는:
+  * [(a) 프로젝트 폴더를 생성하고](#create-the-project-folder)
+  * [(b) #{_package_and_config_files}]을 추가합니다](#add-config-files)
+  * [(c) 패키지를 #{_Install}](#install-packages)
 
-h3 (a) Create the project folder
+h3 (a) 프로젝트 폴더를 생성합니다
 
 code-example(language="sh").
   mkdir angular2-quickstart
   cd    angular2-quickstart
 
-h3#add-config-files (b) Add #{_package_and_config_files}
+h3#add-config-files (b) #{_package_and_config_files}를 추가합니다
 block package-and-config-files
   - var _tsconfigUri = 'guide/typescript-configuration.html#tsconfig'
   - var _typingsUri = 'guide/typescript-configuration.html#!#typings'
 
-  p Add the following package definition and configuration files to the project folder:
+  p 프로젝트 폴더에 다음의 패키지 정의와 설정 파일들을 추가합니다:
   ul
     li.
-      #[b package.json] lists packages the QuickStart app depends on and
-      defines some useful scripts.
-      See #[a(href="guide/npm-packages.html") Npm Package Configuration] for details.
+      #[b package.json]은 퀵스타트 앱이 의존하는 패키지를 나열하고 몇 가지 유용한 스크립트들을 정의합니다.
+      자세한 내용은 #[a(href="guide/npm-packages.html") Npm Package Configuration]을 참고하시기 바랍니다.
     li.
-      #[b tsconfig.json] is the TypeScript compiler configuration file.
-      See #[a(href="#{_tsconfigUri}") TypeScript Configuration] for details.
+      #[b tsconfig.json]은 TypeScrip 컴파일러 설정 파일입니다.
+      자세한 내용은 #[a(href="#{_tsconfigUri}") TypeScript Configuration]을 참고하시기 바랍니다.
     li.
-      #[b typings.json] identifies TypeScript definition files.
-      See #[a(href="#{_typingsUri}") TypeScript Configuration] for details.
+      #[b typings.json]은 TypeScript 정의 파일들을 나타냅니다.
+      자세한 내용은 #[a(href="#{_typingsUri}") TypeScript Configuration]을 참고하시기 바랍니다. 
     li.
-      #[b systemjs.config.js], the SystemJS configuration file.
-      See discussion #[a(href="#systemjs") below].
+      #[b systemjs.config.js]은 SystemJS 설정 파일입니다.
+      #[a(href="#systemjs") 아래] 해설을 보시기 바랍니다.
 
   a#config-files
   +makeTabs(`
@@ -134,384 +126,340 @@ block package-and-config-files
       systemjs.config.js
     `)
 
-h3#install-packages (c) #{_Install} packages
+h3#install-packages (c) 패키지를 #{_Install}
+  .l-verbose-section
+    :marked
+      #### *npm*으로 필요로 하는 라이브러리와 패키지를 추가하기
+      Angular 애플리케이션 개발자는 앱이 요구하는 라이브러리와 패키지를 설치하기 위해 _[npm](https://docs.npmjs.com)_ 패키지 매니저에 의존합니다.
+      Angular 팀은 `dependencies`과 `devDependencies` 섹션에 지정된 패키지의 스타터셋을 추천합니다.
+      자세한 내용을 위해 [npm packages](guide/npm-packages.html) 챕터를 참고하시기 바랍니다.
+
+      #### 유용한 스크립트들
+      우리는 일반적인 개발 태스크를 다루기 위해 우리가 제안한 `package.json`에 몇 개의 npm 스크립트를 포함시켰습니다:
+    +makeJson('quickstart/ts/package.1.json',{ paths: 'scripts'}, 'package.json (scripts)')(format=".")
+
+    :marked
+      대부분의 npm 스크립트는 `npm run` 뒤에 *script-name*이 오도록 하여 실행합니다.
+      어떤 명령어(`start` 같은)는 `run` 키워드를 필요로 하지 않습니다.
+
+      다음은 이 스크립트들의 역할입니다:
+
+      * `npm start` - 동시에 "watch 모드"로 컴파일러와 서버를 실행합니다.
+
+      * `npm run tsc` - TypeScript 컴파일러를 한 번 실행합니다.
+
+      * `npm run tsc:w` - watch 모드에서 TypeScript 컴파일러를 실행합니다. 해당 프로세스는 실행된 상태로, TypeScript 파일의 변화를 감지하고, 변화가 감지되면 다시 컴파일을 합니다.
+
+      * `npm run lite` - 라우팅을 사용하는 Angular 앱을 훌륭히 지원하는 경량의 정적 파일 서버인 <a href="https://www.npmjs.com/package/lite-server" target="_blank">lite-server</a>을 실행합니다.
+
+      * `npm run typings` - [*typings* 툴](#{_typingsUri})을 독립적으로 실행합니다.
+
+      * `npm run postinstall` - 패키지 설치를 성공적으로 완료하고 난 *이후에* *npm*에 의해 자동으로 호출됩니다.
+      이 스크립트는 `typings.json`에 정의된 [TypeScript 정의 파일](#{_typingsUri})을 설치합니다.
 block install-packages
   :marked
-    We install the packages listed in `package.json` using `npm`. Enter the
-    following command in a terminal window (command window in Windows):
+    `npm`을 사용해 `package.json`에 나열된 패키지를 설치하세요. 터미널 윈도우에 다음 명령어를 입력하세요(Windows에서는 커맨드 윈도우):
 
   code-example(language="sh").
     npm install
 
   .alert.is-important
     :marked
-      Scary <span style="color:red; font-weight: bold">error messages in red</span> may appear **during** install.
-      The install typically recovers from these errors and finishes successfully.
+      무서운 <span style="color:red; font-weight: bold">빨간색 오류 메시지</span>가 설치 중간에 나타날 겁니다.
+      설치는 일반적으로 이런 오류들에도 불구하고 계속될 것이고 성공적으로 끝날 겁니다.
     .l-verbose-section(class="l-verbose-inherit")
       :marked
-        #### npm errors and warnings
+        #### npm 오류와 경고
 
-        All is well if there are no console messages starting with `npm ERR!` *at the end* of **npm install**.
-        There might be a few `npm WARN` messages along the way &mdash; and that is perfectly fine.
+        **npm install** 마지막에 `npm ERR~`로 시작하는 콘솔 메시지가 없다면 모든 것이 잘 끝났다는 의미입니다. 
+        진행하다보면 `npm WARN` 메시지를 보게 될텐데, 별 문제가 아닐 겁니다.
 
-        We often see an `npm WARN` message after a series of `gyp ERR!` messages.
-        Ignore them. A package may try to recompile itself using `node-gyp`.
-        If the recompile fails, the package recovers (typically with a pre-built version)
-        and everything works.
+        우리는 연속된 `gyp ERR!` 메시지 이후에 `npm WARN` 메시지를 자주 봅니다. 
+        그것들을 무시하시기 바랍니다. 패키지는 `node-gyp`를 사용해 자기 자신을 다시 컴파일하려고 할 겁니다. 
+        재컴파일이 실패한다면, 패키지는 복구되고(일반적으로는 사전에 빌드된 버전으로) 모든 것이 잘 동작할 겁니다. 
 
-        Just make sure there are no `npm ERR!` messages at the end of `npm install`.
+        `npm install` 마지막에 `npm ERR!`이 없는지만 확실히 하세요.
 
-  .l-verbose-section
-    :marked
-      #### Adding the libraries and packages we need with *npm*
-      Angular application developers rely on the _[npm](https://docs.npmjs.com)_
-      package manager to install the libraries and packages their apps require.
-      The Angular team recommends the starter-set of packages specified in the
-      `dependencies` and `devDependencies` sections.
-      See the [npm packages](guide/npm-packages.html) chapter for details.
-
-      #### Helpful scripts
-      We've included a number of npm scripts in our suggested `package.json` to handle common development tasks:
-    +makeJson('quickstart/ts/package.1.json',{ paths: 'scripts'}, 'package.json (scripts)')(format=".")
-
-    :marked
-      We execute most npm scripts in the following way: `npm run` followed by a *script-name*.
-      Some commands (such as `start`) don't require the `run` keyword.
-
-      Here's what these scripts do:
-
-      * `npm start` - runs the compiler and a server  at the same time, both in "watch mode"
-
-      * `npm run tsc` - runs the TypeScript compiler once
-
-      * `npm run tsc:w` - runs the TypeScript compiler in watch mode;
-      the process keeps running, awaiting changes to TypeScript files and recompiling when it sees them
-
-      * `npm run lite` - runs the <a href="https://www.npmjs.com/package/lite-server" target="_blank">lite-server</a>,
-      a light-weight, static file server with excellent support for Angular apps that use routing
-
-      * `npm run typings` - runs the [*typings* tool](#{_typingsUri}) separately
-
-      * `npm run postinstall` - called by *npm* automatically *after* it successfully completes package installation.
-      This script installs the [TypeScript definition files](#{_typingsUri}) defined in `typings.json`
 
 :marked
-  **We're all set.** Let's write some code.
+  **모든 것이 준비됐습니다.** 코드를 작성해보죠.
 
 .l-main-section
-h2#root-component Step 2: Our first Angular component
+h2#root-component 2단계: 첫 번째 Angular 컴포넌트
 :marked
-  Let's create a folder to hold our application and add a super-simple Angular component.
+  애플리케이션을 위치시킬 폴더를 만들고 매우 간단한 Angular 컴포넌트를 추가합니다.
 
-  **Create #{_an} #{_appDir} subfolder** off the project root directory:
-
+  프로젝트 최상위 디렉토리로 **app이라는 하위 폴더를 만듭니다**:
+  
 code-example.
   mkdir #{_appDir}
 
 a#app-component
 p.
-  #[b Create the component file]
-  #[code #[+adjExPath('app/app.component.ts')]] (in this newly created directory) with the following content:
+  #[code #[+adjExPath('app/app.component.ts')]] (새로 만든 디렉토리 내에) 다음과 같은 내용으로 #[b 컴포넌트 파일을 만듭니다]:
 
 +makeProjExample('app/app.component.ts')
 
 .l-verbose-section
   :marked
-    ### AppComponent is the root of the application
+    ### AppComponent는 애플리케이션의 최상위 컴포넌트입니다
 
-    Every Angular app has at least one **root component**, conventionally named `AppComponent`,
-    that hosts the client user experience.
-    Components are the basic building blocks of Angular applications.
-    A component controls a portion of the screen &mdash; a *view* &mdash; through its associated template.
+    모든 Angular 앱은 관례적으로 `AppComponnet`라고 이름 짓는, 클라이언트 사용자 경험을 호스트하는 적어도 한 개의 **최상위 컴포넌트**를 가집니다.
+    컴포넌트는 Angular 애플리케이션의 기초 빌딩 블록입니다.
+    한 개의 컴포넌트는 그것과 연계되어 있는 템플릿을 통해 스크린의 일부 &mdash; 하나의 *뷰* &mdash; 를 제어합니다.
 
-    This QuickStart has only one, extremely simple component.
-    But it has the essential structure of every component we'll ever write:
+    이 퀵스타트 앱은 오직 하나의, 극도로 간단한 컴포넌트를 가지고 있습니다.
+    그러나 우리가 앞으로 작성하게 될 모든 컴포넌트의 필수 구조를 가지고 있습니다:
 
-    * One or more [import](#component-import)
-    statements to reference the things we need.
-    * A [@Component #{_decorator}](#component-decorator)
-    that tells Angular what template to use and how to create the component.
-    * A [component class](#component-class)
-    that controls the appearance and behavior of a view through its template.
+    * 우리가 필요로 하는 것들을 참조하기 위한 한 개 이상의 [import](#component-import) 구문
+    * 사용할 템플릿은 무엇이고 어떻게 컴포넌트를 생성할지를 Angular에게 알려주는 [@Component #{_decorator}](#component-decorator)
+    * 자신의 템플릿을 통해 뷰의 모습과 동작을 제어하는 [component 클래스](#component-class)
 
   a#component-import
   :marked
     ### Import
 
-    Angular apps are modular. They consist of many files each dedicated to a purpose.
-    Angular itself is modular. It is a collection of library modules
-    each made up of several, related features that we'll use to build our application.
+    Angular 앱들은 모듈화를 지원합니다. 그들은 각자의 목적을 위한 많은 파일들로 구성됩니다.
+    Angular 자체도 모듈화되어 있습니다. Angular는 우리가 애플리케이션을 빌드하기 위해 사용하게 될 몇 가지 관련 특징(feature)들로 만들어진 라이브러리 모듈의 컬렉션입니다.
 
-    When we need something from a module or library, we import it.
-    Here we import the Angular 2 core so that our component code can have access to
-    the `@Component` #{_decorator}.
+    모듈 혹은 라이브러리부터 무언가 필요할 때, 그것을 임포트하게 됩니다.
+    다음은 컴포넌트 코드가 `@Component` #{_decorator}에 접근할 수 있도록 Angular 2 core를 임포트하는 방법입니다.
 
   +makeExcerpt('app/app.component.ts', 'import')
 
   h3#component-decorator @Component #{_decorator}
   +ifDocsFor('ts')
     :marked
-      `Component` is a *decorator function* that takes a *metadata object* as argument.
-      We apply this function to the component class by prefixing the function with the
-      **@** symbol and invoking it with a metadata object, just above the class.
+      `Component`는 *메타데이터 객체*를 인자로 갖는 *decorator 함수*입니다.
+      컴포넌트 클래스 앞에 **@** 심볼로 해당 데코레이터를 붙이고 메타데이터 객체로 실행하여 적용하게 됩니다. 그냥 클래스 위에 말이죠.
   :marked
-    `@Component` is #{_a} *#{_decorator}* that allows us to associate *metadata* with the
-    component class.
-    The metadata tells Angular how to create and use this component.
+    `@Component`는 컴포넌트 클래스와 *메타데이터*를 연계시켜주는 *#{_decorator}*입니다. 
+    메타데이터는 Angular에게 해당 컴포넌트를 어떻게 생성하고 사용할지를 알려줍니다.
 
   +makeExcerpt('app/app.component.ts', 'metadata')
 
   block annotation-fields
     :marked
-      This particular metadata object has two fields, a `selector` and a `template`.
+      저 메타데이터 객체는 `selector`와 `template`이라는 두 가지 필드를 갖습니다.
   :marked
-    The **selector** specifies a simple CSS selector for an HTML element that represents the component.
+    **selector**는 컴포넌트를 표현하는 HTML 요소를 위한 간단한 CSS 셀렉터를 지정합니다.
 
-    >The element for this component is named `my-app`.
-    Angular creates and displays an instance of our `AppComponent`
-    wherever it encounters a `my-app` element in the host HTML.
+    >위 컴포넌트를 위한 요소는 `my-app`라고 이름지어졌습니다.
+    Angular는 호스트 HTML 내 어디서든지 `my-app` 요소를 만나게 되면 해당 `AppComponent`의 인스턴스를 만들게 되고 이를 디스플레이합니다.
 
-    The **template** specifies the component's companion template,
-    written in an enhanced form of HTML that tells Angular how to render this component's view.
+    **template**은 컴포넌트와 짝을 이루는 템플릿을 지정하는데, 컴포넌트의 뷰를 어떻게 렌더링해야 하는지 Angular에게 알려주는
+    진보된 형태의 HTML로 작성됩니다.
 
-    >Our template is a single line of HTML announcing "*My First Angular 2 App*".
+    >위 템플릿은 "*My First Angular 2 App*"라고 알려주는 단일 라인의 HTML입니다.
 
-    >A more advanced template could contain data bindings to component properties
-    and might identify other application components which have their own templates.
-    These templates might identify yet other components.
-    In this way an Angular application becomes a tree of components.
+    >좀 더 진보된 템플릿으로 컴포넌트 프로퍼티과의 데이터 바인딩을 포함시킬 수 있고 자신의 템플릿을 갖는 다른 애플리케이션 컴포넌트들과 구별시켜줍니다.
+    이런 방법으로 Angular 애플리케이션은 컴포넌트 계층 구조로 이루어져 있습니다.
 
   :marked
-    ### Component class
-    At the bottom of the file is an empty, do-nothing class named `AppComponent`.
+    ### Component 클래스
+    예제 파일의 제일 아래에 보면, 아무 일도 하지 않는 `AppComponent`라는 클래스가 존재합니다.
   +makeExcerpt('app/app.component.ts', 'class')
   :marked
-    When we're ready to build a substantive application,
-    we can expand this class with properties and application logic.
-    Our `AppComponent` class is empty because we don't need it to do anything in this QuickStart.
+    우리가 실제적인 애플리케이션을 빌드할 준비가 됐을 때,
+    프로퍼티들과 애플리케이션 로직으로 이 클래스를 확장할 수 있습니다.
+    `AppComponent` 클래스는 비어있는데 퀵스타트 앱에서 해당 클래스가 해야 할 일이 없기 때문이죠.
   +ifDocsFor('ts')
     :marked
-      We **export** `AppComponent` so that we can **import** it elsewhere in our application,
-      as we'll see when we create `main.ts`.
+      `AppComonent`를 **익스포트**했는데 그로 인해 애플리케이션 내 어디에서든지 **임포트*도 할 수 있습니다.
+      `main.ts`를 만들 때 이런 내용을 보게 될 겁니다.
 
 .l-main-section
-h2#main Step 3: Add #[code #[+adjExPath('main.ts')]]
+h2#main Step 3: #[code #[+adjExPath('main.ts')]]를 추가하세요
 
 block create-main
   p.
-    Now we need something to tell Angular to load the root component.
-    Create the file #[code #[+adjExPath('app/main.ts')]] with the following content:
+    이제 최상위 컴포넌트를 로드하기 위한 무언가가 필요합니다.
+    다음 내용으로 #[code #[+adjExPath('app/main.ts')]] 파일을 만드세요:
 
 +makeProjExample('app/main.ts')
 
 .l-verbose-section
   :marked
-    We import the two things we need to launch the application:
+    애플리케이션을 시작하기 위해 필요로 하는 두 가지를 임포트해야 합니다:
 
-    1. Angular's browser `bootstrap` function
-    1. The application root component, `AppComponent`.
+    1. Angular의 브라우저인 `bootstrap` 함수
+    2. 애플리케이션 최상위 컴포넌트, `AppComponent`.
 
-    Then we call `bootstrap` with `AppComponent`.
+    그런 뒤에 `bootstrap`을 `AppComponent`와 함께 호출합니다.
 
-    ### Bootstrapping is platform-specific
-    Notice that we import the `bootstrap` function from `#{_angular_browser_uri}`,
-    not `#{_angular_core_uri}`.
-    Bootstrapping isn't core because there isn't a single way to bootstrap the app.
-    True, most applications that run in a browser call the bootstrap function from
-    this library.
+    ### 부트스트래핑은 플랫폼 종속적입니다
+    `bootstrap` 함수를 `#{_angular_core_uri}`가 아닌 `#{_angular_browser_uri}`로부터 임포트했다는 것을 알아두기 바랍니다.
+    부트스트래핑은 core가 아닌데 그것이 앱을 부트스트랩하기 위한 유일한 방법이 아니기 때문입니다. 
+    사실, 브라우저에서 실행하는 거의 대부분의 애플리케이션들은 이 라이브러리로부터 부트스트랩 함수를 호출하게 됩니다.
 
-    But it is possible to load a component in a different environment.
-    We might load it on a mobile device with [Apache Cordova](https://cordova.apache.org/) or [NativeScript](https://www.nativescript.org/).
-    We might wish to render the first page of our application on the server
-    to improve launch performance or facilitate
-    [SEO](http://www.google.com/webmasters/docs/search-engine-optimization-starter-guide.pdf).
-    These targets require a different kind of bootstrap function that we'd import from a different library.
+    그러나 다른 환경에서 컴포넌트를 로드하는 것이 가능합니다.
+    우리는 그것을 [Apache Cordova](https://cordova.apache.org/) 혹은 [NativeScript](https://www.nativescript.org/)와 함께 모바일 디바이스에서 로드하기도 합니다.
+    우리는 시작 성능을 향상시키거나 [SEO](http://www.google.com/webmasters/docs/search-engine-optimization-starter-guide.pdf)를 적용하기 위해 서버 상에서 애플리케이션 첫 페이지를 렌더링하고자 할 때도 있습니다.    
+    이런 목표들은 다른 라이브러리로부터 임포트된 서로 다른 종류의 부트스트랩 함수를 요구합니다.
 
-    ### Why create separate *main.#{_docsFor}* and app component files?
+    ### 왜 *main.#{_docsFor}*와 앱 컴포넌트 파일들을 구분하나요?
 
-    Both `main.#{_docsFor}` and the app component files are tiny.
-    This is just a QuickStart.
-    We could have merged these two files into one
-    and spared ourselves some complexity.
+    예제의 `main.#{_docsFor}`와 앱 컴포넌트 파일들은 아주 작습니다. 이건 단지 퀵스타트일 뿐이니까요.
+    우리는 이 두 개의 파일을 하나로 묶을 수도 있었으며 그리하면 약간의 복잡도를 겪지 않아도 됐을 겁니다. 
 
-    We'd rather demonstrate the proper way to structure an Angular application.
-    App bootstrapping is a separate concern from presenting a view.
-    Mixing concerns creates difficulties down the road.
-    We might launch the `AppComponent` in multiple environments with different bootstrappers.
-    Testing the component is much easier if it doesn't also try to run the entire application.
-    Let's make the small extra effort to do it *the right way*.
+    우리는 Angular 애플리케이션의 구조를 만드는 적당한 방법을 찾고자 합니다.
+    앱 부트스래핑은 뷰를 표현하는 것과는 별개의 관심사입니다.
+    관심사를 혼합하는 것은 머지 않은 미래에 어려움을 초래할 것입니다.
+    다중 환경에서 서로 다른 부트스트래퍼로 `AppComponent`를 런치하고 합니다.
+    전체 애플리케이션을 실행하려고 하지 않는다면 컴포넌트를 테스트하는 것은 꽤 쉬워질 겁니다.
+    이 *올바른 방법*을 시도해보기 위해 약간의 노력을 기울여 보세요.
 
 .l-main-section
-h2#index Step 4: Add #[code index.html]
+h2#index Step 4: #[code index.html]를 추가합니다
 :marked
-  In the *#{_indexHtmlDir}* folder
-  create an `index.html` file and paste the following lines into it:
+  *#{_indexHtmlDir}* 폴더 내에 `index.html` 파일을 만들고 다음 내용을 붙여넣기 하세요:
 
 +makeProjExample('index.html')
 
 .l-verbose-section
   :marked
-    The `index.html` file defines the web page that hosts the application.
+    `index.html` 파일은 애플리케이션을 호스트하는 웹 페이지를 정의합니다.
 
   block index-html-commentary-for-ts
     :marked
-      The noteworthy sections of HTML are:
+      HTML에서 주목해야 할 부분은:
 
-      1. The JavaScript [libraries](#libraries)
-      2. Configuration file for [SystemJS](#systemjs), and a script
-         where we import and run the `app` module which refers to the `main` file that we just wrote.
-      3. The [`<my-app>`](#my-app) tag in the `<body>` which is *where our app lives!*
+      1. 자바스크립트 [라이브러리](#libraries)
+      2. [SystemJS](#systemjs)를 위한 설정 파일과 우리가 방금 작성했던 `main` 파일을 참조하는 `app` 모듈을 임포트하고 실행하는 스크립트
+      3. *앱이 실행되어 있을* `<body>`내 [`<my-app>`](#my-app) 태그
 
     :marked
-      ### Libraries
-      We loaded the following scripts
+      ### 라이브러리
+      우리는 다음의 스크립트들을 로드했습니다
     +makeExcerpt('index.html', 'libraries')
     :marked
-      We begin with `core-js`'s ES2015/ES6 shim which monkey patches the global context (window) with essential features of ES2015 (ES6).
-      Next are the polyfills for Angular2, `zone.js` and `reflect-metadata`.
-      Then the [SystemJS](#systemjs) library for module loading.
+      ES2015(ES6)의 필수적인 특징(feature)으로 글로벌 컨텍스트(window)를 monkey patch하는 `core-js`의 ES2015/ES6 shim으로 시작합니다.
+      다음은 Angular2, `zone.js` 그리고 `reflect-metadata`를 위한 polyfill입니다.
+      그런 뒤에 모듈 로딩을 위한 [SystemJS](#systemjs) 라이브러리를 로드합니다.
 
-      We'll make different choices as we gain experience and
-      become more concerned about production qualities such as
-      load times and memory footprint.
+      경험을 하게 되고 로드 타임과 메모리 풋프린트와 같이 프로덕션 퀄리티에 좀 더 관심을 둘 수록 다른 선택을 하게 될 것입니다.
 
     h3#systemjs SystemJS
     :marked
-      QuickStart uses <a href="https://github.com/systemjs/systemjs" target="_blank">SystemJS</a>
-      to load application and library modules. [Earlier](#add-config-files) we
-      added the `systemjs.config.js` file to the project root.
-      There are alternatives that work just fine including the well-regarded
-      [webpack](guide/webpack.html).
-      SystemJS happens to be a good choice.
-      But we want to be clear that it was a *choice* and not a *preference*.
+      퀵스타트는 애플리케이션과 라이브러리 모듈을 로드하기 위해 <a href="https://github.com/systemjs/systemjs" target="_blank">SystemJS</a>을 사용합니다.
+      [초기에](#add-config-files) 프로젝트 최상위에 `systemjs.config.js` 파일을 추가했었습니다.
+      잘 고안된 [webpack](guide/webpack.html)을 포함하여 잘 동작하는 대체 라이브러리들이 있습니다.
+      SystemJS은 좋은 선택일 겁니다.
+      그러나 우리는 그것이 *선택*이지 *선호*가 아님을 분명히 하고자 합니다.
 
-      All module loaders require configuration and all loader configuration
-      becomes complicated rather quickly as soon as the file structure diversifies and
-      we start thinking about building for production and performance.
+      모든 모듈 로더들은 설정을 요구하며 모든 로더 환경 설정은 파일 구조가 다양화되자마자 급격히 훨씬 더 복잡하게 될 것이고 프로덕션과 성능을 위한 빌딩에 관해 생각하기 시작할 겁니다. 
 
-      We suggest becoming well-versed in the loader of your choice.
-      Learn more about SystemJS configuration
-      <a href="https://github.com/systemjs/systemjs/blob/master/docs/config-api.md" target="_blank">here</a>.
+      우리는 당신이 선택한 로더를 잘 이해하기를 권장합니다.
+      <a href="https://github.com/systemjs/systemjs/blob/master/docs/config-api.md" target="_blank">여기</a>에서
+      SystemJS 환경 설정에 대해 좀 더 알아보시기 바랍니다.
 
-      With those cautions in mind, what are we doing in the
-      QuickStart [`systemjs.config.js` configuration file we added earlier](#config-files)?
-      First, we create a map to tell SystemJS where to look when we import some module.
-      Then, we register all our packages to SystemJS:
-      all the project dependencies and our application package, `app`.
+      마음 속에 그런 주의 사항을 품고, 퀵스타트 앱에 [우리가 초기에 추가했던 `systemjs.config.js` 환경 설정 파일](#config-files)으로 무엇을 하려고 하는 것인지를 생각해봐야 합니다.
+      첫째, 어떤 모듈을 임포트할 때 SystemJS가 바라보는 위치를 알려주기 위해 map을 생성했습니다.
+      그런 뒤에, SystemJS에 모든 패키지들을 등록해주었습니다:
+      프로젝트의 모든 의존성과 애플리케이션 패키지(`app`)을 말이죠.
 
     .l-sub-section
       :marked
-        Our QuickStart doesn't use all of the listed packages
-        but any substantial application will want many of them
-        and all of the listed packages are required by at least one of the documentation samples.
+        퀵스타트는 나열된 패키지 모두를 사용하지는 않지만
+        현실의 애플리케이션들은 그보다 많은 것을 원할테고 이 문서의 샘플 중 적어도 하나의 샘플에서 나열된 모든 패키지들을 필요로 합니다. 
 
-        There is no runtime harm in listing packages that we don't need as they will only be loaded when requested.
+        요청한 경우에만 로드가 되므로 당장 필요치 않은, 나열된 패키지들이 런타임 장애를 일으키지는 않을 겁니다.
     :marked
-      The `app` package tells SystemJS what to do when it sees a request for a
-      module from the `app/` folder.
+      `app` 패키지는 SystemJS에게 `app/` 폴더로부터 모듈을 요청할 때 해야 하는 일을 알려줍니다.
 
-      Our QuickStart makes such requests when one of its
-      application TypeScript files has an import statement like this:
+      퀵스타트 앱은 애플리케이션의 TypeScript 파일 중 하나가 다음과 같이 임포트 구문을 가질 때 그런 요청을 하게 됩니다:
     +makeExcerpt('app/main.ts', 'import')
     :marked
-      Notice that the module name (after `from`) does not mention a filename extension.
-      In the configuration we tell SystemJS to default the extension to `js`, a JavaScript file.
+      모듈 이름(`from` 뒤의)이 파일의 확장자를 포함하고 있지 않다는 것을 알아두시기 바랍니다.
+      설정 내에서 SystemJS에게 확장자가 `js`, 즉 자바스크립트 파일임을 알려주었기 가능한 일입니다.
 
-      That makes sense because we transpile TypeScript to JavaScript
-      *before* running the application.
+      그것은 애플리케이션 실행 *이전에* TypeScript을 JavaScript로 트랜스파일하기에 가능합니다.
 
     .l-sub-section
       :marked
-        #### Transpiling in the browser
-        In the live example on plunker we transpile (AKA compile) to JavaScript in the browser
-        on the fly. _That's fine for a demo_.
+        #### 브라우저 내 트랜스파일링
+        plunker의 라이브 예제에서는 브라우저 내에서 그때 그때 JavaScript로 트랜스파일(컴파일이라고도 알려진)합니다. 
+        _데모로는 괜찮습니다_.
 
-        **Do not transpile in the browser during development or for production**.
+        **개발 중 혹은 프로덕션을 위한 용도로는 브라우저 내에서 트랜스파일하지 마십시오**.
 
-        We strongly recommend transpiling (AKA compiling) to JavaScript during a build phase
-        before running the application for several reasons including:
+        다음의 몇 가지 이유로 애플리케이션 실행 전 빌드 단계 중간에 JavaScript로 트랜스파일(컴파일이라고도 알려진)할 것을 강력하게 권고합니다:
 
-        * We see compiler warnings and errors that are hidden from us in the browser.
+        * 브라우저 내에서 컴파일러는 경고와 오류를 숨깁니다.
 
-        * Precompilation simplifies the module loading process and
-        it's much easier to diagnose problems when this is a separate, external step.
+        * 사전 컴파일은 모듈 로딩 과정을 간단하게 해주고
+        이것은 독립된 외부의 단계일 때 문제를 진단하기 쉽게 만들어 줍니다.
 
-        * Precompilation means a faster user experience because the browser doesn't waste time compiling.
+        * 브라우저가 컴파일할 시간을 들이지 않으므로 좀 더 빠른 사용자 경험을 가능하게 합니다.
 
-        * We iterate development faster because we only recompile changed files.
-        We notice the difference as soon as the app grows beyond a handful of files.
+        * 변경된 파일만을 다시 컴파일하기에 개발을 좀 더 빠르게 반복할 수 있습니다.
+        앱이 아주 적은 파일을 넘어서 점점 커지에 따라 그 차이점을 알게 될 겁니다.
 
-        * Precompilation fits into a continuous integration process of build, test, deploy.
+        * 사전 컴파일은 빌드, 테스트, 디플로이라는 지속적인 통합 과정에 딱 들어맞습니다.
 
     :marked
-      The `System.import` call tells SystemJS to import the `main` file
-      (`main.js` ... after transpiling `main.ts`, remember?);
-      `main` is where we tell Angular to launch the application.
-      We also catch and log launch errors to the console.
+      `System.import` 호출은 `main` 파일(`main.ts`을 트랜스파일하고 나면... `main.js`, 기억하죠?)을 임포트하라고 SystemJS에게 알려줍니다; 
+      `main`은 애플리케이션을 시작하라고 Angular에게 알려주는 지점입니다.
+      우리는 또 콘솔에 시작 오류를 기록합니다.
 
-      All other modules are loaded upon request
-      either by an import statement or by Angular itself.
+      다른 모든 모듈은 임포트 구문 혹은 Angular가 자체적으로 일으킨 요청에 따라 로드됩니다.
 
       ### *&lt;my-app&gt;*
 
   a(id="my-app")
   :marked
-    When Angular calls the `bootstrap` function in `main.#{_docsFor}`, it reads the `AppComponent`
-    metadata, finds the `my-app` selector, locates an element tag named `my-app`,
-    and renders our application's view between those tags.
+    Angular가 `main.#{_docsFor}`에서 `bootstrap` 함수를 호출하면, `AppComponent`의 메타데이터를 따라 `my-app` 셀렉터를 발견하고 `my-app`이라는 이름의 요소 태그의 정확한 위치를 찾아
+    그 태그들 사이에 애플리케이션의 뷰를 렌더링합니다.
 
 :marked
-  ### Add some style
-  Styles aren't essential but they're nice, and `index.html` assumes we have
-  a stylesheet called `styles.css`.
+  ### 스타일 추가
+  스타일은 필수는 아닙니다만 멋집니다. 그리고 `index.html`은 우리가 `styles.css`라는 스타일시트를 가지고 있다고 가정하고 있습니다.
 
-  Create a `styles.css` file in the *#{_indexHtmlDir}* folder and start styling, perhaps with the minimal
-  styles shown below. For the full set of master styles used by the documentation samples,
-  see [styles.css](https://github.com/angular/angular.io/blob/master/public/docs/_examples/styles.css).
+  *#{_indexHtmlDir}* 폴더에 `styles.css` 파일을 만들고 스타일링해보세요. 아마도 아래 최소한의 스타일이 보일 겁니다.
+  문서 예제에서 사용되는 전체 마스터 스타일 셋은 
+  [styles.css](https://github.com/angular/angular.io/blob/master/public/docs/_examples/styles.css)에서 보시기 바랍니다.
 +makeExcerpt('styles.1.css')
 
 .l-main-section
-h2#build-and-run Step 5: Build and run the app!
+h2#build-and-run Step 5: 앱을 빌드하고 실행하세요!
 block run-app
   :marked
-    Open a terminal window and enter this command:
+    터미널 윈도우를 열고 다음 명령어를 입력하세요:
   code-example.
     npm start
   :marked
-    That command runs two parallel node processes
-    1. The TypeScript compiler in watch mode
-    1. A static server called **lite-server** that loads `index.html` in a browser
-    and refreshes the browser when application files change
+    그 명령어는 병렬의 두 가지 node 프로세스를 실행합니다
+    1. watch 모드의 TypeScript 컴파일러
+    1. 브라우저에서 `index.html`을 로드하고 애플리케이션 파일들이 변경되면 브라우저를 리프레시해주는 **lite-server**라고 불리는 정적 서버
 
-    In a few moments, a browser tab should open and display
+    수 분 내로, 브라우저 탭이 열리면 앱이 보일 겁니다
 
 figure.image-display
   img(src='/resources/images/devguide/quickstart/my-first-app.png' alt="Output of QuickStart app")
 
 :marked
-  **Great job!**
+  **잘 했습니다!**
 
 block build-app
   //- Nothing for ts.
 
 :marked
-  ## Make some changes
+  ## 몇 가지 변화주기
 
-  Try changing the message to "My SECOND Angular 2 app".
+  "My SECOND Angular 2 app"라고 메시지를 변경해보죠.
 block server-watching
   :marked
-    The TypeScript compiler and `lite-server` are watching.
-    They should detect the change, recompile the TypeScript into JavaScript,
-    refresh the browser, and display the revised message.
-    It's a nifty way to develop an application!
+    TypeScript 컴파일러와 `lite-server`는 watch 모드입니다.
+    그들은 변경을 감지해야 하고 그러면 TypeScript를 JavaScript로 다시 컴파일한 뒤 브라우저를 리프레시하고 수정된 메시지를 보여줄 겁니다.
+    애플리케이션을 개발하기 위한 훌륭한 방법이죠!
 
-    We close the terminal window when we're done to terminate both the compiler and the server.
+    컴파일러와 서버 모두 종료시키려면 터미널 윈도우를 닫으세요.
 
 .l-main-section
 :marked
-  # Wrap up
+  # 정리
 
-  Our final project folder structure looks like this:
+  최종적인 프로젝트 폴더 구조는 다음과 같습니다:
 block project-file-structure
   .filetree
     .file angular2-quickstart
@@ -529,7 +477,7 @@ block project-file-structure
       .file tsconfig.json
       .file typings.json
 :marked
-  Here are the file contents:
+  다음은 파일 내용입니다:
 
 block project-files
   +makeTabs(`
@@ -553,21 +501,21 @@ block project-files
 
 .l-main-section
 :marked
-  ## What next?
-  Our first application doesn't do much. It's basically "Hello, World" for Angular 2.
+  ## 다음은?
+  첫 번째 애플리케이션은 뭐 그리 대단치 않았습니다. 그저 Angular 2를 위한 "Hello, World"였죠.
 
-  We kept it simple in our first pass: we wrote a little Angular component,
-  created a simple `index.html`, and launched with a
-  static file server. That's about all we'd expect to do for a "Hello, World" app.
+  첫 번째 과정이기에 그것을 간단하게 하려고 했습니다: 작은 Angular 컴포넌트를 작성했고,
+  간단한 `index.html`을 생성한 뒤 정적 파일 서버로 런치했습니다.
+  그것이 "Hello, World" 앱에 기대한 전부입니다.
 
-  **We have greater ambitions!**
+  **우리는 좀 더 큰 야망을 가지고 있습니다!**
 block what-next-ts-overhead
   :marked
+    좋은 소식은 셋업의 오버헤드를 (대부분) 신경쓰지 않아도 된다는 것입니다.  
     The good news is that the overhead of setup is (mostly) behind us.
-    We'll probably only touch the `package.json` to update libraries.
-    We'll likely open `index.html` only if we need to add a library or some css stylesheets.
+    우리는 아마도 라이브러리 업데이트를 위해 `package.json`을 건드리게 될 것입니다.
+    우리는 라이브러리나 몇 가지 css 스타일시트를 추가해야 하는 경우에만 `index.html`을 열게 될 것입니다.
 :marked
-  We're about to take the next step and build a small application that
-  demonstrates the great things we can build with Angular 2.
+  이후부터는 Angular 2로 빌드할 수 있는 굉장한 것들을 시험해보는 작은 애플리케이션을 빌드할 겁니다.
 
-  Join us on the [Tour of Heroes Tutorial](./tutorial)!
+  [Tour of Heroes Tutorial](./tutorial)에서 계속하시죠!
