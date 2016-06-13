@@ -4,86 +4,80 @@ include ../_util-fns
 :marked
   # Tour of Heroes: the vision
 
-  Our grand plan is to build an app to help a staffing agency manage its stable of heroes.
-  Even heroes need to find work.
+  우리의 웅장한 계획은 직원 채용 에이전시가 영웅들의 훈련소를 관리하도록 돕는 앱을 빌드하는 것입니다.
+  심지어 영웅이 일을 찾는 것까지 말이죠.
 
-  Of course we'll only make a little progress in this tutorial. What we do build will
-  have many of the features we expect to find in a full-blown, data-driven application: acquiring and displaying
-  a list of heroes, editing a selected hero's detail, and navigating among different
-  views of heroic data.
+  물론 우리는 이 튜토리얼 내에서 약간의 과정만 진행할 겁니다. 우리가 빌드하려고 하는 것은 완전히 구축된, 데이터 주도의 애플리케이션 내에서 발견되기를 바라는
+  수많은 특징들을 가지고 있습니다: 영웅들의 목록을 얻고 디스플레이하는 것, 선택된 영웅의 상세정보를 수정하는 것 그리고 서로 다른 영웅의 데이터 뷰를 돌아다니는 것.
 
-  The Tour of Heroes covers the core fundamentals of Angular.
-  We’ll use built-in directives to show/hide elements and display lists of hero data.
-  We’ll create a component to display hero details and another to show an array of heroes.
-  We'll use one-way data binding for read-only data. We'll add editable fields to update a model
-  with two-way data binding. We'll bind component methods to user events like key strokes and clicks.
-  We’ll learn to select a hero from a master list and edit that hero in the details view. We'll
-  format data with pipes. We'll create a shared service to assemble our heroes. And we'll use routing to navigate among different views and their components.
+  Tour of Heroes은 Angular의 핵심적인 기본 내용을 모두 다룹니다.
+  요소를 보여주거나 감추고 영웅 데이터 목록을 디스플레이하기 위해 빌트 디렉티브를 사용할 겁니다.
+  영웅의 상세정보를 디스플레이하기 위한 컴포넌트와 영웅의 배열을 보여주기 위해 다른 것들을 만들 것입니다.
+  읽기 전용 데이터를 위해 단방향 데이터 바인딩을 사용할 겁니다. 양방향 데이터 바인딩으로 모델을 업데이트하기 위한 수정 가능한 필드를 추가해 볼겁니다.
+  키 스트로크와 클릭과 같은 사용자 이벤트를 위한 컴포넌트 메서드를 바인드해볼 겁니다.
+  마스터 목록으로부터 영웅을 선택하고 상세 뷰에서 선택된 영웅을 수정하는 방법도 배워볼 겁니다. 
+  파이프로 데이터를 형식화해볼 겁니다. 영웅들을 조립하기 위해 공유된 서비스를 생성할 겁니다. 그리고 서로 다른 뷰와 그들의 컴포넌트 사이를 돌아다니기 위해 라우팅을 이용해 볼 겁니다.
 
-  We’ll learn enough core Angular to get started and gain confidence that
-  Angular can do whatever we need it to do.
-  We'll be covering a lot of ground at an introductory level but we’ll find plenty of links
-  to chapters with greater depth.
+  일을 시작하고 Angular가 필요한 일이라면 무엇이든지 할 수 있다는 자신감을 얻기 위해 충분히 핵심적인 Angular를 배울 겁니다.
+  도입부에서는 광범위하게 다루겠지만 좀 더 깊이를 가지고 있는 챕터에 대한 링크를 발견하게 될 것입니다.
 // #enddocregion intro
 
 :marked
-  [Run the live example](/resources/live-examples/toh-6/ts/plnkr.html)
+  [라이브 예제를 실행하세요](/resources/live-examples/toh-6/ts/plnkr.html)
 
 // #docregion main
 .l-main-section
 :marked
   ## The End Game
 
-  Here's a visual idea of where we're going in this tour, beginning with the "Dashboard"
-  view and our most heroic heroes:
+  여기 "Dashboard" 뷰와 가장 영웅다운 영웅들로 시작되는, 이 튜토리얼에서 진행하게 될 시각적 아이디어입니다:
 
 figure.image-display
   img(src='/resources/images/devguide/toh/heroes-dashboard-1.png' alt="Output of heroes dashboard")
 
 :marked
-  Above the dashboard are two links ("Dashboard" and "Heroes").
-  We could click them to navigate between this Dashboard and a Heroes view.
+  위 대시보드는 두 개의 링크("Dashboard"와 "Heroes")를 가지고 있습니다.
+  이 링크들을 클릭하여 이 대시보드와 영웅들의 뷰 사이를 돌아다닐 수 있습니다.
 
-  Instead we click the dashboard hero named "Magneta" and the router takes us to a "Hero Details" view
-  of that hero where we can change the hero's name.
+  대신 "Magneta"라는 이름의 영웅을 대시보드에서 클릭하게 되면 라우터는 영웅의 이름을 변경할 수 있는, 해당 영웅의 "Hero Details"라는 뷰로 우리를 안내합니다.
 
 figure.image-display
   img(src='/resources/images/devguide/toh/hero-details-1.png' alt="Details of hero in app")
 
 :marked
-  Clicking the "Back" button would return us to the "Dashboard".
-  Links at the top can take us to either of the main views.
-  We'll click "Heroes". The app takes to the "Heroes" master list view.
+  "Back" 버튼 클릭은 "Dashboard"로 되돌려 보내줍니다.
+  상당의 링크들은 메인 뷰들 중 하나로 우리를 보내줍니다.
+  "Heroes"를 클릭해보죠. 앱은 "Heroes"라는 마스터 리스트 뷰로 이동합니다.
 
 figure.image-display
   img(src='/resources/images/devguide/toh/heroes-list-2.png' alt="Output of heroes list app")
 
 :marked
-  We click a different hero and the readonly mini-detail beneath the list reflects our new choice.
+  다른 영웅을 선택하면 목록 바로 아래에 읽기 전용의 아주 작은 상세 내용이 선택한 영웅을 보여줄 겁니다.
 
-  We click the "View Details" button to drill into the
-  editable details of our selected hero.
-
-  The following diagram captures all of our navigation options.
+  "View Details" 버튼을 클릭하면 선택된 영웅의 수정 가능한 상세 정보로 이동합니다.
+  
+  다음 다이어그램은 모든 네비게이션 옵션을 포착한 것입니다.
 
 figure.image-display
   img(src='/resources/images/devguide/toh/nav-diagram.png' alt="View navigations")
 
 :marked
-  Here's our app in action
+  다음은 동작하는 앱의 모습입니다
 
 figure.image-display
   img(src='/resources/images/devguide/toh/toh-anim.gif' alt="Tour of Heroes in Action")
 
 .l-main-section
 :marked
-  ## Up Next
+  ## 다음 순서
 
-  We’ll build this Tour of Heroes together, step by step.
-  We'll motivate each step with a requirement that we've
-  met in countless applications. Everything has a reason.
+  한 단계씩 이 Tour of Heroes 앱을 함께 빌드해 나갈겁니다.
+  각 단계에 대해, 셀 수 없이 많은 애플리케이션에서 만났던 요구 사항들을 동기 부여로 삼을 것입니다.
+  모든 것은 원인이 있죠. 
 
+  그리고 진행하는 내내 Angular의 수 많은 핵심 내용들을 만나보게 될 겁니다.
   And we’ll meet many of the core fundamentals of Angular along the way.
 
-  [Let's get started!](./toh-pt1.html)
+  [시작해보죠!](./toh-pt1.html)
 // #enddocregion main

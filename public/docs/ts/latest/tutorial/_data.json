@@ -1,38 +1,38 @@
 {
   "index": {
-    "title": "Tutorial: Tour of Heroes",
-    "navTitle": "Introduction",
-    "intro": "The Tour of Heroes tutorial takes us through the steps of creating an Angular application in TypeScript.",
+    "title": "튜토리얼: Tour of Heroes",
+    "navTitle": "소개",
+    "intro": "Tour of Heroes 튜토리얼은 TypeScript로 Angular 애플리케이션을 만드는 절차를 익히도록 도와줍니다",
     "nextable": true
   },
   "toh-pt1": {
-    "title": "The Hero Editor",
-    "intro": "We build a simple hero editor",
+    "title": "영웅 편집기",
+    "intro": "간단한 영웅 편집기를 만듭니다",
     "nextable": true
   },
   "toh-pt2": {
-    "title": "Master/Detail",
-    "intro": "We build a master/detail page with a list of heroes",
+    "title": "마스터/상세",
+    "intro": "영웅 리스트로 마스터 및 상세 페이지를 만듭니다",
     "nextable": true
   },
   "toh-pt3": {
-    "title": "Multiple Components",
-    "intro": "We refactor the master/detail view into separate components",
+    "title": "다중 컴포넌트",
+    "intro": "마스터 및 상세 뷰를 분할된 컴포넌트로 리팩토링합니다",
     "nextable": true
   },
   "toh-pt4": {
-    "title": "Services",
-    "intro": "We create a reusable service to manage our hero data calls",
+    "title": "서비스",
+    "intro": "영웅 데이터 호출을 관리하기 위한 재사용 가능한 서비스를 만듭니다",
     "nextable": true
   },
   "toh-pt5": {
-    "title": "Routing",
-    "intro": "We add the Angular Component Router and learn to navigate among the views",
+    "title": "라우팅",
+    "intro": "Angular 컴포넌트 라우터를 만들고 뷰 사이를 돌아다니는 방법을 배웁니다",
     "nextable": true
   },
   "toh-pt6": {
     "title": "Http",
-    "intro": "We convert our service and components to use Http",
+    "intro": "Http를 사용하기 위해 서비스와 컴포넌트를 변경합니다",
     "nextable": true
   }
 }

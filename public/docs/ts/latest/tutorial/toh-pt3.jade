@@ -9,7 +9,7 @@ include ../_util-fns
 
 .l-main-section
 :marked
-  ## Where We Left Off
+  ## 어디부터 시작해야 할까요
   Tour of Heroes를 계속하기 전에, 다음 구조를 확인하시기 바랍니다. 만약 다르다면, 이전 단계로 돌아가서 빠진게 없는지 확인하시기 바랍니다.
 
 .filetree
@@ -29,13 +29,13 @@ include ../_util-fns
     .file typings.json
 :marked
   ### 앱 트랜스파일링과 실행을 유지하세요
-  We want to start the TypeScript compiler, have it watch for changes, and start our server. We'll do this by typing
+  TypeScript 컴파일러 시작, 변경을 위한 watch, 그리고 서버 시작을 원할 겁니다. 다음 명령어를 통해 이런 것들이 가능합니다.
 
 code-example(format="." language="bash").
   npm start
 
 :marked
-  This will keep the application running while we continue to build the Tour of Heroes.
+  이것은 Tour of Heroes을 빌드하는 내내 애플리케이션 실행을 유지시켜줄겁니다.
 
   ## 영웅 상세 컴포넌트 만들기
   영웅 목록과 영웅 상세는 동일한 파일 내에 같은 컴포넌트로 되어 있습니다.
@@ -169,33 +169,31 @@ code-example(format=".")
   바인딩 덕분에, `HeroDetailComponent`는 `AppComponent`로부터 영웅을 수신하게 되고 목록 아래에 영웅의 상세 정보를 표현하게 됩니다.
   이 상세 정보는 사용자가 새로운 영웅을 고를때마다 매번 갱신되어야 합니다.
   
-  It's not happening yet!
+  그것은 아직 구현되지 않았습니다!
   
-  We click among the heroes. No details. We look for an error in the console of the browser development tools. No error.
+  영웅 중 하나를 클릭해보죠. 상세 정보가 아직 나오지 않아요. 브라우저 개발자 도구의 콘솔에서 오류를 찾아보지만 오류는 없습니다.
   
-  It is as if Angular were ignoring the new tag. That's because *it is ignoring the new tag*.
+  그것은 Angular가 새로운 태그를 무시하는 것 같습니다. 실제로 *새로운 태그를 무시하고 있기* 때문입니다.
   
-  ### The *directives* array
-  A browser ignores HTML tags and attributes that it doesn't recognize. So does Angular.
+  ### *디렉티브* 배열
+  브라우저는 인식하지 못하는 HTML 태그와 속성을 무시합니다. Angular도 그렇구요.
   
-  We've imported `HeroDetailComponent`, we've used it in the template, but we haven't told Angular about it.
+  `HeroDetailComponent`를 임포트했고 템플릿 내에서 사용하고 있습니다만 우린 그것에 관해 Angular에게 알려주지 않았습니다.
   
-  We tell Angular about it by listing it in the metadata `directives` array. Let's add that array property to the bottom of the
-  `@Component` configuration object, immediately after the `template` and `styles` properties.
+  메타데이터의 `directives` 배열에 컴포넌트를 나열해 Angular에게 알려주세요. `@Component` 설정 객체의 아래, 그러니까 `template`과 `styles` 프로퍼티 바로 밑에 그 배열 프로퍼티를 추가해보죠.
 +makeExample('toh-3/ts/app/app.component.ts', 'directives', 'app/app.component.ts (Directives)')
 
 :marked
-  ### It works!
-  When we view our app in the browser we see the list of heroes. 
-  When we select a hero we can see the selected hero’s details. 
-  
-  What's fundamentally new is that we can use this `HeroDetailComponent`
-  to show hero details anywhere in the app.
+  ### 동작하네요!
+  브라우저에서 앱을 볼 때 영웅의 목록을 보게 됩니다.
+  한 명의 영웅을 선택하게 되면 선택된 영웅의 상세 정보를 보게 되죠. 
+   
+  근본적으로 새로운 것은 앱 어디서나 영웅의 상세 정보를 보려면 이 `HeroDetailComponent`를 사용할 수 있다는 겁니다.
 
-  We’ve created our first reusable component!
+  처음으로 재사용 가능한 컴포넌트를 만들었습니다!
 
-  ### Reviewing the App Structure
-  Let’s verify that we have the following structure after all of our good refactoring in this chapter:
+  ### 앱 구조 재검토
+  이 챕터에서 모든 리팩토링을 하고 나서 다음의 구조를 갖는지 확인해보죠:
 
 .filetree
   .file angular2-tour-of-heroes
@@ -213,7 +211,7 @@ code-example(format=".")
     .file tsconfig.json
     .file typings.json
 :marked
-  Here are the code files we discussed in this chapter.
+  다음은 우리가 이 챕터에서 다루었던 코드 파일들입니다.
 
 +makeTabs(`
   toh-3/ts/app/hero-detail.component.ts,
@@ -227,24 +225,23 @@ code-example(format=".")
 
 .l-main-section
 :marked
-  ## The Road We’ve Travelled
-  Let’s take stock of what we’ve built.
+  ## 지금까지 알아본 것들
+  우리가 빌드해 온 내용들을 점검해보죠.
 
-  * We created a reusable component
-  * We learned how to make a component accept input
-  * We learned to bind a parent component to a child component.
-  * We learned to declare the application directives we need in a `directives` array.
+  * 재사용 가능한 컴포넌트를 만들었습니다
+  * 어떻게 하면 컴포넌트가 입력을 받을 수 있는지 배웠습니다
+  * 상위 컴포넌트를 하위 컴포넌트에 바인드하는 법을 배웠습니다
+  * `directives` 배열 내에 필요한 애플리케이션 디렉티브를 선언하는 방법에 대해 배웠습니다
 
-  [Run the live example for part 3](/resources/live-examples/toh-3/ts/plnkr.html).
+  [파트 3를 위한 라이브 예제를 실행해 보세요](/resources/live-examples/toh-3/ts/plnkr.html).
 
 .l-main-section
 :marked
-  ## The Road Ahead
-  Our Tour of Heroes has become more reusable with shared components. 
+  ## 앞으로 가야할 길
+  Tour of Heroes는 공용 컴포넌트와 함께 좀 더 재사용 가능한 모습으로 변해갈 겁니다. 
   
-  We're still getting our (mock) data within the `AppComponent`.
-  That's not sustainable. 
-  We should refactor data access to a separate service
-  and share it among the components that need data. 
+  `AppComponent` 사이에서 여전히 (가짜) 데이터를 사용하고 있습니다.
+  그것은 유지되기 어렵습니다.
+  별도의 서비스에서 데이터 접근을 위한 리팩토링을 해야 하고 데이터를 필요로 하는 컴포넌트에서 그 서비스를 공유해야 합니다. 
   
-  We’ll learn to create services in the [next tutorial](toh-pt4.html) chapter.
+  [다음 튜토리얼](toh-pt4.html)에서 서비스를 만드는 방법을 배우도록 하죠.
