@@ -44,8 +44,8 @@
   },
 
   "template-syntax": {
-    "title": "Template Syntax",
-    "intro": "Learn how to write templates that display data and consume user events with the help of data binding.",
+    "title": "템플릿 문법",
+    "intro": "데이터를 디스플레이하고 데이터 바인딩의 지원으로 사용자 이벤트를 다루는 템플릿을 작성하는 방법에 대해서 배워봅니다.",
     "nextable": true,
     "basics": true
   },

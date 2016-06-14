@@ -7,116 +7,118 @@ block includes
   - var __objectAsMap = 'object';
 
 :marked
-  Our Angular application manages what the user sees and can do, achieving this through the interaction of a Component class instance (the *component*) and its user-facing template.
+  우리의 Angular 애플리케이션은 컴포넌트 클래스의 인스턴스(*component*)와 그에 대해 사용자가 사용하게 될 템플릿의 상호작용을 통해 사용자가 보게 되는 것과 하는 것을 가능하도록 관리해줍니다.
+  
+  우리 중 많은 이들이 모델-뷰-컨트롤러(MVC) 혹은 모델-뷰-뷰모델(MVVM)에 대한 경험으로 컴포넌트/템플릿의 이중성에 친숙합니다.
+  Angular에서, 컴포넌트는 컨트롤러/뷰모델의 일부 역할을 하고 템플릿은 뷰를 나타냅니다.
 
-  Many of us are familiar with the component/template duality from our experience with model-view-controller (MVC) or model-view-viewmodel (MVVM). In Angular,  the component plays the part of the controller/viewmodel, and the template represents the view.
-
-  Let’s find out what it takes to write a template for our view. We’ll cover these basic elements of template syntax:
+  뷰을 위한 템플릿을 작성하기 위해 갖춰야 것들을 알아보도록 하죠.
+  템플릿 문법의 기본적인 요소들을 다룰 것입니다:
+  We’ll cover these basic elements of template syntax:
 
   * [HTML](#html)
-  * [Interpolation](#interpolation)
-  * [Template expressions](#template-expressions)
-  * [Template statements](#template-statements)
-  * [Binding syntax](#binding-syntax)
-  * [Property binding](#property-binding)
-  * [Attribute, class, and style bindings](#other-bindings)
-  * [Event binding](#event-binding)
-  * [Two-way data binding with `NgModel`](#ngModel)
-  * [Built-in directives](#directives)
+  * [어구 삽입](#interpolation)
+  * [템플릿 표현식](#template-expressions)
+  * [템플릿 구문](#template-statements)
+  * [바인딩 문법](#binding-syntax)
+  * [프로퍼티 바인딩](#property-binding)
+  * [어트리뷰트, 클래스, 그리고 스타일 바인딩](#other-bindings)
+  * [이벤트 바인딩](#event-binding)
+  * [`NgModel`을 이용한 양방향 데이터 바인딩](#ngModel)
+  * [빌트인 디렉티브](#directives)
     * [NgClass](#ngClass)
     * [NgStyle](#ngStyle)
     * [NgIf](#ngIf)
     * [NgSwitch](#ngSwitch)
     * [NgFor](#ngFor)
-  * [* and &lt;template>](#star-template)
-  * [Template reference variables](#ref-vars)
-  * [Input and output properties](#inputs-outputs)
-  * [Template expression operators](#expression-operators)
-    * [pipe](#pipe)
-    * [safe navigation operator (?.)](#safe-navigation-operator)
+  * [* 와 &lt;template>](#star-template)
+  * [템플릿 참조 변수](#ref-vars)
+  * [입출력 프로퍼티](#inputs-outputs)
+  * [템플릿 표현식 연산자](#expression-operators)
+    * [파이프](#pipe)
+    * [안전한 네비게이션 연산자 (?.)](#safe-navigation-operator)
 
 p.
-  The #[+liveExampleLink2()]
-  demonstrates all of the syntax and code snippets described in this chapter.
+  #[+liveExampleLink2()]은 이 챕터 내에서 설명하고 있는 모든 문법과 코드 조각을 다룹니다.
 
 .l-main-section
 :marked
   ## HTML
-  HTML is the language of the Angular template. Our [QuickStart](../quickstart.html) application had a template that was pure HTML:
+  HTML은 Angular 템플릿의 언어입니다.
+  [퀵스타트](../quickstart.html) 애플리케이션은 순수한 HTML로 되어 있는 템플릿을 가지고 있었죠:
 
 code-example(language="html" escape="html").
   <h1>My First Angular 2 App</h1>
 
 :marked
-  Almost all HTML syntax is valid template syntax. The `<script>` element is a notable exception; it is forbidden, eliminating the risk of script injection attacks. (In practice, `<script>` is simply ignored.)
+  거의 대부분의 모든 HTML 문법은 유효한 템플릿 문법입니다. `<script>` 요소는 확실히 예외입니다; 스크립트 주입 공격의 위험을 제거하려고 금지시켰습니다. (실제로, `<script>`는 무시됩니다.)
 
-  Some legal HTML doesn’t make much sense in a template. The `<html>`, `<body>`, and `<base>` elements have no useful role in our repertoire. Pretty much everything else is fair game.
+  몇 가지 합법적인 HTML들이 템플릿 내에서는 허용되지 않습니다. `<html>`, `<body>`, `<base>` 요소들은 유용한 역할을 하지 못합니다. 그외의 거의 모든 것들은 문제가 되지 않습니다.
 
-  We can extend the HTML vocabulary of our templates with components and directives that appear as new elements and attributes. And we are about to learn how to get and set DOM values dynamically through data binding.
+  템플릿의 HTML 어휘는 컴포넌트, 그리고 새로운 요소와 어트리뷰트로 표현되는 디렉티브로 확장될 수 있습니다.
+  그리고 데이터 바인딩을 통해 동적으로 DOM 값들을 가져오고 설정하는 방법을 배울려고 합니다.
 
-  Let’s turn to the first form of data binding &mdash; interpolation &mdash; to see how much richer template HTML can be.
+  HTML이 얼마나 더 고급스러운 템플릿이 될 수 있는지 보기 위해 데이터 바인딩의 첫번째 형식인 어구 삽입를 보도록 하죠.
 
 .l-main-section
 :marked
-  ## Interpolation
-  We met the double-curly braces of interpolation, `{{` and `}}`, early in our Angular education.
+  ## 어구 삽입
+  Angular 문서 앞부분에서 중괄호 두개, `{{`와 `}}`로 이루어진 어구 삽입을 보았습니다.
 +makeExample('template-syntax/ts/app/app.component.html', 'first-interpolation')(format=".")
 :marked
-  We use interpolation to weave calculated strings into the text between HTML element tags and within attribute assignments.
+  HTML 요소 태그 사이 혹은 어트리뷰트 할당문 사이의 텍스트 안으로 계산된 문자열을 넣기 위해 어구 삽입을 사용합니다.
 
 +makeExample('template-syntax/ts/app/app.component.html', 'title+image')(format=".")
 :marked
-  The material between the braces is often the name of a component property. Angular replaces that name with the
-  string value of the corresponding component property. In this example, Angular evaluates the `title` and `heroImageUrl` properties
-  and "fills in the blanks", displaying first a bold application title and then a heroic image.
+  괄호 사이의 구성 요소들은 일반적으로 컴포넌트 프로퍼티의 이름이 됩니다. Angular는 이 이름을 그와 연관된 컴포넌트 프로퍼티의 문자열 값으로 대체합니다.
+  이 예제에서, Angular는 `title`과 `heroImageUrl` 프로퍼티를 평가하고
+  먼저 볼드체로 애플리케이션 타이틀을 디스플레이하고 그후 영웅의 이미지를 디스플레이하도록 "빈 칸을 채웁니다".
 
-  More generally, the material between the braces is a **template expression** that Angular first **evaluates**
-  and then **converts to a string**. The following interpolation illustrates the point by adding the two numbers within braces:
+  더 일반적으로 말하자면, 괄호 사이의 구성 요소들은 Angular가 먼저 **평가한** 뒤 **문자열로 변환한** **템플릿 표현식**입니다.
+  다음의 어구 삽입은 괄호 사이의 두개의 번호를 더하는 부분을 나타냅니다:
 +makeExample('template-syntax/ts/app/app.component.html', 'sum-1')(format=".")
 :marked
-  The expression can invoke methods of the host component, as we do here with `getVal()`:
+  여기서 `getVal()`한 것처럼 표현식은 호스트 컴포넌트의 메서드를 실행할 수 있습니다:
 +makeExample('template-syntax/ts/app/app.component.html', 'sum-2')(format=".")
 :marked
-  Angular evaluates all expressions in double curly braces, converts the expression results to strings, and concatenates them with neighboring literal strings. Finally,
-  it assigns this composite interpolated result to an **element or directive property**.
+  Angular는 겹중괄호 내의 모든 표현식을 평가하고, 표현식의 결과를 문자열로 변환하며 근처의 리터럴 문자열과 합칩니다.
+  끝으로, 결합된 삽입결과를 **요소 혹은 디렉티브 프로퍼티**에 할당하게 됩니다.
 
-  We appear to be inserting the result between element tags and assigning to attributes.
-  It's convenient to think so, and we rarely suffer for this mistake.
-  But it is not literally true. Interpolation is a special syntax that Angular converts into a
-  [property binding](#property-binding), as we'll explain below.
+  요소 태그 사이에는 결과를 삽입되고 어트리뷰트에는 할당되는 것처럼 보입니다.
+  그렇게 생각하는 것이 편리하고, 이런 실수로 무척이나 고통받습니다.
+  그러나 엄밀히 말하자면 옳습니다. 어구 삽입은, Angular가, 아래에서 설명하게 될 [프로퍼티 바인딩](#property-binding) 내로 변환하는 특별한 문법입니다.
 
-  But first, let's take a closer look at template expressions and statements.
+  그러나  먼저, 템플릿 표현식과 구문에 대해 자세히 들여다 보겠습니다.
 
 <a id="template-expressions"></a>
 .l-main-section
 :marked
-  ## Template expressions
-  A template **expression** produces a value.
-  Angular executes the expression and assigns it to a property of a binding target;
-  the target might be an HTML element, a component, or a directive.
+  ## 템플릿 표현식
+  템플릿 **표현식**은 값을 만들어 냅니다.
+  Angular는 표현식을 실행하고 그것을 바인딩 대상의 프로퍼티에 할당합니다;
+  그 대상은 HTML 요소, 컴포넌트 혹은 디렉티브가 되겠죠.
 
-  We put a template expression within the interpolation braces when we wrote `{{1 + 1}}`.
-  We’ll see template expressions again in the [property binding](#property-binding) section,
-  appearing in quotes to the right of the `=` symbol as in `[property]="expression"`.
+  어구 삽입 괄호 사이에 템플릿 표현식을 두게 됩니다. `{{1 + 1}}`과 같이 말이죠. 
+  [프로퍼티 바인딩](#property-binding) 섹션에서 템플릿 표현식을 다시 보게 될텐데,
+  이는 `[property]="expression"`에서 처럼 `=` 심볼의 오른쪽 따옴표 내에서 표현됩니다.
+  
+  #{_JavaScript}처럼 보이는 언어로 템플릿 표현식을 작성하게 됩니다.
+  많은 #{_JavaScript} 표현식을 템플릿 표현식으로 사용할 수 있지만, 모두는 아닙니다.
 
-  We write template expressions in a language that looks like #{_JavaScript}.
-  Many #{_JavaScript} expressions are legal template expressions, but not all.
+  부작용이 있거나 유발시킬 가능성이 있는 #{_JavaScript} 표현식은 다음을 포함하여 금지되었습니다:
 
-  #{_JavaScript} expressions that have or promote side effects are prohibited,
-  including:
-
-  * assignments (`=`, `+=`, `-=`, ...)
+  * 할당 (`=`, `+=`, `-=`, ...)
   * !{__new_op}
-  * chaining expressions with !{__chaining_op}
-  * increment and decrement operators (`++` and `--`)
+  * !{__chaining_op}을 이용한 체이닝 표현식
+  * 증감 연산자 (`++` and `--`)
 
 :marked
-  Other notable differences from #{_JavaScript} syntax include:
+  #{_JavaScript} 문법과 다른 주목할 만한 차이점들이 있습니다:
 
 block notable-differences
   :marked
-    * no support for the bitwise operators `|` and `&`
-    * new [template expression operators](#expression-operators), such as `|` and `?.`
+    * 비트와이즈 연산자 `|`와 `&`를 지원하지 않음 
+    * `|`와 `?.`와 같은 새로운 [템플릿 표현식 연산자](#expression-operators) 
 
 h3#expression-context Expression context
 
