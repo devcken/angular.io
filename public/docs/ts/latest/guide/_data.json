@@ -8,9 +8,9 @@
   },
 
   "architecture": {
-    "title": "Architecture Overview",
-    "navTitle": "Architecture",
-    "intro": "The basic building blocks of Angular 2 applications",
+    "title": "아키텍쳐 개요",
+    "navTitle": "아키텍쳐",
+    "intro": "Angular 2 애플리케이션의 기본적인 빌딩 블록들",
     "nextable": true,
     "basics": true
   },
