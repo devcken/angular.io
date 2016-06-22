@@ -112,8 +112,8 @@
   },
 
   "structural-directives": {
-    "title": "Structural Directives",
-    "intro": "Angular has a powerful template engine that lets us easily manipulate the DOM structure of our elements."
+    "title": "구조적 디렉티브",
+    "intro": "Angular는 우리가 쉽게 요소의 DOM 구조를 다룰 수 있도록 해주는 강력한 템플릿 엔진을 가지고 있습니다."
   },
 
   "testing": {
