@@ -16,8 +16,8 @@
   },
 
   "displaying-data": {
-    "title": "Displaying Data",
-    "intro": "Interpolation and other forms of property binding help us show app data in the UI.",
+    "title": "데이터 디스플레이",
+    "intro": "어구 삽입과 프로퍼티 바인딩의 다른 형식들이 UI 내에서 앱의 데이터를 보여주는데 도움을 줍니다.",
     "nextable": true,
     "basics": true
   },
