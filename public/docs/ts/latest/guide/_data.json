@@ -30,8 +30,8 @@
   },
 
   "forms": {
-    "title": "Forms",
-    "intro": "A form creates a cohesive, effective, and compelling data entry experience. An Angular form coordinates a set of data-bound user controls, tracks changes, validates input, and presents errors.",
+    "title": "폼",
+    "intro": "폼은 응집력있고 효과적이며 강제적인 데이터 엔트리 경험입니다. Angular 폼은 데이터 바인딩된 사용자 컨트롤, 변경 추적, 입력 검증 그리고 오류 표시의 집합을 통합 지원합니다.",
     "nextable": true,
     "basics": true
   },
