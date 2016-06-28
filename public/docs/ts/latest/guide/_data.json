@@ -23,8 +23,8 @@
   },
 
   "user-input": {
-    "title": "User Input",
-    "intro": "User input triggers DOM events. We listen to those events with event bindings that funnel updated values back into our components and models.",
+    "title": "사용자 입력",
+    "intro": "사용자 입력은 DOM 이벤트를 일으킵니다. 업데이트 값을 컴포넌트와 모델로 되돌려보내는 이벤트 바인딩으로 그 이벤트들을 수신합니다.",
     "nextable": true,
     "basics": true
   },
