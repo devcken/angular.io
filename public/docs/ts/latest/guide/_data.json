@@ -37,8 +37,8 @@
   },
 
   "dependency-injection": {
-    "title": "Dependency Injection",
-    "intro": "Angular's dependency injection system creates and delivers dependent services \"just-in-time\".",
+    "title": "의존성 주입",
+    "intro": "Angular의 의존성 주입 시스템은 의존하는 서비스들을 \"적시에\" 생성하여 전달합니다.",
     "nextable": true,
     "basics": true
   },
