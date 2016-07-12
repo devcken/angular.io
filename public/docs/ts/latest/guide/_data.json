@@ -51,8 +51,8 @@
   },
 
   "cheatsheet": {
-    "title": "Angular Cheat Sheet",
-    "intro": "A quick guide to Angular syntax.",
+    "title": "Angular 치트 시트",
+    "intro": "Angular 문법에 대한 빠른 가이드",
     "nextable": true,
     "basics": true
   },
