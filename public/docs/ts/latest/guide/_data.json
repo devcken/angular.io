@@ -58,8 +58,8 @@
   },
 
   "style-guide": {
-    "title": "Style Guide",
-    "intro": "Write Angular 2 with style.",
+    "title": "스타일 가이드",
+    "intro": "Angular 2에서 스타일 작성하기.",
     "basics": true
   },
 
