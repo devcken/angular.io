@@ -137,8 +137,8 @@
   },
 
   "glossary": {
-    "title": "Glossary",
-    "intro": "Brief definitions of the most important words in the Angular 2 vocabulary",
+    "title": "용어집",
+    "intro": "Angular 2 어휘에서 가장 중요한 단어들의 간단한 정의 모음",
     "basics": true
   }
 }

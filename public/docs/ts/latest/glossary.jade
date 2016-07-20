@@ -2,15 +2,12 @@ include _util-fns
 
 // #docregion intro
 :marked
-  # Angular 2 Glossary
+  # Angular 2 용어사전
 
-  Angular 2 has a vocabulary of its own.
-  Most Angular 2 terms are everyday English words
-  with a specific meaning within the Angular system.
+  Angular 2에는 자체적인 어휘가 있습니다.
+  Angular 2의 대부분의 용어들은 Angular 시스템 내의 특정 의미를 지닌 일상적인 영단어입니다.
 
-  We have gathered here the most prominent terms
-  and a few less familiar ones that have unusual or
-  unexpected definitions.
+  가장 중요한 단어들과 특이하거나 예상 밖의 정의들을 가진 얼마 안되는 단어들도 여기에 모아봤습니다. 
 
   [A](#A) [B](#B) [C](#C) [D](#D) [E](#E) [F](#F) [G](#G) [H](#H) [I](#I)
   [J](#J) [K](#K) [L](#L) [M](#M) [N](#N) [O](#O) [P](#P) [Q](#Q) [R](#R)
@@ -25,19 +22,17 @@ include _util-fns
   ## Annotation
 .l-sub-section
   :marked
-    In practice a synonym for [Decoration](#decorator).
+    실제로 [Decoration](#decorator)의 동의어입니다.
 // #enddocregion a-1
 // #docregion a-2
 :marked
-  ## Attribute Directive
+  ## 어트리뷰트 디렉티브
 .l-sub-section
   :marked
-    A category of [Directive](#directive) that can listen to and modify the behavior of
-    other HTML elements, attributes, properties, and components. They are usually represented
-    as HTML attributes, hence the name.
+    다른 HTML 요소, 어트리뷰트, 프로퍼티 그리고 컴포넌트의 동작을 리스닝하고 수정하는 [Directive](#directive)의 한 카테고리입니다. 
+    이들은 보통 이름을 통해 HTML 어트리뷰트로써 표현됩니다.
 
-    The `ngClass` directive for adding and removing CSS class names is a good example of
-    an Attribute Directive.
+    CSS 클래스 이름을 추가하거나 제거하는 `ngClass` 디렉티브가 어트리뷰트 디렉티브의 좋은 예입니다.
 // #enddocregion a-2
 
 // #docregion b-c
@@ -50,10 +45,10 @@ include _util-fns
   ## Barrel
 .l-sub-section
   :marked
-    A barrel is a way to *rollup exports* from several modules into a single convenience module.
-    The barrel itself is a module file that re-exports *selected* exports of other modules.
+    베럴은 몇 가지 모듈에서 단일 편의 모듈로 *롤업 익스포트*하기 위한 하나의 방법입니다.
+    베럴 그 자체는 하나의 모듈 파일로 다른 모듈의 *선택된* 익스포트를 다시 익스포트합니다.
     
-    Imagine three modules in a `heroes` folder:
+    `heroes` 폴더 내에 세 개의 모듈이 있다고 가정해보죠:
   code-example(format='').
     // heroes/hero.component.ts
     export class HeroComponent {}
@@ -64,26 +59,26 @@ include _util-fns
     // heroes/hero.service.ts
     export class HeroService {}
   :marked
-    Without a barrel, a consumer would need three import statements:
+    베럴이 없다면, 컨슈머는 세 개의 임포트 구문을 필요로 할 겁니다:
   code-example(format='').
     import { HeroComponent } from '../heroes/hero.component.ts';
     import { Hero }          from '../heroes/hero.model.ts';
     import { HeroService }   from '../heroes/hero.service.ts';
   :marked
-    We can add a barrel to the `heroes` folder (called `index` by convention) that exports all of these items:
+    (관례에 따라 `index`라고 불리는)`heroes` 폴더에 이 세 개의 아이템 모두를 익스포트하는 베럴을 추가할 수 있습니다:
   code-example(format='').
     export * from './hero.model.ts';   // re-export all of its exports
     export * from './hero.service.ts'; // re-export all of its exports
     export { HeroComponent } from './hero.component.ts'; // re-export the named thing
   :marked
-    Now a consumer can import what it needs from the barrel.
+    이제 컨슈머는 필요로 하는 것을 베럴로부터 임포트할 수 있습니다:
   code-example(format='').
     import { Hero, HeroService } from '../heroes'; // index is implied
   :marked
-    The Angular [scoped packages](#scoped-package) each have a barrel named `index`.
+    각각의 Angular [스코프 패키지](#scoped-package)는 `index`라고 불리는 베럴을 가지고 있습니다.
 // #enddocregion b-c
 :marked
-  That's why we can write this:
+  그것이 우리가 다음과 같이 작성할 수 있는 이유입니다:
 +makeExample('../docs/_fragments/quickstart/ts/app/app.component.ts', 'import')(format=".")
 // #docregion b-c
 
@@ -91,23 +86,20 @@ include _util-fns
   ## Binding
 .l-sub-section
   :marked
-    Almost always refers to [Data Binding](#data-binding) and the act of
-    binding an HTML object property to a data object property.
-
-    May refer to a [Dependency Injection](#dependency-injection) binding
-    between a "token" or "key" and a dependency [provider](#provider).
-    This more rare usage should be clear in context.
+    거의 대부분 HTML 객체 프로퍼티를 데이터 객체 프로퍼티에 바인딩하는 [Data Binding](#data-binding)과 그 동작을 나타냅니다.
+    
+    "token" 혹은 "key" 그리고 의존성 [프로바이더](#provider) 사이의 [Dependency Injection](#dependency-injection) 바인딩을 나타내기도 하죠. 
+    이런 좀 더 희귀한 사용법은 컨텍스트 내에서 명확해야 합니다.
 
 :marked
   ## Bootstrap
 .l-sub-section
   :marked
-    We launch an Angular application by "bootstrapping" it with the `bootstrap` method.
-    The `bootstrap` method identifies an application's top level "root" [Component](#component)
-    and optionally registers service [providers](#provider) with the
-    [dependency injection system](#dependency-injection).
+    Angular 애플리케이션은 `bootstrap` 메서드로 "부트스트래핑"하여 시작합니다.
+    `bootstrap` 메서드는 애플리케이션의 최상위 계층인 "root" [Component](#component)를 식별하며,
+    부가적으로 [dependency injection system](#dependency-injection)으로 서비스 [프로바이더](#provider)들을 등록합니다.
 
-    One can bootstrap multiple apps in the same `index.html`, each with its own top level root.
+    하나의 `bootstrap` 메서도로 동일한 `index.html` 내에서 여러 앱을 부트스트랩할 수 있으며, 그 각각의 앱들은 자신의 최상위 레벨의 루트를 가지게 됩니다.
 
 <a id="C"></a>
 .l-main-section
@@ -115,32 +107,26 @@ include _util-fns
   ## camelCase
 .l-sub-section
   :marked
-    The practice of writing compound words or phrases such that each word or abbreviation begins with a capital letter 
-    _except the first letter which is a lowercase letter_. 
+    각 단어 혹은 축약어가 대문자로 시작하는 합성어 혹은 구로 작성하는 관례에서는 _소문자인 첫번째 글자는 예외입니다_. 
     
-    Function, property, and method names are typically spelled in camelCase. Examples include: `square`, `firstName` and `getHeroes`.
+    함수, 프로퍼티 그리고 메서드의 이름들은 일반적으로 카멜 표기법으로 작성됩니다. 예: `square`, `firstName` 그리고 `getHeroes`
     
-    This form is also known as **lower camel case**, to distinguish it from **upper camel case** which we call [PascalCase](#pascalcase).
-    When we write "camelCase" in this documentation we always mean *lower camel case*.
+    이런 형식은 우리가 [PascalCase](#pascalcase)라고 부르는 **대문자 카멜 표기법**과 구분하기 위해 **소문자 카멜 표기법**으로 알려져 있습니다.
+    이 문서 내에서 "카멜 표기법"이라고 쓴 것은 항상 *소문자 카멜 표기법*을 의미합니다.
 
 :marked
   ## Component
 .l-sub-section
   :marked
-    An Angular class responsible for exposing data
-    to a [View](#view) and handling most of the view’s display
-    and user-interaction logic.
+    Angular 클래스는 [View](#view)에 데이터를 노출시키고 뷰 내 대부분의 디스플레이와 사용자 상호작용 로직을 핸들링해야할 책임이 있습니다.
 
-    The Component is one of the most important building blocks in the Angular system.
-    It is, in fact, an Angular [Directive](#directive) with a companion [Template](#template).
+    컴포넌트는 Angular 시스템 내 가장 중요한 빌딩 블록 중 하나입니다.
+    그것은, 사실, 짝꿍인 [Template](#template)을 가진 Angular [Directive](#directive)입니다. 
 
-    The  developer applies the `#{atSym}Component` !{decorator} to
-    the component class, thereby attaching to the class the essential component metadata
-    that Angular needs to create a component instance and render it with its template
-    as a view.
+    개발자는 `#{atSym}Component` !{decorator}를 컴포넌트 클래스에 적용함으로써, Angular가 컴포넌트의 인스턴스를 생성하고
+    템플릿을 이용해 컴포넌트를 뷰로 렌더링하는데 필요로 하는 필수적인 컴포넌트 메타데이터를 클래스에 부여하게 됩니다.
 
-    Those familiar with "MVC" and "MVVM" patterns will recognize
-    the Component in the role of "Controller" or "View Model".
+    "MVC" 그리고 "MVVM" 패턴과 친숙한 사람들은 컴포넌트가 "Controller" 혹은 "View Model"의 역할을 하고 있음을 알게 될 겁니다.
 // #enddocregion b-c
 
 // #docregion d1
@@ -150,42 +136,34 @@ include _util-fns
   ## dash-case
 .l-sub-section
   :marked
-    The practice of writing compound words or phrases such that each word is separated by a dash or hyphen (-). 
+    각 단어가 대시 혹은 하이픈(-)으로 구분된 합성어 혹은 구를 작성하는 관례. 
     
-    Directive selectors and the root of filenames are often spelled in dash-case. Examples include: `my-app` and the `hero-list.component.ts`.
+    디렉티브 셀렉터 그리고 파일 이름의 루트는 종종 dash-case로 지어집니다. 예: `my-app`과 `hero-list.component.ts`
     
-    This form is also known as [kebab-case](#kebab-case).
+    이런 형식은 [kebab-case](#kebab-case)로도 알려져 있습니다.
 
 :marked
   ## Data Binding
 .l-sub-section
   :marked
-    Applications display data values to a user and respond to user
-    actions (clicks, touches, keystrokes).
+    애플리케이션들은 사용자에게 데이터 값들을 디스플레이하고 사용자 액션(클릭, 터치, 키스트로크)에 반응합니다.
 
-    We could push application data values into HTML, attach
-    event listeners, pull changed values from the screen, and
-    update application data values ... all by hand.
+    우리는 애플리케이션 데이터 값을 HTML에 밀어넣고, 이벤트 리스너를 붙이고, 스크린에서 변화된 값을 가져와서 애플리케이션 데이터 값들을 갱신하는 등의 일을 모두 직접 할 수 있습니다.
 
-    Or we could declare the relationship between an HTML widget
-    and an application data source ... and let a data binding
-    framework handle the details.
+    또는 HTML 위젯과 애플리케이션 데이터 소스 간의 관계를 선언할 수 있습니다... 그리고 데이터 바인딩 프레임워크가 그 외 세부 사항을 다루게 할 수 있습니다.
 
-    Data Binding is that second approach. Angular has a rich
-    data binding framework with a variety of data binding
-    operations and supporting declaration syntax.
+    데이터 바인딩이 앞서 본 두번째 방법입니다. Angular는 여러 데이터 바인딩 동작과 선언 문법을 지원하는 상당히 좋은 데이터 바인딩 프레임워크를 가지고 있습니다.  
 
-     The many forms of binding include:
-     * [Interpolation](guide/template-syntax.html#interpolation)
-     * [Property Binding](guide/template-syntax.html#property-binding)
-     * [Event Binding](guide/template-syntax.html#event-binding)
-     * [Attribute Binding](guide/template-syntax.html#attribute-binding)
-     * [Class Binding](guide/template-syntax.html#class-binding)
-     * [Style Binding](guide/template-syntax.html#style-binding)
-     * [Two-way data binding with ngModel](guide/template-syntax.html#ng-model)
+     바인딩의 여러 형식들은 다음과 같습니다:
+     * [어구 삽입](guide/template-syntax.html#interpolation)
+     * [프로퍼티 바인딩](guide/template-syntax.html#property-binding)
+     * [이벤트 바인딩](guide/template-syntax.html#event-binding)
+     * [어트리뷰트 바인딩](guide/template-syntax.html#attribute-binding)
+     * [클래스 바인딩](guide/template-syntax.html#class-binding)
+     * [스타일 바인딩](guide/template-syntax.html#style-binding)
+     * [ngModel을 이용한 양방향 데이터 바인딩](guide/template-syntax.html#ng-model)
 
-    Learn more about data binding in the
-    [Template Syntax](guide/template-syntax.html#data-binding) chapter.
+    [템플릿 문법](guide/template-syntax.html#data-binding) 챕터에서 데이터 바인딩에 관해 좀 더 알아보시기 바랍니다.
 
 // #enddocregion d1
 <a id="decorator"></a> <a id="decoration"></a>
@@ -193,18 +171,15 @@ include _util-fns
   ## Decorator | Decoration
 .l-sub-section
   :marked
-    A Decorator is a **function** that adds metadata to a class, its members (properties, methods) and function arguments.
+    데코레이터는 클래스, 클래스의 멤버(프로퍼티, 메서드), 그리고 함수 인자에 메타데이터를 추가하는 **함수**입니다. 
 
-    Decorators are a JavaScript language [feature](https://github.com/wycats/javascript-decorators), implemented in TypeScript and proposed for ES2016 (AKA ES7).
+    데코레이터는 JavaScript 언어 [특성](https://github.com/wycats/javascript-decorators)으로 TypeScript로 구현되었고 ES2016(다른 말로 ES7)에 의해 제안되었습니다.
 
-    We apply a decorator by positioning it
-    immediately above or to the left of the thing it decorates.
+    우리는 데코레이트하려는 것의 바로 위나 좌측에 데코레이터를 위치시켜 적용합니다.
 
-    Angular has its own set of decorators to help it interoperate with our application parts.
-    Here is an example of a `@Component` decorator that identifies a
-    class as an Angular [Component](#component) and an `@Input` decorator applied to a property
-    of that component.
-    The elided object argument to the `@Component` decorator would contain the pertinent component metadata.
+    Angular는 애플리케이션의 각 부분과 상호작용하는데 도움을 주는 자체적인 데코레이터 집합을 지니고 있습니다. 
+    다음은 Angular [컴포넌트](#component)로 클래스를 식별하는 `@Component` 데코레이터와 컴포넌트의 프로퍼티에 적용된 `@Input` 데코레이터의 예제입니다.
+    `@Component` 데코레이터에서 생략된 객체 인자는 적절한 컴포넌트 메타데이터를 포함하게 됩니다.
     ```
     @Component({...})
     export class AppComponent {
@@ -212,102 +187,80 @@ include _util-fns
       @Input() name:string;
     }
     ```
-    The scope of a decorator is limited to the language feature
-    that it decorates. None of the decorations shown here will "leak" to other
-    classes appearing below it in the file.
+    데코레이터의 스코프는 데코레이트한 언어 특성에 한정됩니다.
+    데코레이션들은 다른 클래스들에 "누출"되지 않습니다.
 
   .alert.is-important
     :marked
-      Always include the parentheses `()` when applying a decorator.
-      A decorator is a **function** that must be called when applied.
+      데코레이터를 적용할 때 괄호 `()`를 항상 포함시키세요.
+      데코레이터는 **함수**여서 반드시 적용 시 호출되어야 합니다.
 
 // #docregion d2
 :marked
   ## Dependency Injection
 .l-sub-section
   :marked
-    Dependency Injection is both a design pattern and a mechanism
-    for creating and delivering parts of an application to other
-    parts of an application that request them.
+    의존성 주입은 애플리케이션의 각 부분들을 요청한 다른 부분들을 위해 생성하고 전달하기 위한 디자인 패턴이자 메카니즘입니다.
 
-    Angular developers prefer to build applications by defining many simple parts
-    that each do one thing well and then wire them together at runtime.
+    Angular 개발자들은 각자의 일을 잘 수행하고 런타임에 서로 연결되는 수많은 간단한 파트들을 정의하여 애플리케이션을 빌드하는 것을 더 선호합니다.
 
-    These parts often rely on other parts. An Angular [Component](#component)
-    part might rely on a service part to get data or perform a calculation. When a
-    part "A" relies on another part "B", we say that "A" depends on "B" and
-    that "B" is a dependency of "A".
+    이런 파트들은 종종 다른 파트를 필요로 합니다. Angular [컴포넌트](#component) 파트는 데이터를 가져오거나 계산을 실행하는 서비스 파트를 필요로 할지도 모릅니다. 
+    파트 "A"가 다른 파트 "B"를 필요로 할 때, "A"는 "B"에 의존하며 "B"는 "A"의 의존성이라고 말할 수 있습니다.
 
-    We can ask a "Dependency Injection System" to create "A"
-    for us and handle all the dependencies.
-    If "A" needs "B" and "B" needs "C", the system resolves that chain of dependencies
-    and returns a fully prepared instance of "A".
+    "A"를 생성하고 모든 의존성을 다루기 위해 "의존성 주입 시스템"을 요구할 수 있습니다.
+    "A"가 "B"를 필요로 하고 "B"가 "C"를 필요로 한다면, 시스템은 그런 의존성 체인을 분석하여 완벽히 준비된 "A"의 인스턴스를 반환하게 됩니다.
 
-    Angular provides and relies upon its own sophisticated
-    [Dependency Injection](dependency-injection.html) system
-    to assemble and run applications by "injecting" application parts
-    into other application parts where and when needed.
+    Angular는 애플리케이션 파트들을 필요로 하는 애플리케이션의 다른 파트들을 필요로 할 때 "주입"하여 애플리케이션을 조립하고 실행하기 위해
+    자신만의 세련된 [Dependency Injection](dependency-injection.html) 시스템을 제공하며 필요로 합니다.
 
-    At the core is an [`Injector`](#injector) that returns dependency values on request.
-    The expression `injector.get(token)` returns the value associated with the given token.
+    core에는 요청 시에 의존성 값들을 반환해주는 [`Injector`](#injector)가 존재합니다.
+    `injector.get(token)` 표현식은 주어진 토큰과 연관된 값을 반환합니다.
 
-    A token is an Angular type (`OpaqueToken`). We rarely deal with tokens directly; most
-    methods accept a class name (`Foo`) or a string ("foo") and Angular converts it
-    to a token. When we write `injector.get(Foo)`, the injector returns
-    the value associated with the token for the `Foo` class, typically an instance of `Foo` itself.
+    이 토큰은 Angular 타입(`OpaqueToken`)입니다. 우리는 아주 드물게 토큰을 직접 다루게 됩니다; 대부분의 메서서들은
+    클래스 이름(`Foo`) 혹은 문자열("foo")를 허용하며 Angular는 그것을 토큰으로 변환합니다. 우리가 `injector.get(Foo)`라고 작성하면,
+    주입자는 `Foo` 클래스에 대한 토큰과 관련된 값을 반환하는데, 일반적으로 `Foo` 자체의 인스턴스가 됩니다.
 
-    Angular makes similar requests internally during many of its operations
-    as when it creates a [`Component`](#AppComponent) for display.
+    Angular는 디스플레이를 위해 [`Component`](#AppComponent)를 생성하는 시점에 따라 그것의 수많은 동작 중에 내부적으로 유사한 요청들을 만들어냅니다.
 
-    The `Injector` maintains an internal map of tokens to dependency values.
-    If the `Injector` can't find a value for a given token, it creates
-    a new value using a `Provider` for that token.
+    `Injector`는 의존성 값에 대해 내부적인 토큰 맵을 보관합니다.
+    `Injector`는 주어진 토큰에 대한 값을 찾을 수 없을 경우, 해당 토큰에 대한 `Provider`를 사용해 새로운 값을 만들어 냅니다.
 
-    A [Provider](#provider) is a recipe for
-    creating new instances of a dependency value associated with a particular token.
+    [프로바이더](#provider)는 특정 토큰과 관련있는 의존성 값의 새로운 인스턴스를 생성하기 위한 레시피입니다.
 
-    An injector can only create a value for a given token if it has
-    a `Provider` for that token in its internal provider registry.
-    Registering providers is a critical preparatory step.
+    주입자는 그것의 내부적인 프로바이더 레지스트리 내 토큰에 대한 `Provider`를 가지고 있을 경우만 주어진 토큰에 대한 값을 생성할 수 있습니다.
+    프로바이더를 등록하는 것은 매우 중요한 선행 단계입니다.
 
-    Angular registers some of its own providers with every injector.
-    We can register our own providers. Quite often the best time to register a `Provider`
-    is when we [bootstrap](#bootstrap) the application.
-    There are other opportunities to register as well.
+    Angular는 모든 주입자에 대한 프로바이더들을 등록합니다.
+    우리가 직접 프로바이더를 등록할 수 있습니다. 애플리케이션을 [부트스트랩](#bootstrap)할 때가 `Provider`를 등록하기에 적기인 경우가 꽤 자주 있습니다.
+    물론 그외에도 등록할 다른 기회들이 존재합니다.
 
-    Learn more in the [Dependency Injection](guide/dependency-injection.html) chapter.
+    [의존성 주입](guide/dependency-injection.html) 챕터에 대해 좀 더 알아보시기 바랍니다.
 :marked
   ## Directive
 .l-sub-section
   :marked
-    An Angular class responsible for creating, re-shaping, and interacting with HTML elements
-    in the browser DOM. Directives are Angular's most fundamental feature.
+    Angular 클래스는 브라우저 DOM 내에서 HTML 요소를 생성하고, 모양을 다듬고 사용작용할 책임을 가지고 있습니다.
+    디렉티브는 Angular의 가장 기본적인 특성입니다.
 
-    A Directive is almost always associated with an HTML element or attribute.
-    We often refer to such an element or attribute as the directive itself.
-    When Angular finds a directive in an HTML template,
-    it creates the matching directive class instance
-    and gives that instance control over that portion of the browser DOM.
+    디렉티브는 거의 항상 HTML 요소 혹은 어트리뷰트와 연관되어 있습니다.
+    우리는 종종 디렉티브 자체로 그런 요소 혹은 어트리뷰트들을 나타내곤 합니다.
+    Angular가 HTML 템플릿 내에서 디렉티브를 찾아내면,
+    디렉티브 클래스 인스턴스를 매칭시키고 그것의 인스턴스 컨트롤을 브라우저 DOM의 일부분으로 전달합니다.
 
-    Developers can invent custom HTML markup (e.g., `<my-directive>`) to
-    associate with their custom directives. They add this custom markup to HTML templates
-    as if they were writing native HTML. In this way, directives become extensions of
-    HTML itself.
+    개발자들은 자신들의 커스텀 디렉티브로 연계된 커스텀 HTML 마크업(예를 들어, `<my-directive>`)을 만들어 낼 수도 있습니다.
+    그것이 마치 네이티브 HTML인 것처럼 HTML 템플릿에 커스텀 마크업을 추가하게 됩니다.
+    이 방법으로 디렉티브는 HTML의 확장이 됩니다.
 
-    Directives fall into one of three categories:
+    디렉티브는 다음 세 개의 카테고리 중 하나로 나누어집니다:
 
-    1. [Components](#component) that combine application logic with an HTML template to
-    render application [views]. Components are usually represented as HTML elements.
-    They are the building blocks of an Angular application and the
-    developer can expect to write a lot of them.
+    1. [컴포넌트](#component)란 애플리케이션 [뷰]를 렌더링하기 위해 HTML 템플릿과 애플리케이션 로직을 혼합한 것을 말합니다.
+    컴포넌트는 보통 HTML 요소들로 표현됩니다.
+    컴포넌트들은 Angular 애플리케이션의 빌드 블록이며 개발자는 많은 컴포넌트들을 작성할 것으로 예상할 수 있습니다.
 
-    1. [Attribute Directives](#attribute-directive) that can listen to and modify the behavior of
-    other HTML elements, attributes, properties, and components. They are usually represented
-    as HTML attributes, hence the name.
+    1. [어트리뷰트 디렉티브](#attribute-directive)는 다른 HTML 요소, 어트리뷰트, 프로퍼티 그리고 컴포넌트의 동작을 리스닝하고 수정할 수 있습니다.
+    어트리뷰트 디렉티브는 일반적으로 이름을 통해 HTML 어트리뷰로 표현됩니다.
 
-    1. [Structural Directives](#structural-directive), a directive responsible for
-    shaping or re-shaping HTML layout, typically by adding, removing, or manipulating
-    elements and their children.
+    1. [구조적 디렉티브](#structural-directive)는 전형적으로 요소와 그 요소의 하위 요소를 추가, 제거 혹은 핸들링하여 HTML 레이아웃을 형성 혹은 재형성할 책임을 가지고 있습니다.
 // #enddocregion d2
 
 // #docregion e1
@@ -319,42 +272,36 @@ include _util-fns
   ## ECMAScript
 .l-sub-section
   :marked
-    The [official JavaScript language specification](https://en.wikipedia.org/wiki/ECMAScript).
+    [JavaScript 언어 공식 스펙](https://en.wikipedia.org/wiki/ECMAScript).
 
-    The latest approved version of JavaScript is
-    [ECMAScript 2015](http://www.ecma-international.org/ecma-262/6.0/)
-    (AKA "ES2015" or "ES6") and many Angular 2 developers will write their applications
-    either in this version of the language or a dialect that strives to be
-    compatible with it such as [TypeScript](#typesScript).
+    가장 최근에 나온 JavaScript 버전은 [ECMAScript 2015](http://www.ecma-international.org/ecma-262/6.0/)("ES2015" 혹은 "ES6"이라고도 하는)으로
+    많은 Anuglar 2 개발자들은 해당 버전의 언어 혹은 [TypeScript](#typesScript)처럼 JavaScript와 호환되는 방언(dialect)으로 그들의 애플리케이션을 작성하려고 할 겁니다.
 
-    Most modern browsers today only support the prior "ECMAScript 5" (AKA ES5) standard.
-    Applications written in ES2015 or one of its dialects must be "[transpiled](#transpile)"
-    to ES5 JavaScript.
+    오늘날 대부분의 모던 브라우저들은 이전의 "ECMAScript 5" (줄여서 ES5) 표준만을 지원합니다.
+    ES2015 혹은 그것의 방언 중 하나로 작성된 애플리케이션들은 ES5 JavaScript로 반드시 "[변환](#transpile)"되어야 합니다.
 
-    Angular 2 developers may choose to write in ES5 directly.
+    Angular 2 개발자들은 직접 ES5로 작성하는 방법을 택할 수도 있습니다.
 :marked
   ## ECMAScript 2015
 .l-sub-section
   :marked
-    The lastest released version of JavaScript,
-    [ECMAScript 2015](http://www.ecma-international.org/ecma-262/6.0/)
-    (AKA "ES2015" or "ES6")
+    최근 릴리즈된 JavaScript 버전인 [ECMAScript 2015](http://www.ecma-international.org/ecma-262/6.0/)("ES2015" 혹은 "ES6"이라고도 합니다)
 :marked
   ## ES2015
 .l-sub-section
   :marked
-    Short hand for "[ECMAScript 2015](#ecmascript=2015)".
+    "[ECMAScript 2015](#ecmascript=2015)"의 줄임말
 :marked
   ## ES6
 .l-sub-section
   :marked
-    Short hand for "[ECMAScript 2015](#ecmascript=2015)".
+    "[ECMAScript 2015](#ecmascript=2015)"의 줄임말
 :marked
   ## ES5
 .l-sub-section
   :marked
-    Short hand for "ECMAScript 5", the version of JavaScript run by most modern browsers.
-    See [ECMAScript](#ecmascript).
+    "ECMAScript 5"의 줄임말로 대부분의 모던 브라우저에서 실행되는 JavaScript 버전입니다.
+    [ECMAScript](#ecmascript)을 참고하시기 바랍니다.
 // #enddocregion e2
 
 // #docregion f-l
@@ -367,38 +314,30 @@ include _util-fns
   ## Injector
 .l-sub-section
   :marked
-    An object in the Angular [dependency injection system](#dependency-injection)
-    that can find a named "dependency" in its cache or create such a thing
-    with a registered [provider](#provider).
+    Angular의 [의존성 주입 시스템](#dependency-injection) 내 객체로 그것의 캐쉬 내에서 명명된 "의존성"을 찾고
+    등록된 [프로바이더](#provider)로 의존성에 대한 인스턴스를 만들어 냅니다.
 
 :marked
   ## Input
 .l-sub-section
   :marked
-    A directive property that can be the ***target*** of a
-    [Property Binding](guide/template-syntax.html#property-binding).
-    Data values flow *into* this property from the data source identified
-    in the template expression to the right of the equal sign.
+    [프로퍼티 바인딩](guide/template-syntax.html#property-binding)의 ***타켓***이 될 수 있는 디렉티브 프로퍼티입니다.
+    데이터 값은 템플릿 표현식 내에서 인식된 데이터 소스로부터 등가 기호의 우측 방향으로, 이 프로퍼티 *내로* 흐르게 됩니다.
 
-    See the [Template Syntax](guide/template-syntax.html#inputs-outputs) chapter.
+    [템플릿 문법](guide/template-syntax.html#inputs-outputs) 챕터를 참고하시기 바랍니다.
 
 :marked
   ## Interpolation
 .l-sub-section
   :marked
-    A form of [Property Data Binding](#data-binding) in which a
-    [template expression](#template-expression) between double-curly braces
-    renders as text.  That text may be concatenated with neighboring text
-    before it is assigned to an element property
-    or displayed between element tags as in this example.
+    [프로퍼티 데이터 바인딩](#data-binding)의 한 형식으로, 중괄호 사이의 [템플릿 표현식](#template-expression)이 텍스트로 값을 렌더링하게 됩니다.
+    해당 텍스트는 그것이 요소 프로퍼티에 할당되기 이전 혹은 다음 예제에서 처럼 요소 태그 사이에서 디스플레이되기 이전에 근처 텍스트와 함께 합쳐질 수도 있습니다.
 
   code-example(language="html" escape="html").
     <label>My current hero is {{hero.name}}</label>
 
   :marked
-    Learn more about interpolation in the
-    [Template Syntax](guide/template-syntax.html#interpolation) chapter.
-
+    [템플릿 문법](guide/template-syntax.html#interpolation) 챕터 내에서 어구 삽입(interpolation)에 관해 좀 더 알아보시기 바랍니다.
 
 <a id="J"></a>
 
@@ -408,11 +347,11 @@ include _util-fns
   ## kebab-case
 .l-sub-section
   :marked
-    The practice of writing compound words or phrases such that each word is separated by a dash or hyphen (-). 
+    각 단어가 대시 혹은 하이픈 (-)으로 구분되어 있는 합성어 혹은 구 작성의 실재입니다. 
     
-    Directive selectors and the root of filenames are often spelled in kebab-case. Examples include: `my-app` and the `hero-list.component.ts`.
+    디렉티브 셀렉터와 파일 이름의 앞 부분은 자주 kebab-case로 이름지어 집니다. 예: `my-app`, `hero-list.component.ts`.
     
-    This form is also known as [dash-case](#dash-case).
+    이 형식은 [dash-case](#dash-case)로도 알려져 있습니다.
 
 <a id="L"></a>
 .l-main-section
@@ -420,26 +359,24 @@ include _util-fns
   ## Lifecycle Hooks
 .l-sub-section
   :marked
-    [Directives](#directive) and [Components](#component) have a lifecycle
-    managed by Angular as it creates, updates and destroys them.
+    [디렉티브](#directive)와 [컴포넌트](#component)는 Angular가 그것들을 만들고 갱신하며 소거함으로써 Angular에 의해 관리되는 생명 주기를 가지고 있습니다. 
 
-    Developers can tap into key moments in that lifecycle by implementing
-    one or more of the "Lifecycle Hook" interfaces.
+    개발자들은 "생명주기 후크" 인터페이스 중 한 개 이상을 구현하여 그런 생명주기 내에 중요한 순간을 잡아낼 수 있습니다.
 
-    Each interface has a single hook method whose name is the interface name prefixed with `ng`.
-    For example, the `OnInit` interface has a hook method names `ngOnInit`.
+    각각의 인터페이스는 `ng`를 접두사로 하는 인터페이스의 이름을 단일 후크 메서드의 그 이름으로 합니다. 
+    예를 들어, `OnInit` 인터페이스는 후크 메서드 이름을 `ngOnInit`으로 합니다.
 
-    Angular calls these hook methods in the following order:
-    * `ngOnChanges` - called when an [input](#input)/[output](#output) binding values change
-    * `ngOnInit` - after the first `ngOnChanges`
-    * `ngDoCheck` - developer's custom change detection
-    * `ngAfterContentInit` - after component content initialized
-    * `ngAfterContentChecked` - after every check of component content
-    * `ngAfterViewInit` - after component's view(s) are initialized
-    * `ngAfterViewChecked` - after every check of a component's view(s)
-    * `ngOnDestroy` - just before the directive is destroyed.
+    Angular는 다음과 같은 순서로 이런 후크 메서드들을 호출합니다:
+    * `ngOnChanges` - [input](#input)/[output](#output) 바인딩 값이 변경됐을 때 호출됩니다
+    * `ngOnInit` - `ngOnChanges`이 처음으로 호출된 뒤에 호출됩니다
+    * `ngDoCheck` - 개발자의 커스텀 변경 감지
+    * `ngAfterContentInit` - 컴포넌트 컨텐츠가 초기화된 이후 호출됩니다
+    * `ngAfterContentChecked` - 컴포넌트 컨텐츠가 검사될 때마다 그 이후에 호출됩니다
+    * `ngAfterViewInit` - 컴포넌트의 뷰가 초기화된 이후에 호출됩니다
+    * `ngAfterViewChecked` - 컴포넌트 뷰가 검사될 때마다 그 이후에 호출됩니다
+    * `ngOnDestroy` - 디렉티브가 소거되기 직전에 호출됩니다
 
-    Learn more in the [Lifecycle Hooks](guide/lifecycle-hooks.html) chapter.
+    [생명주기 후크](guide/lifecycle-hooks.html) 챕터에서 좀 더 자세히 알아보시기 바랍니다.
 // #enddocregion f-l
 
 // #docregion m1
@@ -451,32 +388,28 @@ include _util-fns
   ## Module
 .l-sub-section
   :marked
-    Angular apps are modular.
+    Angular 앱들은 모듈화되어 있습니다.
 
-    In general, we assemble our application from many modules, both the ones we write ourselves
-    and the ones we acquire from others.
+    일반적으로, 애플리케이션을 직접 작성한 것이나 다른 곳에서 가져온, 많은 모듈을 조립하여 만듭니다.
 
-    A typical module is a cohesive block of code dedicated to a single purpose.
+    일반적인 모듈은 한 가지 목적만을 위해 존재하는 결합된 코드 블록입니다. 
 
-    A module **exports** something of value in that code, typically one thing such as a class.
-    A module that needs that thing, **imports** it.
+    모듈은 일반적으로는 클래스와 같은 것들을, 해당 코드 내에서 값과 같은 형태로 **익스포트**합니다.
+    그렇게 익스포트된 것을 필요로 하는 모듈은 그것을 **임포트**하면 됩니다.
 
-    The structure of Angular modules and the import/export syntax
-    is based on the [ES2015](#es2015) module standard
-    described [here](http://www.2ality.com/2014/09/es6-modules-final.html).
+    Angular 모듈과 임포트/익스포트 문법의 구조는 [여기](http://www.2ality.com/2014/09/es6-modules-final.html)에서
+    설명하고 있는 [ES2015](#es2015) 모듈 표준에 기초하고 있습니다.
 
-    An application that adheres to this standard requires a module loader to
-    load modules on request and resolve inter-module dependencies.
-    Angular does not ship with a module loader and does not have a preference
-    for any particular 3rd party library (although most samples use SystemJS).
-    Application developers may pick any module library that conforms to the standard
+    이런 표준을 고수하는 애플리케이션은 요청에 따라 모듈을 로드하고 상호-모듈 의존성을 분석하기 위해 모듈 로더를 필요로 합니다.
+    Angular는 모듈 로더를 제공하지 않으며 어떤 개별적인 서드 파티 라이브러리(대부분의 샘플이 SystemJS를 쓰기는 하지만)도 가지고 있지 않습니다.
+    애플리케이션 개발자들은 표준을 따르는 어떤 모듈 라이브러리든지 선택할 수 있습니다. 
 
-    Modules are typically named after the file in which the exported thing is defined.
-    The Angular [DatePipe](https://github.com/angular/angular/blob/master/modules/angular2/src/common/pipes/date_pipe.ts)
-    class belongs to a feature module named `date_pipe` in the file `date_pipe.ts`.
+    모듈은 일반적으로 익스포트된 모듈이 정의하는 파일의 이름을 따옵니다.
+    Angular [DatePipe](https://github.com/angular/angular/blob/master/modules/angular2/src/common/pipes/date_pipe.ts) 클래스는
+    `date_pipe.ts` 파일 내에 `date_pipe`이라는 이름의 특성 모듈에 속해 있습니다.
 
-    Developers rarely access Angular feature modules directly.
-    We usually import them from one of the Angular [scoped packages](#scoped-package) such as `@angular/core`.
+    개발자들은 아주 드물게 Angular 특성 모듈에 직접 접근합니다.
+    보통 `@angular/core`와 같은 Angular [스코프 패키지](#scoped-package) 중 하나로부터 그것들을 임포트합니다.
 
 // #enddocregion m2
 
@@ -491,12 +424,10 @@ include _util-fns
   ## Output
 .l-sub-section
   :marked
-    A directive property that can be the ***target*** of an
-    [Event Binding](guide/template-syntax.html#property-binding).
-    Events stream *out* of this property to the receiver identified
-    in the template expression to the right of the equal sign.
+    [이벤트 바인딩](guide/template-syntax.html#property-binding)의 타켓이 되는 디렉티브 프로퍼티입니다.
+    이벤트는 등가 기호 우측의 템플릿 표현식 내에서 식별되는 수신자에 대해 이 프로퍼티를 통해 밖으로 스트림합니다.
 
-    See the [Template Syntax](guide/template-syntax.html#inputs-outputs) chapter.
+    [템플릿 문법](guide/template-syntax.html#inputs-outputs) 챕터는 참고하세요.
 
 .l-main-section
 <a id="P"></a>
@@ -504,41 +435,39 @@ include _util-fns
   ## PascalCase
 .l-sub-section
   :marked
-    The practice of writing compound words or phrases such that each word or abbreviation begins with a capital letter. 
-    Class names are typically spelled in PascalCase. Examples include: `Person` and `Customer`.
+    각 단어 혹은 축약어가 대문자로 시작되는 합성어 혹은 구 작성의 실재.
+    클래스 이름은 일반적으로 PascalCase로 이름지어집니다. 예: `Person` and `Customer`.
     
-    This form is also known as **upper camel case**, to distinguish it from **lower camel case** which we simply call [camelCase](#camelcase).
-    In this documentation, "PascalCase" means *upper camel case* and  "camelCase" means *lower camel case*.
+    이 형식은 **대문자 카멜 표기법**으로 알려져 있으며 우리가 흔히 [카멜 표기법](#camelcase)이라고 부르는 **소문자 카멜 표기법**과는 구분됩니다. 
+    이 문서에서, "PascalCase"라고 함은 *대문자 카멜 표기법*을 말하며 "camelCase"는 *소문자 카멜 표기법*을 의미합니다.
 
 :marked
   ## Pipe
 .l-sub-section
   :marked
-    An Angular pipe is a function that transforms input values to output values for
-    display in a [view](#view). We use the `#{atSym}Pipe` !{decorator}
-    to associate the pipe function with a name. We then can use that
-    name in our HTML to declaratively transform values on screen.
+    Angular의 파이프는 [view](#view)에서 디스플레이를 위해 입력 값을 출력 값으로 변형하는 함수를 말합니다.
+    
+    이름으로 파이프 함수를 연관시키기 위해 `#{atSym}Pipe` !{decorator}를 사용합니다.
+    그리고 나면 선언적으로 스크린에서 값을 변형하기 위해 HTML 내 해당 이름을 사용할 수 있습니다. 
 
-    Here's an example that uses the built-in `currency` pipe to display
-    a numeric value in the local currency.
+    다음 예제는, 숫자 값을 로컬 화폐 단위로 디스플레이하기 위해 빌트인 `currency` 파이프를 사용합니다.
 
   code-example(language="html" escape="html").
     <label>Price: </label>{{product.price | currency}}
   :marked
-    Learn more in the chapter on [pipes](guide/pipes.html) .
+    [파이프](guide/pipes.html) 챕터에서 좀 더 알아보시기 바랍니다.
 
 :marked
   ## Provider
 .l-sub-section
   :marked
-    A Provider creates a new instance of a dependency for the Dependency Injection system.
-    It relates a lookup token to code - sometimes called a "recipe" - that can create a dependency value.
+    프로바이더는 의존성 주입 시스템과 관련하여 의존성에 대한 새로운 인스턴스를 생성합니다.
+    그것은 토큰 룩업을 의존성 값을 생성할 수 있는 - 때로는 "레시피"라고 불리는 - 코드와 연관시킵니다. 
 
-    For example, `new Provider(Foo, {useClass: Foo})` creates a `Provider`
-    that relates the `Foo` token to a function that creates a new instance of the `Foo` class.
+    예를 들어, `new Provider(Foo, {useClass: Foo})`는 `Foo` 토큰을 `Foo` 클래스의 새로운 인스턴스를 생성하는 함수와 연관짓는 `Provider`를 생성합니다.
 
-    There are other ways to create tokens and recipes.
-    See [Dependency Injection](#dependency-injection) chapter to learn more.
+    토큰과 레시프를 만들어 내는 또 다른 방법도 존재합니다.
+    [의존성 주입](#dependency-injection) 챕터에서 좀 더 알아보시기 바랍니다.
 
 .l-main-section
 <a id="Q"></a>
@@ -547,26 +476,21 @@ include _util-fns
   ## Router
 .l-sub-section
   :marked
-    Most applications consist of many screens or [views](#view).
-    The user navigates among them by clicking links and buttons
-    and taking other similar actions that cause the application to
-    replace one view with another.
+    대부분의 애플리케이션들은 많은 스크린 혹은 [뷰](#view)로 구성됩니다.
+    사용자는 링크와 버튼을 클릭하고 어떤 뷰를 다른 뷰로 대체하도록 하는 다른 유사한 동작을 일으켜 그런 스크린이나 뷰로 이동하게 됩니다.
 
-    The Angular [Component Router](guide/router.html) is a richly featured mechanism for configuring
-    and managing the entire view navigation process including the creation and destruction
-    of views.
+    Angular의 [컴포넌트 라우터](guide/router.html)는 뷰의 생성과 소거를 포함하여 전체 뷰 네비게이션 프로세스를 설정하고 관리하기 위한 풍부한 기능을 제공하는 메커니즘입니다.
 :marked
   ## Routing Component
 .l-sub-section
   :marked
-    A [Component](#component) with an attached router.
+    라우터를 가진 [컴포넌트](#component)
 
-    In most cases, the component became attached to a [router](#router) by means
-    of a `#{atSym}RouterConfig` #{decorator} that defined routes to views controlled by this component.
+    대부분의 경우, 컴포넌트는 해당 컴포넌트에 의해 조정되는 뷰에 라우트를 정의하는 `#{atSym}RouterConfig` #{decorator}라는 방법으로 [라우터](#router)에 붙게 됩니다.
 
-    The component's template has a `RouterOutlet` element where it can display views produced by the router.
+    컴포넌트의 템플릿은 `RouterOutlet`라는 요소를 가지는데, 라우터에 의해 만들어지는 뷰를 디스플레이할 수 있는 위치가 됩니다.
 
-    It likely has anchor tags or buttons with `RouterLink` directives that users can click to navigate.
+    그것은 사용자가 이동하기 위해 클릭할 수 있는 `RouterLink` 디렉티브를 가진 anchor 태그 혹은 버튼을 가지고 있을 확률이 큽니다.
 
 <a id="S"></a>
 .l-main-section
@@ -574,14 +498,13 @@ include _util-fns
   ## Scoped Package
 .l-sub-section
   :marked
-    Angular modules are delivered within *scoped packages* such as `@angular/core`, `@angular/common`, `@angular/platform-browser-dynamic`,
-    `@angular/http`, and `@angular/router`.
+    Angular의 모듈들은 `@angular/core`, `@angular/common`, `@angular/platform-browser-dynamic`, `@angular/http`, 그리고 `@angular/router`와
+    같은 *스코프 패키지*로 전달됩니다.
 
-    A [*scoped package*](https://docs.npmjs.com/misc/scope) is a way to group related *npm* packages.
+    A [*스코프 패키지*](https://docs.npmjs.com/misc/scope)는 관련된 *npm* 패키지를 그룹짓기 위한 방법입니다.
     
-    We import a scoped package the same way we'd import a *normal* package. 
-    The only difference, from a consumer perspective, 
-    is that the package name begins with the Angular *scope name*, `@angular`.
+    *일반적인* 패키지를 임포트하는 것과 동일한 방법으로 스코프 패키지를 임포트합니다.
+    컨슈머 관점에서 유일한 차이점이라면, 패키지 이름이 `@angular`라는 Angular *스코프 이름*으로 시작된다는 것입니다.
 // #enddocregion n-s
 +makeExample('../docs/_fragments/architecture/ts/app/app.component.ts', 'import')(format=".")
 // #docregion n-s
@@ -590,12 +513,9 @@ include _util-fns
   ## Structural Directive
 .l-sub-section
   :marked
-    A category of [Directive](#directive) that can
-    shape or re-shape HTML layout, typically by adding, removing, or manipulating
-    elements and their children.
+    일반적으로 요소와 그것의 하위 요소들을 추가, 제거, 혹은 핸들링하여 HTML 레이아웃을 형성하거나 재형성하는 [디렉티브](#directive)의 한 분류입니다.
 
-    The `ngIf` "conditional element" directive and the `ngFor` "repeater" directive are
-    good examples in this category.
+    `ngIf`라는 "조건부 요소" 디렉티브와 `ngFor`라는 "반복자" 디렉티브는 이런 분류의 좋은 예입니다.
 // #enddocregion n-s
 
 // #docregion t1
@@ -605,19 +525,17 @@ include _util-fns
   ## Template
 .l-sub-section
   :marked
-    A template is a chunk of HTML that Angular uses to render a [view](#view) with
-    the support and continuing guidance of an Angular [Directive](#directive),
-    most notably a [Component](#component).
+    템플릿은 Angular가 Angular의 [디렉티브](#directive)(특히 [Component](#component))의 지원과 지속적인 가이드로
+    [뷰](#view)를 렌더링하기 위해 사용하는 HTML 청크입니다.
 
-    We write templates in a special [Template Syntax](guide/template-syntax.html).
+    템플릿은 특별한 [템플릿 문법](guide/template-syntax.html)으로 작성합니다.
 
 :marked
   ## Template Expression
 .l-sub-section
   :marked
-    An expression in a JavaScript-like syntax that Angular evaluates within
-    a [data binding](#data-binding).  Learn how to write template expressions
-    in the [Template Syntax](guide/template-syntax.html#template-expressions) chapter.
+    Angular가 [데이터 바인딩](#data-binding) 내에서 평가하는, JavaScript과 유사한 문법을 가진 표현식입니다.
+    [템플릿 문법](guide/template-syntax.html#template-expressions) 챕터에서 템플릿 표현식 작성 방법에 대해서 알아보시기 바랍니다.
 
 // #enddocregion t1
 // #docregion t2
@@ -625,28 +543,24 @@ include _util-fns
   ## Transpile
 .l-sub-section
   :marked
-    The process of transforming code written in one form of JavaScript
-    (e.g., TypeScript) into another form of JavaScript  (e.g., [ES5](#es5)).
+    JavaScript의 형식 중 하나(예를 들자면, TypeScript)로 작성된 코드를 JavaScript의 다른 형식(예를 들자면, [ES5](#es5))으로 변환하는 과정을 말합니다.
 
  :marked
   ## TypeScript
 .l-sub-section
   :marked
-    A version of JavaScript that supports most [ECMAScript 2015](#ecmascript=2015)
-    language features and many features that may arrive in future versions
-    of JavaScript such as [Decorators](#decorator).
+    [ECMAScript 2015](#ecmascript=2015)의 언어 특성과 [데코레이터](#decorator)와 같은 JavaScript의 미래 버전의 많은 기능들을 지원하는 JavaScript 버전 중 하나입니다.
 
-    TypeScript is also noteable for its optional typing system which gives
-    us compile-time type-checking and strong tooling support (e.g. "intellisense",
-    code completion, refactoring, and intelligent search). Many code editors
-    and IDEs support TypeScript either natively or with plugins.
+    TypeScript는 컴파일 타임의 타입 검사와 강력한 도구 지원(예를 들어, "intellisense", 코드 완성, 리팩토링, 그리고 인텔리전트 검색과 같은)을 가져다 주는
+    부가적인 타이핑 시스템에 있어서도 매우 중요합니다.
+    많은 코드 에디터와 IDE들은 네이티브하게 혹은 플러그인으로 TypeScript를 지원하고 있습니다.
 
-    TypeScript is the preferred language for Angular 2 development although
-    we are welcome to write in other JavaScript dialects such as [ES5](#es5).
+    [ES5](#es5)와 같은 다른 JavaScript 방언으로 코드를 작성하는 것도 환영하지만
+    Angular 2 개발에 있어 가장 선호되는 언어는 TypeScript입니다.
 
-    Angular 2 itself is written in TypeScript.
+    Angular 2 자체도 TypeScript로 작성되었습니다.
 
-    Learn more about TypeScript on its [website](http://www.typescriptlang.org/).
+    TypeScript의 [웹사이트](http://www.typescriptlang.org/)에서 TypeScript에 대해 좀 더 알아보시기 바랍니다.
 // #enddocregion t2
 
 // #docregion u-z
@@ -657,17 +571,12 @@ include _util-fns
   ## View
 .l-sub-section
   :marked
-    A view is a portion of the screen that displays information and responds
-    to user actions such as clicks, mouse moves, and keystrokes.
+    뷰는 스크린의 일부분 중 하나로 정보를 디스플레이하고 클릭, 마우스 무브 그리고 키스트로크와 같은 사용자 액션에 반응합니다.
 
-    Angular renders a view under the control of one or more [Directives](#directive),
-    especially  [Component](#component) directives and their companion [Templates](#template).
-    The Component plays such a prominent role that we often
-    find it convenient to refer to a component as a view.
+    Angular는 한 개 이상의 [디렉티브](#directive), 특히 [컴포넌트](#component) 디렉티브와 컴포넌트의 짝꿍인 [템플릿](#template)의 제어 아래 뷰를 렌더링합니다.
+    우리는 뷰로써 컴포넌트를 참조하기 위해 편리하게 그것을 자주 찾게 되는데, 컴포넌트는 그런 중요한 역할을 합니다.
 
-    Views often contain other views and any view might be loaded and unloaded
-    dynamically as the user navigates through the application, typically
-    under the control of a [router](#router).
+    뷰는 종종 다른 뷰를 포함하며 일반적으로 [라우터](#router)의 제어 아래, 뷰는 애플리케이션에 걸쳐 사용자가 이동함으로써 다이나믹하게 로드되거나 또는 언로드될 수도 있습니다.
 
 .l-main-section
 <a id="W"></a>
@@ -678,23 +587,16 @@ include _util-fns
   ## Zone
 .l-sub-section
   :marked
-    Zones are a mechanism for encapsulating and intercepting
-    a JavaScript application's asynchronous activity.
+    Zones는 JavaScript 애플리케이션의 비동기 동작을 캡슐화하고 인터셉트하기 위한 메커니즘입니다.
 
-    The browser DOM and JavaScript have a limited number
-    of asynchronous activities, activities such as DOM events (e.g., clicks),
-    [promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/
-    Promise), and
-    [XHR](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest)
-    calls to remote servers.
+    브라우저 DOM과 JavaScript는 비동기 동작, DOM 이벤트와 같은 동작(예를 들어, 클릭),
+    [promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+    그리고 원격 서버에 대한 [XHR](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) 호출에 회수 제한을 갖고 있습니다.
 
-    Zones intercept all of these activities and give a "zone client" the opportunity
-    to take action before and after the async activity completes.
+    Zones는 이런 모든 동작들을 가로채며 비동기 동작이 완료되기 이전과 이후에 어떤 행위를 취할 수 있는 기회를 "zone client"에 제공합니다.
 
-    Angular runs our application in a zone where it can respond to
-    asynchronous events by checking for data changes and updating
-    the information it displays via [data binding](#data-binding).
+    Angular는 데이터 변경을 검사하고 [데이터 바인딩](#data-binding)을 통해 디스플레이하는 정보를 갱신하여 비동기 이벤트에 응답할 수 있는
+    zone 내에서 애플리케이션을 실행합니다.
 
-    Learn more about zones in this
-    [Brian Ford video](https://www.youtube.com/watch?v=3IqtmUscE_U).
+    [Brian Ford의 비디오](https://www.youtube.com/watch?v=3IqtmUscE_U)에서 zones에 대해 좀 더 알아보시기 바랍니다.
 // #enddocregion u-z
