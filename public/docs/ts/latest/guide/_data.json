@@ -64,8 +64,8 @@
   },
 
   "attribute-directives": {
-    "title": "Attribute Directives",
-    "intro": "Attribute directives attach behavior to elements."
+    "title": "어트리뷰트 디렉티브",
+    "intro": "어트리뷰트는 요소에 동작을 부여합니다."
   },
 
   "component-styles": {
