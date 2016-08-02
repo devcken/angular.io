@@ -1,51 +1,47 @@
 include ../_util-fns
 
 :marked
-  ## Write *Component-Relative* URLs to component templates and style files
+  ## 컴포넌트 템플릿과 스타일 파일에 대한 *컴포넌트에 상대적인* URL 작성하기
 
-  Our components often refer to external template and style files.
-  We identify those files with a URL in the `templateUrl` and `styleUrls` properties of the `@Component` metadata
-  as seen here:
+  컴포넌트들은 외부 템플릿과 스타일 파일들을 자주 참조합니다.
+  우리는 이 파일들을 아래 보이는 것처럼 `@Component` 메타데이터의 `templateUrl`과 `styleUrls` 내에 URL을 가지고 인식하게 됩니다:
   
 +makeExample('cb-component-relative-paths/ts/app/some.component.ts','absolute-config')(format='.')
 :marked
-  By default, we *must* specify the full path back to the application root.
-  We call this an ***absolute path*** because it is *absolute* with respect to the application root.
+  기본적으로, 우리는 애플리케이션 루트에 대해 전체 경로를 *반드시* 지정해야 합니다.
+  우리는 이런 ***절대 경로***를 호출하는데 그것이 애플리케이션 루트에 대해 *절대적이기* 때문입니다. 
 
-  There are two problems with an *absolute path*:
+  *절대 경로*를 사용할 경우의 두 가지 문제가 있습니다:
   
-  1. We have to remember the full path back to the application root.
+  1. 애플리케이션 루트로부터의 전체 경로를 기억해야만 합니다.
   
-  1. We have to update the URL when we move the component around in the application files structure.
+  1. 애플리케이션 파일 구조 내 어딘가로 컴포넌트를 이동하게 되면 URL을 업데이트해야만 합니다.
   
-  It would be much easier to write and maintain our application components if we could specify template and style locations
-  *relative* to their component class file.
+  템플릿과 스타일 위치를 컴포넌트 클래스 파일에 대해 *상대적으로* 지정할 수 있다면
+  애플리케이션의 컴포넌트들을 작성하고 유지하기가 더욱 더 쉬워질 겁니다.
   
-  *We can!*
+  *할 수 있습니다!*
   
 .alert.is-important
   :marked
-    We can if we build our application as `commonjs` modules and load those modules
-    with a suitable package loader such as `systemjs` or `webpack`.
-    Learn why [below](#why-default).
+    애플리케이션을 `commonjs` 모듈로 빌드하고 그 모듈들을 `systemjs` 혹은 `webpack`과 같은 
+    적합한 패키지 로더와 함께 로드한다면 가능합니다.
+    [아래에서](#why-default) 왜 그런지 알아보도록 하겠습니다.
     
-    The Angular 2 CLI uses these technologies and defaults to the
-    *component-relative path* approach described here.
-    CLI users can skip this chapter or read on to understand
-    how it works.
+    Angular 2 CLI는 이런 기술들을 사용하는데 여기서 설명하는 *컴포넌트에 상대적인 경로*를 기본으로 합니다. 
+    CLI 사용자들은 이 챕터를 그냥 넘겨도 되고 혹은 어떻게 동작하는지 이해하고자 한다면 읽으시기 바랍니다.
   
 .l-main-section
 :marked
-  ## _Component-Relative_ Paths
+  ## _컴포넌트에 상대적인_ 경로
   
-  Our goal is to specify template and style URLs *relative* to their component class files, 
-  hence the term ***component-relative path***.
+  우리의 목표는 템플릿과 스타일의 URL들을 해당 컴포넌트 클래스 파일에 *상대적으로* 지정하는 것이어서
+  그런 이유로 ***컴포넌트에 상대적인 경로***라는 용어를 사용한 것입니다.
   
-  The key to success is following a convention that puts related component files in well-known locations.
+  성공하기 위한 키는 잘 알려진 위치 내 관련 컴포넌트 파일들을 놓는 다음의 관례를 따르는 것입니다.
   
-  We recommend keeping component template and component-specific style files as *siblings* of their
-  companion component class files. 
-  Here we see the three files for `SomeComponent` sitting next to each other in the `app` folder. 
+  우리는 컴포넌트 템플릿과 컴포넌트 지정 스타일 파일들을 동반하는 컴포넌트 클래스 파일들의 *형제*로 유지하는 것을 추천합니다.
+  다음 예제에서 `app` 폴더 내에 `SomeComponent`로 동반되는 세 개 파일들을 보시기 바랍니다.
   
 .filetree
   .file app
@@ -55,29 +51,28 @@ include ../_util-fns
       .file some.component.ts
     .file ...
 :marked
-  We'll have more files and folders &mdash; and greater folder depth &mdash; as our application grows.
-  We'll be fine as long as the component files travel together as the inseparable siblings they are.
+  애플리케이션이 커지면서 더 많은 파일과 폴더들 &mdash; 그리고 더 많은 뎁스의 폴더들도 &mdash; 이 생길 것입니다.
+  그것들이 그렇듯 불가분한 형제로써 컴포넌트 파일이 함께 하는 동안은 괜찮을 겁니다.
   
-  ### Set the *moduleId*
+  ### *moduleId*을 설정하세요
   
-  Having adopted this file structure convention, we can specify locations of the template and style files
-  relative to the component class file simply by setting the `moduleId` property of the `@Component` metadata like this
+  이런 파일 구조 관례를 받아들인 상태에서, 다음과 같이 단순히 `@Component` 메타데이터의 `moduleId` 프로퍼티를 설정하여
+  컴포넌트 클래스 파일에 상대적으로 템플릿과 스타일 파일들의 위치를 지정할 수 있습니다:
 +makeExample('cb-component-relative-paths/ts/app/some.component.ts','module-id')(format='.')
 :marked
-  We strip the `app/` base path from the `templateUrl` and `styleUrls`. The result looks like this:
+  `templateUrl`과 `styleUrls`에서 기본 경로인 `app/`을 걷어냈습니다. 결과는 다음과 같습니다:
 +makeExample('cb-component-relative-paths/ts/app/some.component.ts','relative-config')(format='.')
 
 .alert.is-helpful
   :marked
-    Webpack users may prefer [an alternative approach](#webpack) that uses `require`.
+    Webpack 사용자들은 `require`를 사용하는 [대체 해결방법](#webpack)을 선호하기도 합니다.
     
 .l-main-section
 :marked
-  ## Source
+  ## 소스
   
-  **We can see the [live example](/resources/live-examples/cb-component-relative-paths/ts/plnkr.html)**
-  and download the source code from there
-  or simply read the pertinent source here.
+  **[라이브 예제](/resources/live-examples/cb-component-relative-paths/ts/plnkr.html)를 참고할수 있으며**
+  거기서 소스 코드를 다운로드하거나 단순하게 여기서 적절한 소스 코드를 읽을 수도 있습니다.
 +makeTabs(
   `cb-component-relative-paths/ts/app/some.component.ts,
   cb-component-relative-paths/ts/app/some.component.html,
@@ -89,52 +84,48 @@ include ../_util-fns
 a#why-default
 .l-main-section
 :marked
-  ## Appendix: why *component-relative* is not the default
+  ## 부록: 왜 *컴포넌트 상대적*이 기본이 아닌가
 
-  A *component-relative* path is obviously superior to an *absolute* path.
-  Why did Angular default to the *absolute* path?
-  Why do *we* have to set the `moduleId`? Why can't Angular set it?
+  *컴포넌트 상대적인* 경로는 확실히 *절대적인* 경로에 비해 우수합니다.
+  왜 Angular는 *상대적인* 경로를 기본으로 할까요?
+  왜 *우리는* `moduleId`를 설정해야만 하는 걸까요? 왜 Angular가 대신 설정하지 못하는 걸까요?
   
-  First, let's look at what happens if we use a relative path and omit the `moduleId`.
-  
+  먼저, 상대 경로를 사용하면서 `moduleId`를 생략한 경우를 어떤 일이 벌어지는지 보도록 하겠습니다.
+
   `EXCEPTION: Failed to load some.component.html`
 
-  Angular can't find the file so it throws an error.
+  Angular는 파일을 찾을 수가 없어서 오류를 던지게 됩니다.
   
-  Why can't Angular calculate the template and style URLs from the component file's location? 
+  왜 Angular는 컴포넌트 파일 위치로부터 템플릿과 스타일 URL들을 알아낼 수 없는걸까요? 
 
-  Because the location of the component can't be determined without the developer's help.
-  Angular apps can be loaded in many ways: from individual files, from SystemJS packages, or
-  from CommonJS packages, to name a few. 
-  We might generate modules in any of several formats. 
-  We might not be writing modular code at all!
+  이유는 컴포넌트의 위치가 개발자 도움없이는 결제될 수 없기 때문입니다.
+  Angular 앱들은 많은 방법들로 로드될 수 있습니다: 몇 가지 예를 들자면, 개별 파일들로부터, SystemJS 패키지들로부터, 혹은 CommonJS 패키지들로부터 말이죠.  
+  우리는 몇 가지 형식을 가지고 모듈들을 생성하게 됩니다.
+  우리는 전혀 모듈화된 코드를 작성하고 있지 않을 지도 모릅니다! 
   
-  With this diversity of packaging and module load strategies, 
-  it's not possible for Angular to know with certainty where these files reside at runtime.
+  패키징과 모듈 로드 전략의 다양성 때문에
+  이 파일들이 런타임에 어느 위치에 있는지 확실성을 가지고 Angular에게 알려주는 것이 불가능합니다.
 
-  The only location Angular can be sure of is the URL of the `index.html` home page, the application root.
-  So by default it resolves template and style paths relative to the URL of `index.html`.
-  That's why we previously wrote our file URLs with an `app/` base path prefix.
+  Angular가 확신할 수 있는 위치는 오로지 애플리케이션 루트인 `index.html`의 URL 뿐입니다.
+  그래서 기본적으로 그것은 템플릿과 스타일의 위치를 `index.html`의 URL에 대해 상대적으로 해석하게 됩니다.
+  그것이 우리가 `app/`이라고 하는 기반 경로 접두사로 파일 URL을 작성했던 이유입니다.
 
-  But *if* we follow the recommended guidelines and we write modules in `commonjs` format
-  and we use a module loader that *plays nice*,
-  *then* we &mdash; the developers of the application &mdash;
-  know that the semi-global `module.id` variable is available and contains
-  the absolute URL of the component class module file.
+  그러나 *만약* 가이드라인을 따르고 모듈들을 `commonjs` 포맷을 작성하며 *잘 동작하는* 모듈 로더를 사용한다면,
+  *그렇다면* 우리는 &mdash; 애플리케이션 개발자 &mdash; 세미 글로벌한 `module.id` 변수를 이용가능하며
+  컴포넌트 클래스 모듈 파일의 절대적인 URL을 포함한다는 것을 알게 될 겁니다.
   
-  That knowledge enables us to tell Angular where the *component* file is
-  by setting the `moduleId`:
+  이 지식은 `moduleId`를 설정하여 *컴포넌트* 파일이 어디 있는지를 Angular에게 알려줌으로써 활성됩니다:
 +makeExample('cb-component-relative-paths/ts/app/some.component.ts','module-id')(format='.')
 
 a#webpack
 .l-main-section
 :marked
-  ## Webpack: load templates and styles with *require*
-  Webpack developers have an alternative to `moduleId`.
+  ## Webpack: *require*로 템플릿과 스타일 로드하기
+  Webpack 개발자들은 `moduleId`에 대한 대안을 가지고 있습니다.
   
-  They can load templates and styles at runtime by setting the component metadata `template` and `style` properties
-  with `require` statements that reference *component-relative* URLS.
+  그들은 컴포넌트 메타데이터인 `template`과 `style` 프로퍼티들을 *컴포넌트에 상대적인* URL을 참조하는 `require` 구문으로 설정하여
+  런타임에 템플릿과 스타일들을 로드할 수 있습니다.
   
 +makeExample('webpack/ts/src/app/app.component.ts')(format='.')
 :marked
-  See the [Introduction to Webpack](../guide/webpack.html).
+  [Webpack 도입](../guide/webpack.html)을 참고하시기 바랍니다.
