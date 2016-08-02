@@ -2,318 +2,293 @@ block includes
   include ../_util-fns
 
 :marked
-  An **Attribute** directive changes the appearance or behavior of a DOM element.
+  **어트리뷰트** 디렉티브는 DOM 요소의 외관인 동작을 변경합니다.
 
 :marked
-  In this chapter we will
-  * [write an attribute directive to change the background color](#write-directive)
-  * [apply the attribute directive to an element in a template](#apply-directive)
-  * [respond to user-initiated events](#respond-to-user)
-  * [pass values into the directive using data binding](#bindings)
+  이 챕터에서는
+  * [배경색을 변경하기 위한 어트리뷰트 디렉티브를 작성해보고](#write-directive)
+  * [어트리뷰트 디렉티브를 템플릿 내 요소에 적용하고](#apply-directive)
+  * [사용자가 초기화한 이벤트에 응답하며](#respond-to-user)
+  * [데이터 바인딩을 사용하여 디렉티브 내로 값을 전달해볼 겁니다](#bindings)
 
-p Try the #[+liveExampleLink2()].
+p #[+liveExampleLink2()]을 활용하세요.
 
 :marked
-  ## Directives overview
+  ## 디렉티브 개요
   
-  There are three kinds of directives in Angular:
-  1. Components
-  1. Structural directives  
-  1. Attribute directives
+  Angular에는 세 가지 종류의 디렉티브가 있습니다:
+  1. 컴포넌트
+  1. 구조적 디렉티브
+  1. 어트리뷰트 디렉티브
 
-  A *Component* is really a directive with a template. 
-  It's the most common of the three directives and we tend to write lots of them as we build applications.
+  *컴포넌트*는 실제로 템플릿을 가진 디렉티브입니다.
+   
+  그것이 세 디렉티브 중 가장 흔한 디렉티브이며 애플리케이션을 빌드함에 따라 많은 컴포넌트를 구현하게 될 겁니다.
 
-  [*Structural* directives](structural-directives.html) can change the DOM layout by adding and removing DOM elements. 
-  [NgFor](template-syntax.html#ngFor) and [NgIf](template-syntax.html#ngIf) are two familiar examples.
+  [*구조적* 디렉티브](structural-directives.html)는 DOM 요소를 추가하고 제거하여 DOM 레이아웃을 변경할 수 있습니다. 
+  [NgFor](template-syntax.html#ngFor)와 [NgIf](template-syntax.html#ngIf)는 유사한 두가지 예입니다.
   
-  An *Attribute* directive can change the appearance or behavior of an element.
-  The built-in [NgStyle](template-syntax.html#ngStyle) directive, for example,
-  can change several element styles at the same time.
+  *어트리뷰트* 디렉티브는 요소의 외관 혹은 동작을 변경할 수 있습니다. 
+  예를 들어, 빌트인 [NgStyle](template-syntax.html#ngStyle) 디렉티브는 동시에 여러 요소의 스타일을 변경할 수 있습니다.
   
-  We are going to write our own attribute directive to set an element's background color
-  when the user hovers over that element.
+  사용자가 어떤 요소 위에 마우스를 올리면 해당 요소의 배경색을 설정하는 어트리뷰트 디렉티브를 작성해볼 겁니다.
 .l-sub-section
   :marked
-    We don't need *any* directive to simply set the background color.
-    We can set it with the special [Style Binding](template-syntax.html#style-binding) like this:
+    단순히 배경색을 설정하기 위한 디렉티브는 필요하지 않습니다.
+    다음과 같이 특별한 [스타일 바인딩](template-syntax.html#style-binding)으로 그것을 설정할 수 있습니다.
 
   +makeExample('attribute-directives/ts/app/app.component.1.html','p-style-background')
-
+  
   :marked
-    That wouldn't be nearly as much fun as creating our own directive.
+    그것은 디렉티브를 작성하는 것만큼 재밌지는 않을 겁니다.
     
-    Besides, we're not just *setting* the color; we'll be *changing* the color
-    in response to a user action, a mouse hover.
-
+    게다가, 우리는 컬러를 *설정*하는 것만 하는게 아닙니다; 사용자 액션인 마우스 호버에 대한 응답으로 컬러를 *변경*되게 할 겁니다.
+    
 .l-main-section
 a#write-directive
 :marked
-  ## Build a simple attribute directive
-  An attribute directive minimally requires building a controller class annotated with 
-  `@Directive`, which specifies the selector identifying
-  the attribute associated with the directive. 
-  The controller class implements the desired directive behavior.
+  ## 간단한 어트리뷰트 디렉티브 만들기
+  어트리뷰트 디렉티브는, (디렉티브와 연관된 어트리뷰트를 식별하는 셀렉터를 지정하는) `@Directive`로 어노테이트된 컨트롤 클래스 빌드를 최소한도로 요구합니다. 
+  컨트롤러 클래스는 요구되는 디렉티브 동작을 구현합니다.
 
-  Let's build a small illustrative example together.
-
+  함께 실제 예가 되는 자그마한 예제를 빌드해보죠.
 :marked
-  ### Our first draft
-  Create a new project folder (`attribute-directives`) and follow the steps in the [QuickStart](../quickstart.html).
+  ### 첫번째 드래프트
+  새로운 프로젝트 폴더(`attribute-directives`)를 만들고 [QuickStart](../quickstart.html)의 각 단계를 진행하세요.
 
 include ../_quickstart_repo
 :marked
-  Create the following source file in the indicated folder with the given code:
+  주어진 코드를 가지고 앞에서 말한 폴더 내에서 다음의 소스 파일 만들어주세요:
 +makeExample('attribute-directives/ts/app/highlight.directive.1.ts', null, 'app/highlight.directive.ts')
 
 block highlight-directive-1
   :marked
-    We begin by importing some symbols from the Angular `core`.
-    We need the `Directive` symbol for the `@Directive` decorator.
-    We need the `ElementRef` to [inject](dependency-injection.html) into the directive's constructor
-    so we can access the DOM element.
-    We don't need `Input` immediately but we will need it later in the chapter.
+    Angular `core`로부터 몇 가지 심볼을 임포트하는 것으로 시작해보겠습니다.
+    우리는 `@Directive` 데코레이터를 위한 `Directive` 심보를 필요로 합니다.
+    디렉티브의 생성자 내로 [주입](dependency-injection.html)하기 위한 `ElementRef`를 필요로 합니다.
+    그렇게 하면 DOM 요소에 접근할 수 있죠.
+    지금 즉시 `Input`을 필요로 하지는 않지만 챕터의 후반에 그것을 필요로 할 겁니다.
   
-    Then we define the directive metadata in a configuration object passed
-    as an argument to the `@Directive` decorator function. 
+    그런 뒤에 `@Directive` 데코레이터 함수에 인자로써 전달된 설정 객체 내에 디렉티브 메타데이터를 정의하도록 합니다.
 :marked
-  `@Directive` requires a CSS selector to identify
-  the HTML in the template that is associated with our directive.
-  The [CSS selector for an attribute](https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors)
-  is the attribute name in square brackets.
-  Our directive's selector is `[myHighlight]`. 
-  Angular will locate all elements in the template that have an attribute named `myHighlight`. 
+  `@Directive`는 디렉티브와 연관되어 있는 템플릿 내 HTML을 식별하기 위해 CSS 셀렉터를 필요로 합니다.
+  [어트리뷰트를 위한 CSS 셀렉터](https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors)는 대괄호 내 어트리뷰트 이름입니다.
+  우리가 만드는 디렉티브의 셀렉터는 `[myHighlight]`입니다.
+  Angular는 모든 요소들을 `myHighlight`라는 이름의 어트리뷰트를 가진 템플릿 내에 위치시킬 겁니다.
 .l-sub-section
   :marked
-    ### Why not call it "highlight"?
-    *highlight* is a nicer name than *myHighlight* and, technically, it would work if we called it that.
+    ### 왜 그걸 "highlight"라고 부르지 않나요?
+    *highlight*는 *myHighlight*보다 나은 이름이며, 기술적으로 봤을 때, 그렇게 부르면 잘 동작할 겁니다.
  
-    However, we recommend picking a selector name with a prefix to ensure
-    that it cannot conflict with any standard HTML attribute, now or in the future.
-    There is also less risk of colliding with a third-party directive name when we give ours a prefix.
+    하지만, 우리는 지금이나 미래에도 다른 표준 HTML 어트리뷰트와 충돌하지 않도록 보장하는 접두사를 가지고 셀렉터 이름을 고를 것을 권장합니다. 
+    접두사를 두게 되면 서드 파티 디렉티브 이름과의 충돌의 위험성도 더 낮아지게 됩니다.
 
-    We do **not** prefix our `highlight` directive name with **`ng`**.
-    That prefix belongs to Angular.
+    `highlight` 디렉티브 이름에 **`ng`**을 접두사로 두지 **않습니다**.
+    그 접두사는 Angular의 것입니다.
 
-    We need a prefix of our own, preferably short, and `my` will do for now.
+    자신의 접두사를 가능하면 짧게 유지하도록 해야하며, `my`는 현재로써는 그렇게 하고 있죠.
 p
-  | After the `@Directive` metadata comes the directive's controller class, which contains the logic for the directive. 
+  | 그리고 나면 `@Directive` 메타데이터는 디렉티브에 대한 로직을 포함하는 디렉티브 컨트롤러 클래스가 됩니다. 
   +ifDocsFor('ts')
-    | We export `HighlightDirective` to make it accessible to other components.
+      다른 컴포넌트에서 접근 가능하도록 만들기 위해 `HighlightDirective`을 익스포트합니다.
 :marked
-  Angular creates a new instance of the directive's controller class for
-  each matching element, injecting an Angular `ElementRef` 
-  into the constructor.
-  `ElementRef` is a service that grants us direct access to the DOM element
-  through its `nativeElement` property.
-  That's all we need to set the element's background color using the browser DOM API.
+  Angular는 Angular의 `ElementRef`를 생성자 내로 주입하여 각각의 일치하는 요소에 대한 디렉티브 컨트롤러 클래스의 새로운 인스턴스를 생성합니다.
+  `ElementRef`는 `nativeElement` 프로퍼티를 통해 DOM 요소에 직접 접근할 수 있는 권한을 주는 서비스입니다.
+  그것은 브라우저 DOM API를 사용해 요소의 배경색을 바꾸는데 필요한 전부입니다.
 
 .l-main-section
 a#apply-directive
 :marked
-  ## Apply the attribute directive
-  The `AppComponent` in this sample is a test harness for our `HighlightDirective`.
-  Let's give it a new template that 
-  applies the directive as an attribute to a paragraph (`p`) element.
-  In Angular terms, the `<p>` element will be the attribute **host**.
+  ## 어트리뷰트 디렉티브 적용
+  이 샘플에서 `AppComponent`는 `HighlightDirective`를 위한 테스트 마구(馬具)입니다.
+  절 (`p`) 요소에 어트리뷰트로 디렉티브를 적용한 새로운 템플릿에 이를 적용하도록 하겠습니다. 
+  Angular 용어로 보면, `<p>` 요소는 어트리뷰트 **호스트**가 될 겁니다.
 p
-  | We'll put the template in its own 
+  | 다음과 같이 
   code #[+adjExPath('app.component.html')]
-  | file that looks like this:
+  | 파일 내에 템플릿을 놓도록 할 겁니다:
 +makeExample('attribute-directives/ts/app/app.component.1.html',null,'app/app.component.html')(format=".")
 :marked
-  A separate template file is clearly overkill for a 2-line template. 
-  Hang in there; we're going to expand it later.
-  Meanwhile, we'll revise the `AppComponent` to reference this template.
+  개별적인 템플릿 파일은 2 줄의 템플릿에게는 분명히 지나쳐 보입니다.
+  하지만 견디세요; 템플릿은 이후에 확장되어 갈 겁니다.
+  한편, 이 템플릿을 참조하기 위한 `AppComponent`를 수정할 겁니다.
 +makeExample('attribute-directives/ts/app/app.component.ts',null,'app/app.component.ts')
 :marked
-  We've added an `import` statement to fetch the 'Highlight' directive and, 
-  added that class to a `directives` component metadata so that Angular 
-  will recognize our directive when it encounters `myHighlight` in the template. 
+  우리는 'Highlight' 디렉티브를 불러오기 위한 `import` 구문을 추가했었고,
+  `directives` 컴포넌트 메타데이터에 해당 클래스를 추가했었기에 Angular는 템플릿 내에서 `myHighlight`을 발견할 경우 디렉티브를 인지할 수 있을 겁니다.  
 
-  We run the app and see that our directive highlights the paragraph text.
+  이제, 앱을 실행하면 디렉티브가 절 텍스트를 하이라이트하는 것을 볼 수 있습니다.
   
 figure.image-display
   img(src="/resources/images/devguide/attribute-directives/first-highlight.png" alt="First Highlight")
 .l-sub-section
   :marked
-    ### Your directive isn't working? 
+    ### 디렉티브가 동작하지 않고 있나요? 
 
-    Did you remember to set the `directives` attribute of `@Component`? It is easy to forget!
+    `@Component`의 `directives` 어트리뷰트를 설정을 까먹은 것은 아닌가요? 잊기 쉽습니다!
     
-    Open the console in the browser tools and look for an error like this:
+    브라우저 도구에서 콘솔을 열면 다음과 같은 에러가 보일 겁니다:
   code-example(format="nocode").
     EXCEPTION: Template parse errors:
       Can't bind to 'myHighlight' since it isn't a known native property
   :marked
-    Angular detects that we're trying to bind to *something* but it doesn't know what.
-    We have to tell it by listing `HighlightDirective` in the `directives` metadata array.
+    Angular는 *무언가*를 바인딩하려고 한다는 것을 감지해내지만 그게 무엇인지 알지 못합니다.
+    `directives` 메타데이터 배열에 `HighlightDirective`를 나열하여 무엇을 바인딩하려고 하는지 알려줘야 합니다.
 :marked
-  Let's recap what happened.
+  무슨 일이 있었는지 다시 한번 되돌아보죠.
   
-  Angular found the `myHighlight` attribute on the `<p>` element. It created
-  an instance of the `HighlightDirective` class, 
-  injecting a reference to the element into the constructor 
-  where we set the `<p>` element's background style to yellow.
+  Angular는 `<p>` 요소 상의 `myHighlight` 어트리뷰트를 찾아냈습니다.
+  그로 인해, `<p>` 요소의 배경 스타일을 노란색으로 설정하려는 곳에서, 생성자 내로 요소에 대한 참조를 주입하여 `HighlightDirective` 클래스의 인스턴스가 생성됐습니다.
 
 .l-main-section
 a#respond-to-user
 :marked
-  ## Respond to user action
+  ## 사용자 액션에 응답하기
 
-  We are not satisfied to simply set an element color.
-  Our directive should set the color in response to a user action.
-  Specifically, we want to set the color when the user hovers over an element.
+  단순히 요소 색상을 설정하는 것만으로는 만족스럽지 않습니다.
+  이 디렉티브는 사용자 액션에 따라 색상을 설정해야 합니다.
+  특히, 사용자가 요소 위로 호버할 경우, 색상을 바꾸기를 원합니다.
   
-  We'll need to
-  1. detect when the user hovers into and out of the element,
-  2. respond to those actions by setting and clearing the highlight color, respectively.
+  우리는 다음과 같이
+  1. 사용자가 요소 안과 밖으로 호버하는 시점을 감지하고,
+  1. 하이라이트 색상을 각각 설정하거나 제거하여 해당 액션에 반응
+  해야 할 필요가 있습니다.
   
-  We use the `@HostListener` decorator on a method which is called when the event is raised.
+  이벤트가 일어났을 때 호출되는 메서드 상에서 `@HostListener` 데코레이터를 사용할 겁니다.
 
 +makeExample('attribute-directives/ts/app/highlight.directive.2.ts','host')(format=".")
 
 .l-sub-section
   :marked
-    The `@HostListener` decorator refers to the DOM element that hosts our attribute directive, the `<p>` in our case.
-     
-    We could have attached event listeners by manipulating the host DOM element directly, but
-    there are at least three problems with such an approach:
-    
-    1. We have to write the listeners correctly.
-    1. We must *detach* our listener when the directive is destroyed to avoid memory leaks.
-    1. We'd be talking to DOM API directly which, we learned, is something to avoid.
+    `@HostListener` 데코레이터는, 이 예제에서는 `<p>`인, 어트리뷰트 디렉티브를 호스트하는 DOM 요소와 관련이 있습니다.
 
-    Let's roll with the `@HostListener` decorator. 
+    직접적으로 호스트 DOM 요소를 다루어 이벤트 리스너를 연결할 수 있지만, 그런 해결책에는 적어도 다음의 세 가지 문제점이 존재합니다:
+    
+    1. 리스너를 정확하게 구현해야 합니다.
+    1. 디렉티브가 메모리 릭을 피하기 위해 소거될 때에 리스너 연결을 *끊어야만* 합니다.
+    1. 배운바에 의하면 DOM API를 직접 사용하는 것을 피해야 하는데 직접 사용해야 할 수도 있습니다.
+    
+    `@HostListener` 프로퍼티를 다뤄보죠.
 :marked
-  Now we implement the two mouse event handlers:
+  이제 두 개의 마우스 이벤트 핸들러를 구현할 겁니다:
 +makeExample('attribute-directives/ts/app/highlight.directive.2.ts','mouse-methods')(format=".")
 :marked
-  Notice that they delegate to a helper method that sets the color via a private local variable, `#{_priv}el`.
-  We revise the constructor to capture the `ElementRef.nativeElement` in this variable.
+  이 핸들러들이 비공개 로컬 변수, `#{_priv}el`을 통해 색상을 설정하는 헬퍼 메서드를 위임한다는 것을 알아두시기 바랍니다.
+  이 변수에 `ElementRef.nativeElement`을 할당하기 위해 생성자를 수정하겠습니다.
 
 +makeExample('attribute-directives/ts/app/highlight.directive.2.ts','ctor')(format=".")
 :marked
-  Here's the updated directive:
+  다음은 수정된 디렉티브입니다:
 +makeExample('attribute-directives/ts/app/highlight.directive.2.ts',null, 'app/highlight.directive.ts')
 :marked
-  We run the app and confirm that the background color appears as we move the mouse over the `p` and
-  disappears as we move out.
+  이제 앱을 실행해서, 배경색이 마우스를 `p` 위로 움직여서 나타나거나, 밖으로 빼서 사라지는 것을 확인할 수 있습니다.
 figure.image-display
   img(src="/resources/images/devguide/attribute-directives/highlight-directive-anim.gif" alt="Second Highlight")
 .l-main-section
 a#bindings
 :marked
-  ## Configure the directive with binding
+  ## 디렉티브에 바인딩 설정하기
   
-  Currently the highlight color is hard-coded within the directive. That's inflexible.
-  We should set the color externally with a binding like this:
+  현재 하이라이트 색상은 디렉티브 내에 하드코딩되어 있습니다. 그건 유연하지 못하죠.
+  다음과 같은 바인딩으로 색상을 외부에서 설정해야 합니다:
 +makeExample('attribute-directives/ts/app/app.component.html','pHost')
 :marked
-  We'll extend our directive class with a bindable **input** `highlightColor` property and use it when we highlight text.
+  바인딩 가능한 **input** `highlightColor` 프로퍼티로 디렉티브 클래스를 확장하고 텍스트를 하이라이트할 때 사용할 겁니다.
 
-  Here is the final version of the class:
+  다음은 해당 클래스의 최종 버전입니다:
 +makeExample('attribute-directives/ts/app/highlight.directive.ts', 'class-1', 'app/highlight.directive.ts (class only)')
 a#input
 :marked
-  The new `highlightColor` property is called an *input* property because data flows from the binding expression into our directive.
-  Notice the `@Input()` #{_decorator} applied to the property.
+  새로운 `highlightColor` 프로퍼티는 *input* 프로퍼티라고 불리는데, 이는 데이터가 바인딩 표현식으로부터 디렉티브 내로 전달되기 때문입니다.
+  `@Input()` #{_decorator}가 프로퍼티에 적용된다는 것을 알아두시기 바랍니다.
 +makeExample('attribute-directives/ts/app/highlight.directive.ts', 'color')
 :marked
-  `@Input` adds metadata to the class that makes the `highlightColor` property available for 
-  property binding under the `myHighlight` alias. 
-  We must add this input metadata or Angular will reject the binding.
-  See the [appendix](#why-input) below to learn why.
+  `@Input`은 `myHighlight`라는 별칭으로 프로퍼티 바인딩이 가능한 `highlightColor` 프로퍼티를 만드는 클래스에 메타데이터를 추가합니다. 
+  이 입력 메타데이터를 반드시 추가해야 하며 그렇지 않으면 Angular가 해당 바인딩을 거부합니다. 
+  왜 그런지 [부록](#why-input)을 참고하시기 바랍니다.
 .l-sub-section
   :marked
-    ### @Input(_alias_) 
-    The developer who uses this directive expects to bind to the attribute name, `myHighlight`.
-    The directive property name is `highlightColor`. That's a disconnect.
+    ### @Input(_alias_)
+    이 디렉티브를 사용하는 개발자는 `myHighlight`라는 어트리뷰트 이름으로 바인딩되기를 바랄 것입니다.
+    해당 디렉티브 프로퍼티의 이름은 `highlightColor`입니다. 이것은 불일치점입니다.
     
-    We could resolve the discrepancy by renaming the property to `myHighlight` and define it as follows:
+    해당 프로퍼티의 이름을 `myHighlight`로 변경하여 이런 불일치를 해결할 수 있고 다음처럼 정의할 수 있습니다:
 
   +makeExample('attribute-directives/ts/app/highlight.directive.ts', 'highlight')
   :marked
-    Maybe we don't want that property name inside the directive perhaps because it 
-    doesn't express our intention well. 
-    We can **alias** the `highlightColor` property with the attribute name by
-    passing `myHighlight` into the `@Input` #{_decorator}:
+    아마도 디렉티브 내부의 해당 프로퍼티 이름을 원치는 않을 것입니다. 왜냐하면 그것이 우리의 의도를 잘 표현해주지 않기 때문입니다.
+    `@Input` #{_decorator} 내로 `myHighlight`을 전달하여 어트리뷰트 이름을 가지고 `highlightColor` 프로퍼티의 **별칭을 정할 수** 있습니다:
   +makeExample('attribute-directives/ts/app/highlight.directive.ts', 'color')
 :marked
-  Now that we're getting the highlight color as an input, we modify the `onMouseEnter()` method to use
-  it instead of the hard-coded color name.
-  We also define red as the default color to fallback on in case
-  the user neglects to bind with a color.
+  입력으로써 하이트라이트 색상을 얻는 지금, 하드 코딩된 색상 이름 대신에 그것을 사용하도록 `onMouseEnter()` 메서드를 수정하려고 합니다.
+  사용자가 색상을 이용한 바인딩을 하지 않는 경우를 위한 대비책으로 기본 색상인 빨간색을 정의할 겁니다.
 +makeExample('attribute-directives/ts/app/highlight.directive.ts', 'mouse-enter')
 :marked
-  Now we'll update our `AppComponent` template to let 
-  users pick the highlight color and bind their choice to our directive.
+  이제 사용자가 하이라이트 색상을 선택해 디렉티브에 바인딩하도록 `AppComponent` 템플릿을 갱신할 겁니다.
   
-  Here is the updated template:
+  다음은 갱신된 템플릿입니다:
 +makeExample('attribute-directives/ts/app/app.component.html', 'v2')
 
 .l-sub-section
   :marked
-    ### Where is the templated *color* property?
+    ### 템플릿화된 *색상* 프로퍼티는 어디있을까요?
     
-    The eagle-eyed may notice that the radio button click handlers in the template set a `color` property
-    and we are binding that `color` to the directive. 
-    We should expect to find a `color` on the host `AppComponent`.
+    만약 매의 눈을 가졌다면, 템플릿 내 라디오 버튼 클릭 핸들러가 `color` 프로퍼티를 설정하고 디렉티브 해당 `color`를 바인딩하고 있다는 것을 알게 됐을 겁니다.
+    호스트인 `AppComponent`에서 `color`를 찾을 수 있어야 합니다.
     
-    **We never defined a color property for the host *AppComponent***!
-    And yet this code works. Where is the template `color` value going?
+    **우리는 결코 호스트인 *AppComponent*을 위한 색상 프로퍼티를 정의하지 않았습니다**!
+    그리고 여전히 이 코드는 작동하고 있습니다. 어디서 템플릿의 `color` 값을 조정하는걸까요?
     
-    Browser debugging reveals that Angular dynamically added a `color` property 
-    to the runtime instance of the `AppComponent`.
+    브라우저 디버깅은 Angular가 `AppComponent`의 런타임 인스턴스에 `color` 프로퍼티를 동적으로 추가하고 있다고 알려줍니다.
     
-    This is *convenient* behavior but it is also *implicit* behavior that could be confusing. 
-    While it's cool that this technique works, we recommend adding the `color` property to the `AppComponent`.
+    이것은 *편리한* 동작이지만 동시에 혼란을 야기할 수도 있는 *암시적* 동작이기도 합니다.
+    이 기술이 동작하긴 하지만, `color` 프로퍼티를 `AppComponent`에 추가할 것을 권장합니다.
 
 :marked
-  Here is our second version of the directive in action.
+  다음은 동작하는 두번째 버전의 디렉티브입니다.
 figure.image-display
   img(src="/resources/images/devguide/attribute-directives/highlight-directive-v2-anim.gif" alt="Highlight v.2")
 
 .l-main-section
 :marked
-  ## Bind to a second property
-  Our directive only has a single, customizable property. What if we had ***two properties***?
+  ## 두번째 프로퍼티에 바인딩하기
+  디렉티브는 오로지 단 한개의 커스터마이징 가능한 프로퍼티만을 갖습니다. ***두 개의 프로퍼티***가 있다면 어떨까요?
   
-  Let's allow the template developer to set the default color, the color that prevails until the user picks a highlight color.
-  We'll add a second **input** property to `HighlightDirective` called `defaultColor`:
+  사용자가 하이라이트 색상을 고르기 전까지 적용되게 될 색상인, 기본 색상을 템플릿 개발자가 설정할 수 있도록 해보겠습니다.
+  `HighlightDirective`에 `defaultColor`라고 불리는 두번째 **입력** 프로퍼티를 추가할 겁니다:
 +makeExample('attribute-directives/ts/app/highlight.directive.ts', 'defaultColor')(format=".")
 :marked
-  The `defaultColor` property has a setter that overrides the hard-coded default color, "red".
-  We don't need a getter.
+  `defaultColor` 프로퍼티는 하드 코딩된 기본 색상 "red"을 재정의하는 setter를 가집니다. getter는 필요없습니다.
   
-  How do we bind to it? We already "burned" the `myHighlight` attribute name as a binding target.
+  어떻게 바인딩해야 할까요? 이미 `myHighlight` 어트리뷰트 이름을 바인딩 대상으로 "써버렸습니다". 
   
-  Remember that a *component is a directive too*. 
-  We can add as many component property bindings as we need by stringing them along in the template
-  as in this example that sets the `a`, `b`, `c` properties to the string literals 'a', 'b', and 'c'. 
+  *컴포넌트도 디렉티브*라는 것을 기억하세요.
+  
+  다음 예제에서 `a`, `b`, `c` 프로퍼티를 문자열 리터럴인 'a', 'b', 그리고 'c'로 설정하는 것처럼,
+  템플릿 내에 그것들을 줄줄이 엮어 필요로 하는 만큼 많은 컴포넌트 프로퍼티 바인딩을 추가할 수 있습니다.
 code-example(format="." ).
   &lt;my-component [a]="'a'" [b]="'b'" [c]="'c'">&lt;my-component>
 :marked
-  We do the same thing with an attribute directive.
+  어트리뷰트 디렉티브에서도 마찬가지입니다.
 +makeExample('attribute-directives/ts/app/app.component.html', 'defaultColor')(format=".")
 :marked
-  Here we're binding the user's color choice to the `myHighlight` attribute as we did before.
-  We're *also* binding the literal string, 'violet', to the `defaultColor`.
+  앞서 했던 것처럼 `myHighlight` 어트리뷰트에 사용자의 색상 결정을 바인딩할 것입니다.
+  *또한* `defaultColor`에 리터럴 문자열인 'violet'을 바인딩할 겁니다.
     
-  Here is the final version of the directive in action.
+  다음은 동작하는 최종 버전의 디렉티브입니다.
 figure.image-display
   img(src="/resources/images/devguide/attribute-directives/highlight-directive-final-anim.gif" alt="Final Highlight")
 
 .l-main-section
 :marked
-  ## Summary
-  We now know how to
-  - [build a simple **attribute directive** to attach behavior to an HTML element](#write-directive),
-  - [use that directive in a template](#apply-directive),
-  - [respond to **events** to change behavior based on an event](#respond-to-user),
-  - and [use **binding** to pass values to the attribute directive](#bindings).
+  ## 요약
+  이제 다음의 방법들에 대해서 알게 되었습니다.
+  - [HTML 요소에 동작을 더하기 위해 간단한 **어트리뷰트 디렉티브**를 만들기](#write-directive),
+  - [템플릿 내에서 디렉티브 사용](#apply-directive),
+  - [동작을 변경하기 위해 이벤트에 기반하는 이벤트에 응답하기](#respond-to-user),
+  - 그리고 [어트리뷰트 디렉티브에 값을 전달하기 위해 **바인딩** 사용하기](#bindings).
 
-  The final source:
+  최종 소스 파일들:
 
 +makeTabs(
   `attribute-directives/ts/app/app.component.ts,
@@ -334,40 +309,38 @@ figure.image-display
 a#why-input
 .l-main-section
 :marked
-  ### Appendix: Input properties
+  ### 부록: 입력 프로퍼티
   
-  Earlier we declared the `highlightColor` property to be an ***input*** property of our
-  `HighlightDirective`
+  초기에 `HighlightDirective`의 ***입력*** 프로퍼티가 될 `highlightColor` 프로퍼티를 선언했습니다.
  
-  We've seen properties in bindings before. 
+  우린 전에 바인딩 내 프로퍼티를 본적이 있습니다.
+  아무거나 가지고 그것을 선언해서는 결코 안됩니다. 왜 그럴까요? 
   We never had to declare them as anything. Why now?
   
-  Angular makes a subtle but important distinction between binding **sources** and **targets**.
+  Angular는 **소스**와 **타겟** 사이의 미묘하지만 아주 중요한 차이점을 만들어 냅니다. 
   
-  In all previous bindings, the directive or component property was a binding ***source***.
-  A property is a *source* if it appears in the template expression to the ***right*** of the equals (=).
+  이전의 모든 바인딩에서, 디렉티브 혹은 컴포넌트 프로퍼티는 바인딩 ***소스***였습니다.
+  프로퍼티가 템플릿 표현식 내에서 등가 기호 (=)의 ***우측***에 나오면 *소스*입니다.
   
-  A property is a *target* when it appears in **square brackets** ([ ]) to the **left** of the equals (=) ...
-  as it is does when we bind to the `myHighlight` property of the `HighlightDirective`, 
+  프로퍼티가 등가 기호 (=)의 ***좌측***의 **대괄호** ([ ])에 나오면 *대상*이 됩니다 ...
+  `HighlightDirective`의 `myHighlight` 프로퍼티에 바인딩할 때 그랬던 것처럼 말이죠..
 +makeExample('attribute-directives/ts/app/app.component.html','pHost')(format=".")
 :marked
-  The 'color' in `[myHighlight]="color"` is a binding ***source***.
-  A source property doesn't require a declaration.
+  `[myHighlight]="color"`에서 'color'는 바인딩 ***소스***입니다.
+  소스 프로퍼티는 선언을 필요로 하지 않습니다.
   
-  The 'myHighlight' in `[myHighlight]="color"` *is* a binding ***target***.
-  We must declare it as an *input* property.
-  Angular rejects the binding with a clear error if we don't.
+  `[myHighlight]="color"` 내에서 'myHighlight'는 바인딩 ***대상****입니다*.
+  'myHighlight'를 *입력* 프로퍼티로 반드시 선언해야 합니다.
+  그렇지 않을 경우 Angular는 명백한 오류로 보고 바인딩을 거절하게 됩니다. 
   
-  Angular treats a *target* property differently for a good reason.
-  A component or directive in target position needs protection.
+  Angular는 *대상* 프로퍼티를 합당한 이유로 다르게 다룹니다.
+  타겟의 위치 내에 있는 컴포넌트 혹은 디렉티브는 보호를 필요로 합니다.
   
-  Imagine that our `HighlightDirective` did truly wonderous things.
-  We graciously made a gift of it to the world. 
+  `HighlightDirective`가 실제로는 놀라운 것이라고 상상해세요.
+  우아하게 세상에 주는 선물을 만드는 것이라고 말이죠. 
   
-  To our surprise, some people &mdash; perhaps naively &mdash;
-  started binding to *every* property of our directive. 
-  Not just the one or two properties we expected them to target. *Every* property.
-  That could really mess up our directive in ways we didn't anticipate and have no desire to support.
+  놀랍게도, (아마도 순진한)어떤 사람들이 우리의 디렉티브의 *모든* 프로퍼티에 바인딩하기 시작할 겁니다. 
+  단지 한 개 혹은 두 개의 프로퍼티만이 아니라 그것들을 타겟으로 한다고 생각하겠죠. *모든* 프로퍼티를 말이죠.
+  그러한 점들이 우리가 예상하지 않았던 그리고 지원하고 싶지 않은 방법들로 디렉티브를 실제로 망쳐놓을 수도 있습니다. 
   
-  The *input* declaration ensures that consumers of our directive can only bind to
-  the properties of our public API ... nothing else.
+  *입력* 선언은 디렉티브 컨슈머가 공개 API의 프로퍼티에만 바인딩할 수 있다는 것을 보장합니다. 그 외에는 불가능하도록 말이죠.

@@ -1,51 +1,51 @@
 {
   "index": {
     "hero": "home",
-    "title": "One framework.",
-    "subtitle": "Mobile and desktop."
+    "title": "하나의 프레임워크.",
+    "subtitle": "모바일 그리고 데스크톱."
   },
 
   "features": {
-    "title": "Features & Benefits"
+    "title": "특징과 이점"
   },
 
   "contribute": {
-    "title": "Contribute to Angular",
-    "subtitle": "Help us build the framework of the future!",
+    "title": "Angular에 기여하기",
+    "subtitle": "미래의 프레임워크를 빌드하도록 저희를 도와주세요!",
     "autoformat": "true"
   },
 
   "news": {
-    "title": "News"
+    "title": "뉴스"
   },
 
   "events": {
-    "title": "Events",
-    "subtitle": "Where we'll be presenting"
+    "title": "이벤트",
+    "subtitle": "우리가 프레젠테이션하게 될 장소"
   },
 
   "support": {
-    "title": "Support",
-    "subtitle": "Get help from the Angular Community"
+    "title": "지원",
+    "subtitle": "Angular 커뮤니티로부터 도움을 받으세요"
   },
 
   "presskit": {
-    "title": "Press Kit"
+    "title": "프레스 키트"
   },
 
   "books": {
-    "title": "Books"
+    "title": "도서"
   },
 
   "training": {
-    "title": "Training"
+    "title": "트레이닝"
   },
 
   "communities": {
-    "title": "Communities"
+    "title": "커뮤니티"
   },
 
   "tooling": {
-    "title": "Tooling and Libraries"
+    "title": "툴과 라이브러리"
   }
 }

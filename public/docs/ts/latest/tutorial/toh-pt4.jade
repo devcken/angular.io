@@ -1,27 +1,23 @@
 include ../_util-fns
 
 :marked
-  # Services
-  The Tour of Heroes is evolving and we anticipate adding more components in the near future.
+  # 서비스
+  Tour of Heroes는 점점 발전하고 있고 가까운 미래에 좀 더 많은 컴포넌트가 추가될거라고 확신합니다.
   
-  Multiple components will need access to hero data and we don't want to copy and 
-  paste the same code over and over.
-  Instead, we'll create a single reusable data service and learn to
-  inject it in the components that need it.
+  다중 컴포넌트는 영웅 데이터에 접근할 필요가 있을 것이고 우리는 똑같은 코드를 계속해서 복사하고 붙여넣기를 반복하고 싶지 않을 것입니다.
+  대신, 단일의 재사용 가능한 데이터 서비스를 만들고 그것을 필요로 하는 컴포넌트에 주입하는 방법을 배워보도록 하겠습니다.
   
-  Refactoring data access to a separate service keeps the component lean and focused on supporting the view.
-  It also makes it easier to unit test the component with a mock service.
+  데이터 접근을 독립적인 서비스로 리팩토링하는 것은 컴포넌트를 날렵하게 유지하고, 뷰를 지원하는데 집중하도록 만들어줄 것입니다.
+  가짜 서비스로 컴포넌트 단위 테스트를 쉽도록 만들어 주기도 할 것입니다.
   
-  Because data services are invariably asynchronous, 
-  we'll finish the chapter with a **!{_Promise}**-based version of the data service.
+  데이터 서비스는 언제나 비동기적이므로 데이터 서비스의 **!{_Promise}** 기반의 버전으로 이 챕터를 마무리할 것입니다.
 
-p Run the #[+liveExampleLink2('', 'toh-4')] for this part.
+p 이 파트에 대한 #[+liveExampleLink2('', 'toh-4')]를 실행해보세요.
 
 .l-main-section
 :marked
-  ## Where We Left Off
-  Before we continue with our Tour of Heroes, let’s verify we have the following structure. 
-  If not, we’ll need to go back and follow the previous chapters.
+  ## 어디부터 시작해야 할까요
+  Tour of Heroes를 계속하기 전에, 다음 구조를 확인하시기 바랍니다. 만약 다르다면, 이전 단계로 돌아가서 빠진게 없는지 확인하시기 바랍니다.
 
 .filetree
   .file angular2-tour-of-heroes
@@ -42,265 +38,250 @@ p Run the #[+liveExampleLink2('', 'toh-4')] for this part.
     .file typings.json
 
 :marked
-  ### Keep the app transpiling and running
-  Open a terminal/console window. 
-  Start the TypeScript compiler, watch for changes, and start our server by entering the command:
+  ### 앱 트랜스파일링과 실행을 유지하세요
+  TypeScript 컴파일러 시작, 변경을 위한 watch, 그리고 서버 시작을 원할 겁니다. 다음 명령어를 통해 이런 것들이 가능합니다.
 
 code-example(language="bash").
   npm start
 
 :marked
-  The application runs and updates automatically as we continue to build the Tour of Heroes.
+  이것은 Tour of Heroes을 빌드하는 내내 애플리케이션 실행을 유지시켜줄겁니다.
 
-  ## Creating a Hero Service
-  Our stakeholders have shared their larger vision for our app. 
-  They tell us they want to show the heroes in various ways on different pages. 
-  We already can select a hero from a list.
-  Soon we'll add a dashboard with the top performing heroes and create a separate view for editing hero details.
-  All three views need hero data. 
+  ## 영웅 서비스를 만들기
+  우리의 이해당사자들은 앱에 대한 더 큰 비전을 공유하고 있습니다. 
+  그들은 다른 페이지에서 다양한 방법으로 영웅들을 보고 싶어하고 있습니다. 
+  우리는 목록에서 영웅을 선택할 수 있게 되었습니다. 
+  곧 최고 성적의 영웅들을 보여주는 대시보드를 추가하고 영웅 상세 정보 수정을 위한 개별적인 뷰를 만들게 될 것입니다.
+  모두 세 개의 뷰가 영웅 데이터를 필요로 하는군요.
   
-  At the moment the `AppComponent` defines mock heroes for display.
-  We have at least two objections.
-  First, defining heroes is not the component's job. 
-  Second, we can't easily share that list of heroes with other components and views. 
+  지금 이때 `AppComponent`는 디스플레이를 위해 가짜 영웅들을 정의하고 있습니다.
+  
+  그것에는 적어도 두 개의 결점이 있습니다.
+  첫째, 영웅을 정의하는 것은 컴포넌트의 일이 아닙니다.
+  둘째, 영웅들의 목록을 다른 컴포넌트와 뷰와 함께 쉽게 공유할 수 없습니다.  
 
-  We can refactor this hero data acquisition business to a single service that provides heroes, and 
-  share that service with all components that need heroes.
+  우리는 영웅 데이터를 가져오기 위한 비지니스 코드를 영웅 목록을 제공하는 단일 서비스로 리팩터링하고 그 서비스를 영웅 목록을 필요로 하는 다른 모든 컴포넌트와 공유할 수 있습니다.
 
-  ### Create the HeroService
-  Create a file in the `app` folder called `hero.service.ts`. 
+  ### HeroService 만들기
+  `app` 폴더 안에 `hero.service.ts`라고 불리는 파일을 만들어 주세요.
 .l-sub-section
   :marked
-    We've adopted a convention in which we spell the name of a service in lowercase followed by `.service`.
-    If the service name were multi-word, we'd spell the base filename in lower [dash-case](../guide/glossary.html#!#dash-case).
-    The `SpecialSuperHeroService` would be defined in the `special-super-hero.service.ts` file.
+    우리는 서비스의 이름을 `.service`가 접미사로 붙는 소문자로 이루어진 이름을 짓는 관례를 따릅니다.
+    서비스의 이름이 여러 단어로 이루어져 있다면 파일의 이름을 소문자로 이루어진 [dash-case](../guide/glossary.html#!#dash-case)로 이루어진 이름으로 지을 겁니다.  
+    그러니까 `SpecialSuperHeroService`는 `special-super-hero.service.ts` 파일이 되겠죠.
 :marked
-  We name the class `HeroService` and export it for others to import.
+  `HeroService`라는 클래스를 만들고 그것을 다른 곳에 임포트할 수 있도록 익스포트해주세요.
 
 +makeExample('toh-4/ts/app/hero.service.1.ts', 'empty-class', 'app/hero.service.ts (starting point)')(format=".")
 
 :marked
-  ### Injectable Services
-  Notice that we imported the Angular `Injectable` function and applied that function as an `@Injectable()` decorator.
+  ### 주입 가능한 서비스
+  Angular의 `Injectable` 함수를 임포트했고 그 함수를 `@Injectable` 데코레이터로 적용했다는 것을 기억해두세요.
 .callout.is-helpful
   :marked
-    **Don't forget the parentheses!** Neglecting them leads to an error that's difficult to diagnose.
+    **소괄호를 잊지 마세요!** 소괄호를 빼먹으면 분석하기 어려운 오류를 일으키게 됩니다.
 :marked
-  TypeScript sees the `@Injectable()` decorator and emits metadata about our service, 
-  metadata that Angular may need to inject other dependencies into this service.
+  TypeScript는 `@Injectable()` 데코레이터를 만나게 되면 서비스에 관한 메타데이터를 내보내게 됩니다. 여기서 말한 메타데이터란, Angular가 다른 의존성들을 이 서비스 안으로 주입하기 위해 필요로 하는 것들입니다.
 
-  The `HeroService` doesn't have any dependencies *at the moment*. Add the decorator anyway.
-  It is a "best practice" to apply the `@Injectable()` decorator ​*from the start*​ 
-  both for consistency and for future-proofing.
+  `HeroService`는 *지금으로써는* 어떤 의존성도 갖고 있지 않습니다.
+  어쨌든 데코레이터를 추가하도록 합니다.
+  *처음부터* `@Injectable()` 데코레이터를 적용하는 것이 견고함과 훗날을 대비하기 위한 좋은 방법입니다.
 
 :marked
-  ### Getting Heroes
-  Add a `getHeroes` method stub.
+  ### 영웅들 가져오기
+  `getHeroes` 메서드 스텁을 추가하세요.
 +makeExample('toh-4/ts/app/hero.service.1.ts', 'getHeroes-stub', 'app/hero.service.ts (getHeroes stub)')(format=".")
 :marked
-  We're holding back on the implementation for a moment to make an important point.
+  중요한 설명을 위해 잠깐 위 구현에서 멈춰보죠.
   
-  The consumer of our service doesn't know how the service gets the data. 
-  Our `HeroService` could get `Hero` data from anywhere. 
-  It could get the data from a web service or local storage
-  or from a mock data source.
+  이 서비스의 사용자는 서비스가 데이터를 어떻게 가져오는지 모릅니다. 
+  `HeroService`는 어디서든지 `Hero` 데이터를 가져올수 있기 때문이죠. 
+  웹 서비스 혹은 로컬 스토리지, 심지어 가짜 데이터 소스로부터 데이터를 가져올 수 있습니다. 
   
-  That's the beauty of removing data access from the component.
-  We can change our minds about the implementation as often as we like,
-  for whatever reason, without touching any of the components that need heroes.
+  그런 점이 바로 컴포넌트로부터 데이터 접근을 제거한 이점이죠.
+  하고 싶은만큼, 이유를 불문하고 영웅을 필요로 하는 컴포넌트가 무엇이든지 수정하지 않고도 그 구현을 바꿀 수 있습니다.
   
+  ### 가짜(mock) 영웅들
+  우리는 이미 `AppComponent`에 적용한 가짜 `Hero` 데이터를 가지고 있습니다. 그것은 거기에 있지도 않고 *여기에* 있지도 않습니다.   
+  그 데이터를 위한 파일로 옮기도록 하겠습니다.
   
-  ### Mock Heroes  
-  We already have mock `Hero` data sitting in the `AppComponent`.  It doesn't belong there. It doesn't belong *here* either.
-  We'll move the mock data to its own file.
-
-  Cut the `HEROES` array from `app.component.ts` and paste it to a new file in the `app` folder named `mock-heroes.ts`.
-  We copy the `import {Hero} ...` statement as well because the heroes array uses the `Hero` class.
-
 +makeExample('toh-4/ts/app/mock-heroes.ts', null, 'app/mock-heroes.ts')
 :marked
-  We export the `HEROES` constant so we can import it elsewhere &mdash; such as our `HeroService`.
+  `HEROES` 상수를 익스포트하여 그것을 어디에든 임포트할 수 있도록 합니다 &mdash; `HeroService`와 같은 곳에 말이죠.
 
-  Meanwhile, back in `app.component.ts` where we cut away the `HEROES` array, 
-  we leave behind an uninitialized `heroes` property:
+  그러는 동안, `HEROES` 배열을 잘라냈던 `app.component.ts`로 돌아가 `heroes` 프로퍼티를 초기화되지 않은 상태로 남겨두도록 합니다:
 +makeExample('toh-4/ts/app/app.component.1.ts', 'heroes-prop', 'app/app.component.ts (heroes property)')(format=".")
 :marked
-  ### Return Mocked Heroes
-  Back in the `HeroService`  we import the mock `HEROES` and return it from the `getHeroes` method.
-  Our `HeroService` looks like this:
-+makeExample('toh-4/ts/app/hero.service.1.ts', null, 'app/hero.service.ts')(format=".")
+  ### 가짜 영웅들을 반환하기
+  `HeroService`로 돌아와 가짜 `HEROES`를 임포트하고 `getHeroes` 메서드로 부터 그것을 반환시킵니다. 
+  `HeroService`는 다음과 같아지겠죠:
++makeExample('toh-4/ts/app/hero.service.1.ts', 'heroes-prop', 'app/app.component.ts (heroes property)')(format=".")
 :marked
-  ### Use the Hero Service
-  We're ready to use the `HeroService` in other components starting with our `AppComponent`.
+  ### 영웅 서비스 사용하기
+  `AppComponent`의 하위 객체들에 `HeroService`를 사용할 준비를 마쳤습니다.
 
-  We begin, as usual, by importing the thing we want to use, the `HeroService`.
-+makeExcerpt('toh-4/ts/app/app.component.ts', 'hero-service-import')
+  보통의 경우처럼 우리가 사용하려는 `HeroService`를 임포트하는 것으로부터 시작하겠습니다.
++makeExample('toh-4/ts/app/app.component.ts', 'hero-service-import')
 :marked
-  Importing the service allows us to *reference* it in our code. 
-  How should the `AppComponent` acquire a runtime concrete `HeroService` instance?
+  서비스를 임포트하는 것은 코드 안에서 그것을 참조하도록 하는 것과 같습니다.
+  `AppComponent`는 어떻게 런타임 콘크리트 `HeroService`의 인스턴스를 얻게 되는 걸까요? 
   
-  ### Do we *new* the *HeroService*? No way!
-  We could create a new instance  of the `HeroService` with `new` like this:
+  ### *HeroService*를 *new*하는 걸까요? 결코 아닙니다!
+  `HeroService`의 새로운 인스턴스를 다음과 같이 `new`로 만들 수 있습니다.
 +makeExample('toh-4/ts/app/app.component.1.ts', 'new-service')(format=".")
 :marked
-  That's a bad idea for several reasons including
+  하지만 그것은 다음의 몇 가지 이유로 좋은 생각이 아닙니다.
   
-  * Our component has to know how to create a `HeroService`. 
-  If we ever change the `HeroService` constructor, 
-  we'll have to find every place we create the service and fix it.
-  Running around patching code is error prone and adds to the test burden.
+  * 컴포넌트가 `HeroService`를 어떻게 만들어야 할 지 알고 있어야 합니다.
+  `HeroService` 생성자를 변경할 경우,
+  서비스를 생성하는 곳을 찾아 모두 수정해주어야 합니다.
+  수정이 자주 일어나면 오류를 범하기 쉬워지고 테스트가 가중될 수 있습니다.
     
-  * We create a new service each time we use `new`. 
-  What if the service should cache heroes and share that cache with others?
-  We couldn't do that.
+  * `new`를 사용하는 그 때마다 새로운 서비스가 만들어지게 됩니다. 
+  서비스가 영웅 목록을 캐쉬해야 되고 그 캐쉬를 다른 것들과 공유해야 한다면 어떨까요?
+  그럴 수 없겠죠.
   
-  * We're locking the `AppComponent` into a specific implementation of the `HeroService`.
-  It will be hard to switch implementations for different scenarios.
-  Can we operate offline? 
-  Will we need different mocked versions under test?
-  Not easy.
+  * `AppComponent`를 `HeroService`의 특정 구현 내로 끌어들이게 됩니다. 
+  그렇게 되면 다른 시나리오를 위해 구현을 전환하는 것이 어려워질 겁니다.
+  오프라인에서 동작시킬 수 있을까요?
+  테스트 환경에서 다른 가짜 버전을 필요로 할까요?
+  쉽지 않습니다.
   
-  *What if ... what if ... Hey, we've got work to do!*
+  *그 외에... 또.. 이봐요, 할 일을 합시다!*
   
-  We get it. Really we do. 
-  But it is so ridiculously easy to avoid these problems that there is no excuse for doing it wrong.
+  이해했죠? 그렇죠?
+  그런데, 이런 문제들을 해결할 수 있는 방법은 굉장히 터무니없이 쉽습니다. 왜 문제가 되는지 이유를 들어볼 필요도 없이요.
 
-  ### Inject the *HeroService*
+  ### *HeroService*를 주입하세요
   
-  Two lines replace the one line that created with *new*:
-  1. We add a constructor that also defines a private property.
-  1. We add to the component's `providers` metadata.
+  *new*로 만들어지는 하나의 라인을 두 라인으로 대체하겠습니다:
+  1. 생성자를 만들고
+  1. 컴포넌트의 `providers` 메타데이터를 추가해줍니다
   
-  Here's the constructor:
+  다음은 생성자입니다:
 +makeExample('toh-4/ts/app/app.component.1.ts', 'ctor', 'app/app.component.ts (constructor)')
 :marked
-  The constructor itself does nothing. The parameter simultaneously 
-  defines a private `heroService` property and identifies it as a `HeroService` injection site.
+  생성자 자체에는 아무것도 없습니다. 파라메터가 private `heroService`로 정의됨과 동시에 `HeroService` 주입 지점으로써 인식됩니다.
 :marked
-  Now Angular will know to supply an instance of the `HeroService` when it creates a new `AppComponent`. 
-
+  이제 Angular는 새로운 `AppComponent`를 만들 때 `HeroService`의 인스턴스를 공급해야 한다는 것을 알 게 됩니다.
 .l-sub-section
   :marked
-    Learn more about Dependency Injection in the [Dependency Injection](../guide/dependency-injection.html) chapter.
+    [의존성 주입](../guide/dependency-injection.html) 챕터에서 의존성 주입에 관해 좀 더 알아보시기 바랍니다.
 :marked
-  The *injector* does not know yet how to create a `HeroService`. 
-  If we ran our code now, Angular would fail with an error:
+  *injector*는 아직 `HeroService`를 어떻게 생성해야 하는지 모릅니다.
+  이제 코드를 실행해보면, Angular는 다음과 같은 오류로 실패하게 될 겁니다:
 code-example(format="nocode").
     EXCEPTION: No provider for HeroService! (AppComponent -> HeroService)
 :marked
-  We have to teach the *injector* how to make a `HeroService` by registering a `HeroService` **provider**.
-  Do that by adding the following `providers` array property to the bottom of the component metadata
-  in the `@Component` call.
+  우리는 `HeroService`를 어떻게 만드는지 **provider**로 등록하여 *injector*에게 알려주어야 합니다. 
+  `@Component` 호출 내에서 컴포넌트 메타데이터 아래쪽에 다음과 같은 `providers` 배열 프로퍼티를 추가하도록 합니다.
 
 +makeExcerpt('toh-4/ts/app/app.component.1.ts', 'providers')
 :marked
-  The `providers` array  tells Angular to create a fresh instance of the `HeroService` when it creates a new `AppComponent`.
-  The `AppComponent` can use that service to get heroes and so can every child component of its component tree.
+  `providers` 배열은 Angular에게 새로운 `AppComponent`가 만들어지면 `HeroService`의 새로운 인스턴스 만들라고 알려줍니다.
+  `AppComponent`는 영웅들을 얻기 위해 그 서비스를 이용할 수 있게 됩니다. 컴포넌트 트리 내의 모든 하위 컴포넌트들도 말이죠.
 a#child-component
 :marked
-  ### *getHeroes* in the *AppComponent*
-  We've got the service in a `heroService` private variable. Let's use it.
+  ### *AppComponent*에서 *getHeroes*하기
+  우리는 `heroService`라는 private 변수를 얻었습니다. 그걸 이용해보죠.
   
-  We pause to think. We can call the service and get the data in one line.
+  잠깐만요. 서비스를 호출하여 한 줄로 데이터를 얻을 수 있잖아요.
 +makeExample('toh-4/ts/app/app.component.1.ts', 'get-heroes')(format=".")
 :marked
-  We don't really need a dedicated method to wrap one line.  We write it anyway:
-+makeExcerpt('toh-4/ts/app/app.component.1.ts', 'getHeroes')
+  그 한줄을 감싸는 헌신적인 메서드를 꼭 필요로 하지는 않습니다. 어쨋든 만들어보죠:
++makeExample('toh-4/ts/app/app.component.1.ts', 'getHeroes')(format=".")
 
 <a id="oninit"></a>
 :marked
-  ### The *ngOnInit* Lifecycle Hook
-  `AppComponent` should fetch and display heroes without a fuss.
-  Where do we call the `getHeroes` method? In a constructor? We do *not*!
+  ### *ngOnInit* 생명주기 후크
+  `AppComponent`는 장애물 없이 영웅들을 가져와 디스플레이를 해야 합니다.
+  `getHeroes` 메서드를 어디서 호출해야 할까요? 생성자일까요? 그렇게 하지 *않을거에요*!
   
-  Years of experience and bitter tears have taught us to keep complex logic out of the constructor,
-  especially anything that might call a server as a data access method is sure to do.
+  수년간의 경험과 쓰디 쓴 눈물은 우리에게 복잡한 로직은 생성자에 두지 말라고 알려줬고 특히 데이터 접근 메서드 같은 서버 호출을 하는 것은 더욱 그러했습니다.
   
-  The constructor is for simple initializations like wiring constructor parameters to properties.
-  It's not for heavy lifting. We should be able to create a component in a test and not worry that it 
-  might do real work &mdash; like calling a server!  &mdash; before we tell it to do so.
+  생성자는 생성자 파라메터를 프로퍼티와 와이어링과 같은 간단한 초기화를 위한 곳입니다.
+  버거운 코드를 위한 곳이 아닙니다.
+  테스트 시에 컴포넌트를 생성할 수 있어야 하며 실제로 그렇게 되는지 호출하기 이전에 &mdash; 서버를 호출하는 것과 같은 작업이 &mdash; 실제로 동작할지에 대해서 걱정하게 해서는 안된다.
   
-  If not the constructor, something has to call `getHeroes`.
+  생성자가 아니라면 무엇이 `getHeroes`를 호출해야 할까.
   
-  Angular will call it if we implement the Angular **ngOnInit** *Lifecycle Hook*.
-  Angular offers a number of interfaces for tapping into critical moments in the component lifecycle:
-  at creation, after each change, and at its eventual destruction.
+  Angular의 **ngOnInit** *생명주기 후크*을 구현할 경우 거기에서 호출할 수 있습니다. 
+  Angular는 컴포넌트의 생명주기 내에서 결정적인 순간을 감청하기 위해 많은 인터페이스를 제공합니다:
+  생성 단계에, 각각의 변화 이후, 그리고 마지막 소거 단계에.
   
-  Each interface has a single method. When the component implements that method, Angular calls it at the appropriate time.
+  각각의 인터페이스를 위한 단일 메서드가 있습니다. 컴포넌트가 그 메서드를 구현하면, Angular는 적절한 시기에 그것을 호출하게 됩니다.
 .l-sub-section
   :marked
-    Learn more about lifecycle hooks in the [Lifecycle Hooks](../guide/lifecycle-hooks.html) chapter.
+    [생명주기 후크](../guide/lifecycle-hooks.html)에서 생명주기 후크에 관해 좀 더 알아보시기 바랍니다.
 :marked
-  Here's the essential outline for the `OnInit` interface:
+  다음은 `OnInit` 인터페이스에 대한 기본적인 모습입니다:
 +makeExample('toh-4/ts/app/app.component.1.ts', 'on-init', 'app/app.component.ts (ngOnInit stub)')(format=".")
 :marked
-  We write an `ngOnInit` method with our initialization logic inside and leave it to Angular to call it
-  at the right time. In our case, we initialize by calling `getHeroes`.
-+makeExcerpt('toh-4/ts/app/app.component.1.ts', 'ng-on-init')
+  내부에 초기화 로직과 함께 `ngOnInit` 메서드를 작성하며 올바른 시기에 그것이 호출되도록 Angular에게 알려줍니다.
+  이 경우에는 `getHeroes`를 호출하여 초기화를 진행합니다.
++makeExample('toh-4/ts/app/app.component.1.ts', 'ng-on-init')(format=".")
 :marked
-  Our application should be running as expected, showing a list of heroes and a hero detail view
-  when we click on a hero name.
+  우리의 애플리케이션은 영웅 목록과 영웅 이름을 클릭 시 영웅 상세정보 뷰를 보여주는 등 기대한 대로 동작해야 합니다.
   
-  We're getting closer. But something isn't quite right.
+  점점 끝이 다가옵니다. 그러나 무언가 아직 좀 부족합니다.
 
   <a id="async"></a>
-  ## Async Services and !{_Promise}s
-  Our `HeroService` returns a list of mock heroes immediately. 
-  Its `getHeroes` signature is synchronous
+  ## 비동기 서비스와 !{_Promise}s
+  `HeroService`는 즉각적으로 가짜 영웅들의 목록을 반환합니다.
+  `getHeroes`의 시그니처는 동기 방식입니다.
 +makeExample('toh-4/ts/app/app.component.1.ts', 'get-heroes')(format=".")
 :marked
-  Ask for heroes and they are there in the returned result.
+  영웅 목록을 요청하게 되면 반환된 결과 내에 그에 대한 값이 존재합니다.
    
-  Someday we're going to get heroes from a remote server. We don’t call http yet, but we aspire to in later chapters.
+  어느 날, 원격 서버로부터 영웅 목록을 가져오려고 한다고 가정해보죠. 우린 아직 HTTP를 호출하지는 않고 있지만, 차후의 챕터에서는 그렇게 될 것입니다.
   
-  When we do, we'll have to wait for the server to respond and we won't be able to block the UI while we wait, 
-  even if we want to (which we shouldn't) because the browser won't block.
+  만약 그렇게 되면, 서버로부터의 응답을 기다려야 할테고 대기하는 동안 UI를 블록하지 못할 겁니다. 우리가 그렇게 하고 싶더라도 브라우저가 블록하지 않을 겁니다.
+   
+  그러기에 몇 가지 종류의 비동기 기술을 사용해야만 하고 `getHeroes` 메서드의 시그니처가 변경되어야 합니다.
   
-  We'll have to use some kind of asynchronous technique and that will change the signature of our `getHeroes` method.
+  우리는 *!{_Promise}s*를 사용할 겁니다.
   
-  We'll use *!{_Promise}s*.
-  
-  ### The Hero Service makes a !{_Promise}  
+  ### Hero Service는 한 개의 promise를 만듭니다  
 
-  A **!{_Promise}** is ... well it's a promise to call us back later when the results are ready. 
-  We ask an asynchronous service to do some work and give it a callback function. 
-  It does that work (somewhere) and eventually it calls our function with the results of the work or an error.
+  **!{_Promise}** 는 ... 음 결과가 준비됐을 때 우리를 콜백하도록 하는 약속입니다. 
+  어떤 일을 하기 위해 비동기 서비스를 요청하게 되면 콜백 함수를 마련하게 되죠. 
+  (어디선가) 그 일을 하고 난 뒤에 최종적으로 그 일의 결과 혹은 오류와 함께 함수를 호출하게 됩니다.
+
 .l-sub-section
   :marked
-    We are simplifying. Learn about ES2015 Promises [here](http://exploringjs.com/es6/ch_promises.html) and elsewhere on the web.
+    우리는 많은 부분을 생략하고 있습니다. ES2015 Promises에 대해 더 알고 싶다면 [여기](http://exploringjs.com/es6/ch_promises.html)와 웹에서 찾아보도록 하세요.
 :marked
-  Update the `HeroService` with this !{_Promise}-returning `getHeroes` method:
+  다음과 같이 `HeroService`의 `getHeroes` 메서드가 !{_Promise}를 반환하도록 만들어보세요:
 +makeExample('toh-4/ts/app/hero.service.ts', 'get-heroes', 'app/hero.service.ts (excerpt)')(format=".")
 :marked
-  We're still mocking the data. We're simulating the behavior of an ultra-fast, zero-latency server,
-  by returning an **immediately resolved !{_Promise}** with our mock heroes as the result.
+  우리는 여전히 데이터를 가짜로 다루고 있습니다. 결과로 가짜 영웅들을 사용하여 **즉각적으로 리졸브된 !{_Promise}**를 반환하여 매우 빠르고 레이턴시가 없는 서버를 시뮬레이션하고 있습니다.
   
-  ### Act on the !{_Promise}
-  Returning to the `AppComponent` and its `getHeroes` method, we see that it still looks like this:
+  ### !{_Promise}로 동작시키기
+  `AppComonent`와 `getHeroes` 메서드는 여전히 다음과 같을 겁니다:
 +makeExample('toh-4/ts/app/app.component.1.ts', 'getHeroes', 'app/app.component.ts (getHeroes - old)')(format=".")
 :marked
-  As a result of our change to `HeroService`, we're now setting `this.heroes` to a !{_Promise} rather than an array of heroes. 
+  `HeroService`의 변화로 인해 이제는 영웅들의 배열보다는 `this.heroes`를 !{_Promise}로 설정하게 됐습니다. 
   
-  We have to change our implementation to *act on the !{_Promise} when it resolves*.
-  When the !{_Promise} resolves successfully, *then* we will have heroes to display.
+  *결과가 해석되고 나면 !{_Promise} 상에서 동작*하도록 구현을 변경해야만 합니다.
+  !{_Promise}가 성공적으로 리졸브되고 *난후에* 디스플레이해야 하는 영웅 목록을 갖게 될 겁니다.
   
-  We pass our callback function as an argument to the !{_Promise}'s **then** method:
+  우리는 인자로 콜백 함수를 !{_Promise}의 **then** 메서드로 전달해야 합니다:
 +makeExample('toh-4/ts/app/app.component.ts', 'get-heroes', 'app/app.component.ts (getHeroes - revised)')(format=".")
 .l-sub-section
   :marked
-    The [ES2015 arrow function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions)
-    in the callback is more succinct than the equivalent function expression and gracefully handles *this*.
+    콜백 속의 [ES2015 애로우 함수](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions)는
+    동급의 함수 표현식보다 좀 더 간결하며 *this*를 아주 훌륭하게 잘 다룹니다.
 :marked
-  Our callback sets the component's `heroes` property to the array of heroes returned by the service. That's all there is to it!
+  우리의 콜백은 컴포넌트의 `heroes` 프로퍼티를 서비스에 의해 반환되는 영웅 배열로 설정합니다. 
+  그게 다고 모든 것입니다!
   
-  Our app should still be running, still showing a list of heroes, and still
-  responding to a name selection with a detail view.
+  앱은 여전히 영웅 목록을 보여주고 선택된 이름과 관련된 영웅의 상세정보 뷰를 보여주는 등 제대로 동작합니다.
 .l-sub-section
   :marked
-    Checkout the "[Take it slow](#slow)" appendix to see what the app might be like with a poor connection.
+    어떤 앱이 좋지 않게 연결되는지를 보여주는 "[Take it slow](#slow)" 부록을 확인해보세요.
 :marked
-  ### Review the App Structure
-  Let’s verify that we have the following structure after all of our good refactoring in this chapter:
+  ### 앱 구조 리뷰하기
+  이 챕터 내에서의 모든 리팩터링 이후의 구조가 다음과 같은지 확인하세요:
 
 .filetree
   .file angular2-tour-of-heroes
@@ -322,7 +303,7 @@ a#child-component
     .file tsconfig.json
     .file typings.json
 :marked
-  Here are the code files we discussed in this chapter.
+  다음은 우리가 이 챕터 내에서 알아보았던 코드 파일들입니다.
 
 +makeTabs(`
   toh-4/ts/app/hero.service.ts,
@@ -334,36 +315,34 @@ a#child-component
   app/mock-heroes.ts
   `)
 :marked
-  ## The Road We’ve Travelled
-  Let’s take stock of what we’ve built.
+  ## 지금까지 알아본 것들
+  우리가 빌드해 온 내용들을 점검해보죠.
 
-  * We created a service class that can be shared by many components.
-  * We used the `ngOnInit` Lifecycle Hook to get our heroes when our `AppComponent` activates.
-  * We defined our `HeroService` as a provider for our `AppComponent`.
-  * We created mock hero data and imported them into our service.
-  * We designed our service to return a !{_Promise} and our component to get our data from the !{_Promise}.
+  * 많은 컴포넌트들에 의해 공유될 수 있는 서비스 클래스를 만들었습니다
+  * `AppComponent`가 활동하기 시작할 때 영웅 목록을 가져오기 위해 `ngOnInit` 생명주기 후크를 사용했습니다
+  * `HeroService`를 `AppComponent`의 provider로 정의했습니다
+  * 가짜 영웅 데이터를 만들고 그것을 서비스 내에 임포트했습니다
+  * 서비스는 !{_Promise}를 반환하도록, 컴포넌트는 !{_Promise}로부터 데이터를 가져오도록 설계했습니다
 
-p Run the #[+liveExampleLink2('', 'toh-4')] for this part.
+p 이 파트에 대한 #[+liveExampleLink2('', 'toh-4')]를 실행해 보세요.
 :marked
-  ### The Road Ahead
-  Our Tour of Heroes has become more reusable using shared components and services.
-  We want to create a dashboard, add menu links that route between the views, and format data in a template.
-  As our app evolves, we’ll learn how to design it to make it easier to grow and maintain.
+  ### 앞으로 가야할 길
+  Tour of Heroes는 공유 컴포넌트와 서비스를 사용해 좀 더 재사용성이 높도록 만들어질 겁니다.
+  대시보드를 만들고 뷰 사이를 라우트하는 메뉴 링크를 추가하며 템플릿 내에서 데이터를 형식화하려고 합니다.
+  앱이 점점 발전함에 따라, 개발하기 쉽고 유지보수에 좋도록 설계하는 방법을 배워도록 할 겁니다.
   
-  We learn about Angular Component Router and navigation among the views in the [next tutorial](toh-pt5.html) chapter.
-  
+  [다음 튜토리얼](toh-pt5.html) 챕터에서 Angular 컴포넌트 라우터와 뷰를 돌아다니는 것에 대해 배워보도록 하겠습니다.
 .l-main-section
 <a id="slow"></a>
 :marked
-  ### Appendix: Take it slow
+  ### 부록: Take it slow
   
-  We can simulate a slow connection.
+  우리는 느린 연결을 시뮬레이션 할 수 있습니다.
   
-  Import the `Hero` symbol and add the following `getHeroesSlowly` method to the `HeroService`
+  `Hero` 심볼을 임포트한 뒤 `HeroService`에 다음의 `getHeroesSlowly` 메서드를 추가해보세요
 +makeExample('toh-4/ts/app/hero.service.ts', 'get-heroes-slowly', 'app/hero.service.ts (getHeroesSlowly)')(format=".")
 :marked
-  Like `getHeroes`, it also returns a !{_Promise}. 
-  But this !{_Promise} waits 2 seconds before resolving the !{_Promise} with mock heroes.
+  `getHeroes`처럼, 그 메서드도 !{_Promise}를 반환합니다.
+  그러나 이 !{_Promise}는 promise를 가짜 영웅 목록을 리졸브하기 이전에 2초를 대기합니다. 
   
-  Back in the `AppComponent`, replace `heroService.getHeroes` with `heroService.getHeroesSlowly`
-  and see how the app behaves.
+  `AppComponent`로 돌아가, `heroService.getHeroes`를 `heroService.getHeroesSlowly`로 대체한 뒤에 앱이 어떻게 동작하는지 지켜보세요.

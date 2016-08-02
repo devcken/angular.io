@@ -1,99 +1,100 @@
 include ../_util-fns
 
 :marked
-  Welcome to the Angular 2 Style Guide
+  Angular 2 스타일 가이드에 오신 걸 환영합니다.
 
-  ## Purpose
+  ## 목적
 
-  If you are looking for an opinionated style guide for syntax, conventions, and structuring Angular applications, then step right in.
+  문법, 관례, 그리고 구조화된 Angular 애플리케이션을 위한 완고한 스타일을 가이드를 찾고 있다면, 잘 오셨습니다.
 
-  The purpose of this style guide is to provide guidance on building Angular applications by showing the conventions we use and, more importantly, why we choose them.
+  이 스타일 가이드의 목적은 Angular 애플리케이션을 만듦에 있어 우리가 사용하고 있는 관례 그리고 더 중요한 것은 왜 우리가 그것들을 선택했는지를 보여줌으로써 가이드를 제공하기 위함입니다.
 .l-main-section
 
 :marked
-  ## Style Vocabulary
+  ## 스타일 어휘
 
-  Each guideline describes either a good or bad practice, and all have a consistent presentation.
+  각각의 가이드라인은 좋은 사례와 나쁜 사례 모두를 설명하고, 모두 일관된 표현을 사용합니다.
 
-  The wording of each guideline indicates how strong the recommendation is.
+  각 가이드라인의 어법은 아주 강한 권고를 나타냅니다.
 
 .s-rule.do
   :marked
-    **Do** is one that should always be followed.
-    _Always_ might be a bit too strong of a word.
-    Guidelines that literally should always be followed are extremely rare.
-    On the other hand, we need a really unusual case for breaking a *Do* guideline.
+    **하세요**는 항상 따라야 하는 것을 말합니다.
+    _Always_는 좀 강한 의미입니다.
+    정확히 항상 따라야 한다는 가이드라인은 극히 드묾니다.
+    반면에, *Do* 가이드라인을 깨는 실제로 예외적인 케이스를 필요로 할 겁니다.
 
 .s-rule.consider
   :marked
-    **Consider** guidelines should generally be followed.
-    If you fully understand the meaning behind the guideline and have a good reason to deviate, then do so. Please strive to be consistent.
+    **고려하세요** 가이드라인은 대개 따라야 합니다.
+    그 가이드라인 너머의 의미를 완전히 이해하고 그것을 어겨야 하는 합당한 이유가 있다면, 그래도 됩니다. 일관성을 지켜주시기 바랍니다.
 
 .s-rule.avoid
   :marked
-    **Avoid** indicates something we should almost never do. Code examples to *avoid* have an unmistakeable red header.
+    **하지마세요**는 왠만하면 해서는 안되는 것을 가르킵니다. *피하기 위한* 코드 예제는 확실히 붉은 헤더를 가지고 있을 겁니다.
 .l-main-section
 
 :marked
-  ## File Structure Conventions
+  ## 파일 구조 관례
 
-  Some code examples display a file that has one or more similarly named companion files. (e.g. hero.component.ts and hero.component.html).
-
-  The guideline will use the shortcut `hero.component.ts|html|css|spec` to represent those various files. Using this shortcut makes this guide's file structures easier to read and more terse.
+  몇 가지 코드 예제는 한 개 이상의 유사하게 이름지어진 파일들을 가진 파일을 보여줄 겁니다. (예, hero.component.ts and hero.component.html).
+  
+  가이드라인은 여러 가지 파일들을 나타내기 위해 `hero.component.ts|html|css|spec` 숏컷을 사용할 겁니다. 이런 숏컷 사용은 가이드의 파일 구조를 좀 더 읽기 쉽고 좀 더 간결하게 만들어 줄 겁니다.
 
 .l-main-section
 a(id='toc')
 
 :marked
-  ## Table of Contents
+  ## 목차
 
-    1. [Single Responsibility](#single-responsibility)
-    1. [Naming](#naming)
-    1. [Coding Conventions](#coding-conventions)
-    1. [Application Structure](#application-structure)
-    1. [Components](#components)
-    1. [Directives](#directives)
-    1. [Services](#services)
-    1. [Data Services](#data-services)
-    1. [Lifecycle Hooks](#lifecycle-hooks)
-    1. [Routing](#routing)
-    1. [Appendix](#appendix)
+    1. [단일 책임](#single-responsibility)
+    1. [네이밍](#naming)
+    1. [코딩 컨벤션](#coding-conventions)
+    1. [애플리케이션 구조](#application-structure)
+    1. [컴포넌트](#components)
+    1. [디렉티브](#directives)
+    1. [서버스](#services)
+    1. [데이터 서비스](#data-services)
+    1. [생명주기 후크](#lifecycle-hooks)
+    1. [라우팅](#routing)
+    1. [부록](#appendix)
 
 .l-main-section
 :marked
-  ## Single Responsibility
+  ## 단일 책임
 
-  We apply the [Single Responsibility Principle](https:\/\/en.wikipedia.org/wiki/Single_responsibility_principle) to all Components, Services, and other symbols we create. This helps make our app cleaner, easier to read and maintain, and more testable.
+  Angular 2에서 생성하게 될 모든 컴포넌트, 서비스 그리고 다른 심볼들 모두 [단일 의존성 원칙](https:\/\/en.wikipedia.org/wiki/Single_responsibility_principle)이 적용됩니다.
+  이것은 앱을 좀 더 깨끗하게 만들어주며, 읽거나 유지하기 쉽고 좀 더 테스트 가능하도록 만들어줍니다.
 
-  ### <a id="01-01"></a>Rule of One
-  #### <a href="#01-01">Style 01-01</a>
+  ### <a id="01-01"></a>한 가지 규칙
+  #### <a href="#01-01">스타일 01-01</a>
 .s-rule.do
   :marked
-    **Do** define one thing (e.g. service or component) per file.
+    파일 하나 당 한 가지(예, 서비스 혹은 컴포넌트)를 정의**하세요**.
 
 .s-rule.consider
   :marked
-    **Consider** limiting files to 400 lines of code.
+    파일 내 코드를 400 라인을 제한하는 것을 **고려하세요**.
 
 .s-why
   :marked
-    **Why?** One component per file makes it far easier to read, maintain, and avoid collisions with teams in source control.
+    **왜냐구요?** 파일 당 하나의 컴포넌트는 읽거나 유지보수하거나 버전 컨트롤 내에서 팀과의 충돌을 피하는데 좀 더 도움을 줍니다.
 
 .s-why
   :marked
-    **Why?** One component per file avoids hidden bugs that often arise when combining components in a file where they may share variables, create unwanted closures, or unwanted coupling with dependencies.
+    **왜냐구요?** 파일 당 하나의 컴포넌트는 컴포넌트가 혼재되어 있는 파일에서 종종 발생하는 숨겨진 버그를 피할 수 있게 해줍니다. 그런 파일 내에서는 변수가 공유된다든지, 원치 않은 클로저 혹은 원치 않은 의존성 커플링이 발생할 수 있습니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** A single component can be the default export for its file which facilitates lazy loading with the Component Router.
+    **왜냐구요?** 단일 컴포넌트는 컴포넌트 라우터를 이용한 lazy 로딩를 원활하게 해주는, 파일에 대한 기본 익스포트를 가능하게 해줍니다.
 :marked
-  The key is to make the code more reusable, easier to read, and less mistake prone.
+  요점은 코드를 좀 더 재사용 가능하고, 읽기 편하며, 발생하기 쉬운 실수를 줄여준다는데 있습니다.
 
-  The following *negative* example defines the `AppComponent`, bootstraps the app, defines the `Hero` model object, and loads heroes from the server ... all in the same file. *Don't do this*.
+  다음의 *나쁜* 예제는 `AppComponent`를 정의하고, 앱을 부트스트랩하고, `Hero` 모델 객체를 정의하며 서버로부터 영웅들을 로드합니다... 하나의 파일 내에서 이 모든 것을요. *이렇게 하지 마세요*.
 
 +makeExample('style-guide/ts/01-01/app/heroes/hero.component.avoid.ts', '', 'app/heroes/hero.component.ts')(avoid=1)
 :marked
-  Better to redistribute the component and supporting activities into their own dedicated files.
+  컴포넌트를 구분하고 각자의 파일 내에서 자신들의 역할을 하도록 하는 것이 더 좋습니다.
 
 +makeTabs(
   `style-guide/ts/01-01/main.ts,
@@ -111,154 +112,154 @@ a(id='toc')
   app/heroes/shared/mock-heroes.ts`)
 
 :marked
-  As the app grows, this rule becomes even more important.
+  앱이 커져가면서, 이 규칙은 훨씬 더 중요해질 겁니다.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="01-02"></a>Small Functions
-  #### <a href="#01-02">Style 01-02</a>
+  ### <a id="01-02"></a>작은 함수
+  #### <a href="#01-02">스타일 01-02</a>
 .s-rule.do
   :marked
-    **Do** define small functions
+    함수를 작게 정의**하세요**.
 
 .s-rule.consider
   :marked
-    **Consider** limiting to no more than 75 lines.
+    75 라인을 넘지 않도록 제한하는 것을 **고려하세요**.
 
 .s-why
   :marked
-    **Why?** Small functions are easier to test, especially when they do one thing and serve one purpose.
+    **왜냐구요?** 작은 함수가 테스트하기 쉬운데, 특히 함수가 한 가지 역할을 수행하고 한 가지 목적만을 지원하는 경우에 더욱 그렇습니다.
 
 .s-why
   :marked
-    **Why?** Small functions promote reuse.
+    **왜냐구요?** 작은 함수는 재사용을 촉진시킵니다.
 
 .s-why
   :marked
-    **Why?** Small functions are easier to read.
+    **왜냐구요?** 작은 함수는 읽기 좋습니다.
 
 .s-why
   :marked
-    **Why?** Small functions are easier to maintain.
+    **왜냐구요?** 작은 함수는 유지하기 쉽습니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Small functions help avoid hidden bugs that come with large functions that share variables with external scope, create unwanted closures, or unwanted coupling with dependencies.
+    **왜냐구요?** 작은 함수는 외부 스코프와 변수를 공유하거나, 원치 않는 클로저 혹은 원치 않는 의존성 커플링을 만들어내는 큰 함수가 가져오는 숨겨진 버그들을 피할 수 있도록 도와줍니다.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ## Naming
+  ## 네이밍
 
-  Naming conventions are hugely important to maintainability and readability. This guide recommends naming conventions for the file name and the symbol name.
+  네이밍 관례는 유지보수와 읽기를 쉽도록 만드는데 굉장히 중요한 역할을 합니다. 이 가이드는 파일 이름과 심볼 이름에 대한 네이밍 관례를 권고합니다.
 
 .l-main-section
 :marked
-  ### <a id="02-01"></a>General Naming Guidelines
-  #### <a href="#02-01">Style 02-01</a>
+  ### <a id="02-01"></a>일반적 네이밍 가이드라인
+  #### <a href="#02-01">스타일 02-01</a>
 
 .s-rule.do
   :marked
-    **Do** use consistent names for all symbols.
+    모든 심볼에 대해새 일관된 이름을 사용**하세요**.
 
 .s-rule.do
   :marked
-    **Do** follow a pattern that describes the symbol's feature then its type. The recommended pattern is `feature.type.ts`.
+    심볼의 기능을 설명한 뒤 그것의 타입을 설명하는 패턴을 따르도록 **하세요**. 추천하는 패턴은 `feature.type.ts`입니다.
 
 .s-why
   :marked
-    **Why?** Naming conventions help provide a consistent way to find content at a glance. Consistency within the project is vital. Consistency with a team is important. Consistency across a company provides tremendous efficiency.
+    **왜냐구요?** 네이밍 관례는 즉시 내용을 알아챌 수 있는 일관된 방법을 제공하는데 도움을 줍니다. 프로젝트 내 일관성은 필수적입니다. 팀 내 일관성은 중요하죠. 회사 내의 일관성은 엄청난 효과를 가져다 줍니다.
 
 .s-why
   :marked
-    **Why?** The naming conventions should simply help us find our code faster and make it easier to understand.
+    **왜냐구요?** 네이밍 관례는 코드를 좀 더 빠르게 찾고 이해하기 쉽게 만들어줍니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Names of folders and files should clearly convey their intent. For example, `app/heroes/hero-list.component.ts` may contain a component that manages a list of heroes.
+    **왜냐구요?** 폴더와 파일 이름은 그것의 의도를 분명히 전달할 수 있어야 합니다. 예를 들어, `app/heroes/hero-list.component.ts`은 아마 영웅들의 목록을 관리하는 컴포넌트를 포함하고 있을 겁니다.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="02-02"></a>Separate File Names with Dots and Dashes
-  #### <a href="#02-02">Style 02-02</a>
+  ### <a id="02-02"></a>마침표와 대시로 파일 이름 분리하기
+  #### <a href="#02-02">스타일 02-02</a
 
 .s-rule.do
   :marked
-    **Do** use dashes to separate words in the descriptive name.
+    서술적인 이름으로 단어를 분리하기 위해 대시를 사용**하세요**.
 
 .s-rule.do
   :marked
-    **Do** use dots to separate the descriptive name from the type.
+    타입과 서술적인 이름을 구분하기 위해 마침표를 사용**하세요**.
 
 .s-rule.do
   :marked
-    **Do** use consistent type names for all components following a pattern that describes the component's feature then its type. A recommended pattern is `feature.type.ts`.
+    컴포넌트의 기능 다음에 그것의 타입을 설명하는 패턴을 따르도록 모든 컴포넌트에 대해 일관된 타입 이름을 사용**하세요**. 추천하는 패턴은 `feature.type.ts`입니다.
 
 .s-rule.do
   :marked
-    **Do** use conventional type names including `.service`, `.component`, `.pipe`. 
-    Invent additional type names if you must but take care not to create too many.
+    `.service`, `.component`, `.pipe`을 포함하여 관례적인 타입 이름들을 사용**하세요**.
+    필요하다면 추가적인 타입 이름을 만들어내세요. 그러나 너무 많이 만들지 않도록 하세요.
 
 .s-why
   :marked
-    **Why?** Type names provide a consistent way to quickly identify what is in the file.
+    **왜냐구요?** 타입 이름은 파일 내에서 하는 일이 무엇인지 빠르게 인지시켜주는 일관된 방법을 제공합니다.
 
 .s-why
   :marked
-    **Why?** Make it easy to find a specific file type using an editor or IDE's fuzzy search techniques.
+    **왜냐구요?** 에디터 혹은 IDE의 불분명한 검색 기술을 사용해 특정 파일 타입을 찾는 것이 쉬워집니다.
 
 .s-why
   :marked
-    **Why?** Unabbreviated type names such as `.service` are descriptive and unambiguous.
-    Abbreviations such as `.srv`, `.svc`, and `.serv` can be confusing.
+    **왜냐구요?** `.service`와 같이 생략되지 않은 타입 이름이 서술적이고 애매모호하지 않습니다.
+    `.srv`, `.svc` 그리고 `.serv`와 같은 축약형 이름들은 혼란을 줄 수 있습니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Provides pattern matching for any automated tasks.
+    **왜냐구요?** 자동화된 태스크를 위해 패턴 매칭을 제공합니다.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="02-03"></a>Components and Directives
+  ### <a id="02-03"></a>컴포넌트와 디렉티브
   #### <a href="#02-03">Style 02-03</a>
 
 .s-rule.do
   :marked
-    **Do** use consistent names for all assets named after what they represent.
+    표현 다음에 이름지어지는 모든 애셋들에 대해 일관된 이름을 사용**하세요**.
 
 .s-rule.do
   :marked
-    **Do** use upper camel case for symbols. Match the name of the symbol to the naming of the file.
+    심볼에 대해서는 대문자 카멜 표기법을 사용**하세요**. 파일의 네이밍과 심볼의 이름을 일치시키세요.
 
 .s-rule.do
   :marked
-    **Do** append the symbol name with the suffix that it represents.
+    심볼이 나타내는 바를 접미사로 하여 이름을 확장**하세요**.
 
 .s-why
   :marked
-    **Why?** Provides a consistent way to quickly identify and reference assets.
+    **왜냐구요?** 애셋을 빠르게 인지하고 참조하기 위한 일관된 방법을 제공합니다.
 
 .s-why
   :marked
-    **Why?** Upper camel case is conventional for identifying objects that can be instantiated using a constructor.
+    **왜냐구요?** 대문자 카멜 표기법은 생성자를 사용해 초기화될 수 있는 객체를 식별하기 위한 관례입니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** The `Component` suffix is more commonly used and is more explicitly descriptive.
+    **왜냐구요?** `Component` 접두사는 좀 더 흔히 사용되며 좀 더 명시적으로 서술합니다.
 
 - var top="vertical-align:top"
 table(width="100%")
   col(width="50%")
   col(width="50%")
   tr
-    th Symbol Name
-    th File Name
+    th 심볼 이름
+    th 파일 이름
   tr(style=top)
     td
       code-example.
@@ -305,40 +306,40 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="02-04"></a>Service Names
+  ### <a id="02-04"></a>서비스 이름
   #### <a href="#02-04">Style 02-04</a>
 
 .s-rule.do
   :marked
-    **Do** use consistent names for all services named after their feature.
+    모든 서비스에 대해 기능 뒤에 일관된 이름을 사용**하세요**.
 
 .s-rule.do
   :marked
-    **Do** use upper camel case for services.
+    서비스에 대해서 대문자 카멜 표기법을 사용**하세요**.
 
 .s-rule.do
   :marked
-    **Do** suffix services with `Service` when it is not clear what they are (e.g. when they are nouns).
+    서비스의 역할이 분명치 않을 때(예. 명사일 때) `Service`를 접미사로 붙이**세요**.
 
 .s-why
   :marked
-    **Why?** Provides a consistent way to quickly identify and reference services.
+    **왜냐규요?** 서비스를 빠르게 익식하고 참조하기 위한 일관된 방법을 제공하세요.
 
 .s-why
   :marked
-    **Why?** Clear service names such as `Logger` do not require a suffix.
+    **왜냐구요?** `Logger`와 같은 명확한 서비스 이름은 접두사를 필요로 하지 않습니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Service names such as `Credit` are nouns and require a suffix and should be named with a suffix when it is not obvious if it is a service or something else.
+    **왜냐구요?** `Credit`과 같은 서비스 이름들은 명사인데, 그것이 서비스인지 아니면 다른 것인지 명확하지 않을 것 같다면 접미사를 붙여 이름지어야 합니다.
 
 - var top="vertical-align:top"
 table(width="100%")
   col(width="50%")
   col(width="50%")
   tr
-    th Symbol Name
-    th File Name
+    th 심볼 이름
+    th 파일 이름
   tr(style=top)
     td
       code-example.
@@ -369,70 +370,70 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="02-05"></a>Bootstrapping
-  #### <a href="#02-05">Style 02-05</a>
+  ### <a id="02-05"></a>부트스트래핑
+  #### <a href="#02-05">스타일 02-05</a>
 
 .s-rule.do
   :marked
-    **Do** put bootstrapping and platform logic for the app in a file named `main.ts`.
+    `main.ts`라는 파일에 앱에 대한 부트스트래핑과 플랫폼 로직을 두도록 **하세요**.
 
 .s-rule.avoid
   :marked
-    **Avoid** putting app logic in the `main.ts`. Instead consider placing it in a Component or Service.
+    `main.ts`에 앱 로직을 두지 **마세요**. 대신 컴포넌트나 서비스를 고려하세요.
 
 .s-why
   :marked
-    **Why?** Follows a consistent convention for the startup logic of an app.
+    **왜냐구요?** 앱의 스타트업 로직을 위한 일관된 관례를 따르도록 하기 위해서 입니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Follows a familiar convention from other technology platforms.
+    **왜냐구요?** 다른 기술 플랫폼과 유사한 관례를 따르도록 하기 위해서 입니다.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="02-06"></a>Directive Selectors
-  #### <a href="#02-06">Style 02-06</a>
+  ### <a id="02-06"></a>디렉티브 셀렉터
+  #### <a href="#02-06">스타일 02-06</a>
 
 .s-rule.do
   :marked
-    **Do** Use lower camel case for naming the selectors of our directives.
+    디렉티브의 셀렉터를 네이밍하는데 소문자 카멜 표기법을 사용**하세요**.
 
 .s-why
   :marked
-    **Why?** Keeps the names of the properties defined in the directives that are bound to the view consistent with the attribute names.
+    **왜냐구요?** 어트리뷰트 이름과 밀접한 뷰에 바운드된 디렉티브 내에 정의되어 있는 프로퍼티들의 이름을 유지하기 위해서입니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** The Angular 2 HTML parser is case sensitive and will recognize lower camel case.
+    **왜냐구요?** Angular 2 HTML 파서는 대소문자를 구분하며 소문자 카멜 표기법을 받아들이기 때문입니다.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="02-07"></a>Custom Prefix for Components
+  ### <a id="02-07"></a>컴포넌트에 대한 커스텀 접두사
   #### <a href="#02-07">Style 02-07</a>
 
 .s-rule.do
   :marked
-    **Do** use a custom prefix for the selector of our components. For example, the prefix `toh` represents from **T**our **o**f **H**eroes and the prefix `admin` represents an admin feature area.
+    컴포넌트의 셀렉터에 커스텀 접두사를 사용**하세요**. 예를 들어, `toh`라는 접두사는 **T**our **o**f **H**eroes을 나타내면 `admin`이라는 접두사는 어드민 기능 영역을 나타냅니다.
 
 .s-rule.do
   :marked
-    **Do** use a prefix that identifies the feature area or the app itself.
+    기능 영역 혹은 앱 그 자체를 나타내는 접두사를 사용**하세요**.
 
 .s-why
   :marked
-    **Why?** Prevents name collisions.
+    **왜냐구요?** 이름 충돌을 막기 위해서 입니다.
 
 .s-why
   :marked
-    **Why?** Makes it easier to promote and share our feature in other apps.
+    **왜냐구요?** 다른 앱에서 기능의 사용을 조성하고 공유하기 쉽도록 만들기 위해서 입니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Our Components and elements are easily identified.
+    **왜냐구요?** 컴포넌트와 요소들이 쉽게 식별되게 하기 위해서 입니다.
 
 +makeExample('style-guide/ts/02-07/app/heroes/hero.component.avoid.ts', 'example', 'app/heroes/hero.component.ts')(avoid=1)
 :marked
@@ -447,20 +448,20 @@ a(href="#toc") Back to top
 :marked
 
 :marked
-  ### <a id="02-08"></a>Custom Prefix for Directives
-  #### <a href="#02-08">Style 02-08</a>
+  ### <a id="02-08"></a>디렉티브를 위한 커스텀 접두사
+  #### <a href="#02-08">스타일 02-08</a>
 
 .s-rule.do
   :marked
-    **Do** use a custom prefix for the selector of our directives (for instance below we use the prefix `toh` from **T**our **o**f **H**eroes).
+    디렉티브의 셀렉터에 대해 커스텀 접두사를 사용**하세요**(아래 예에서 **T**our **o**f **H**eroes을 `toh` 접두사로 표현한 것처럼).
 
 .s-why
   :marked
-    **Why?** Prevents name collisions.
+    **왜냐구요?** 이름 충돌을 막기 위해서 입니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Our Directives are easily identified.
+    **왜냐구요?** 디렉티브가 쉽게 식별되게 하기 위해서 입니다.
 
 +makeExample('style-guide/ts/02-08/app/shared/validate.directive.avoid.ts', 'example', 'app/shared/validate.directive.ts')(avoid=1)
 :marked
@@ -472,24 +473,24 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="02-09"></a>Pipe Names
+  ### <a id="02-09"></a>파이프 이름
   #### <a href="#02-09">Style 02-09</a>
 
 .s-rule.do
   :marked
-    **Do** use consistent names for all pipes, named after their feature.
+    모든 파이프에 대해 기능 뒤에 일관된 이름을 사용**하세요**.
 
 .s-why.s-why-last
   :marked
-    **Why?** Provides a consistent way to quickly identify and reference pipes.
+    **왜냐구요?** 파이프를 빠르게 식별하고 참조하기 위한 일관된 방법을 제공하기 위해서 입니다.
 
 - var top="vertical-align:top"
 table(width="100%")
   col(width="50%")
   col(width="50%")
   tr
-    th Symbol Name
-    th File Name
+    th 심볼 이름
+    th 파일 이름
   tr(style=top)
     td
       code-example.
@@ -512,24 +513,24 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="02-10"></a>Unit Test File Names
+  ### <a id="02-10"></a>유닛 테스트 파일 이름
   #### <a href="#02-10">Style 02-10</a>
 
 .s-rule.do
   :marked
-    **Do** name test specification files the same as the component they test.
+    테스트 스펙 파일에 테스트하고자 하는 컴포넌트와 동일한 이름을 부여**하세요**.
 
 .s-rule.do
   :marked
-    **Do** name test specification files with a suffix of `.spec`.
+    테스트 스펙 파일에 `.spec` 접미사를 붙이**세요**.
 
 .s-why
   :marked
-      **Why?** Provides a consistent way to quickly identify tests.
+      **왜냐구요?** 테스트를 빠르게 식별하기 위한 일관된 방법을 제공하기 위해서 입니다.
 
 .s-why.s-why-last
   :marked
-      **Why?** Provides pattern matching for [karma](http://karma-runner.github.io/) or other test runners.
+      **왜냐구요?** [karma](http://karma-runner.github.io/) 혹은 다른 테스트 러너들을 위한 패턴 매칭을 제공하기 위해서 입니다.
 
 :marked
 - var top="vertical-align:top"
@@ -537,12 +538,12 @@ table(width="100%")
   col(width="50%")
   col(width="50%")
   tr
-    th Symbol Name
-    th File Name
+    th 심볼 이름
+    th 파일 이름
   tr(style=top)
     td
       :marked
-        Components
+        컴포넌트
     td
       :marked
         heroes.component.spec.ts
@@ -553,7 +554,7 @@ table(width="100%")
   tr(style=top)
     td
       :marked
-        Services
+        서비스
     td
       :marked
         logger.service.spec.ts
@@ -564,7 +565,7 @@ table(width="100%")
   tr(style=top)
     td
       :marked
-        Pipes
+        파이프
     td
       :marked
         ellipsis.pipe.spec.ts
@@ -576,20 +577,20 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="02-11"></a>End to End Test File Names
-  #### <a href="#02-11">Style 02-11</a>
+  ### <a id="02-11"></a>End to End 테스트 파일 이름
+  #### <a href="#02-11">스타일 02-11</a>
 
 .s-rule.do
   :marked
-    **Do** name end-to-end test specification files after the feature they test with a suffix of `.e2e-spec`.
+    테스트하려고 하는 기능 뒤에 `.e2e-spec` 접미사를 붙여 end-to-end 테스트 스펙 파일의 이름을 만드**세요**.
 
 .s-why
   :marked
-    **Why?** Provides a consistent way to quickly identify end-to-end tests.
+    **왜냐구요?** end-to-end 테스트를 빠르게 식별하기 위한 일관된 방법을 제공하기 위해서 입니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Provides pattern matching for test runners and build automation.
+    **왜냐구요?** 테스트 러너와 빌드 자동화에 패턴 매칭을 제공하기 위해서 입니다.
 
 :marked
 :marked
@@ -598,12 +599,12 @@ table(width="100%")
   col(width="50%")
   col(width="50%")
   tr
-    th Symbol Name
-    th File Name
+    th 심볼 이름
+    th 파일 이름
   tr(style=top)
     td
       :marked
-        End to End Tests
+        End to End 테스트
     td
       :marked
         app.e2e-spec.ts
@@ -615,26 +616,27 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ## Coding Conventions
+  ## 코딩 컨벤션
 
+  일관된 집합의 코딩, 네이밍 그리고 화이트스페이스 관례을 갖도록 합니다.
   Have consistent set of coding, naming, and whitespace conventions.
 
 .l-main-section
 :marked
-  ### <a id="03-01"></a>Classes
-  #### <a href="#03-01">Style 03-01</a>
+  ### <a id="03-01"></a>클래스
+  #### <a href="#03-01">스타일 03-01</a>
 
 .s-rule.do
   :marked
-    **Do** use upper camel case when naming classes.
+    클래스를 이름지을 때 대문자 카멜 표기법을 사용**하세요**.
 
 .s-why
   :marked
-    **Why?** Follows conventional thinking for class names.
+    **왜냐구요?** 클래스 이름에 관례적 사고를 따르기 위함입니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Classes can be instantiated and construct an instance. We often use upper camel case to indicate a constructable asset.
+    **왜냐구요?** 클래스는 초기화되어 인스턴스를 만들어 낼 수 있습니다. 인스턴스를 만들어 낼 수 있는 것들을 나타낼 때 보통 대문자 카멜 표기법을 사용하곤 합니다.
 
 +makeExample('style-guide/ts/03-01/app/shared/exception.service.avoid.ts', 'example', 'app/shared/exception.service.ts')(avoid=1)
 :marked
@@ -646,20 +648,20 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="03-02"></a>Constants
-  #### <a href="#03-02">Style 03-02</a>
+  ### <a id="03-02"></a>상수
+  #### <a href="#03-02">스타일 03-02</a>
 
 .s-rule.do
   :marked
-    **Do** use uppercase with underscores when naming constants.
+    상수를 이름지을 때 대문자 표기에 언더스코어를 함께 사용**하세요**.
 
 .s-why
   :marked
-    **Why?** Follows conventional thinking for constants.
+    **왜냐구요?** 상수에 대해 관례적 사고를 따르기 위함입니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Constants can easily be identified.
+    **왜냐구요?** 상수를 쉽게 식별해낼 수 있습니다.
 
 +makeExample('style-guide/ts/03-02/app/shared/data.service.avoid.ts', 'example', 'app/shared/data.service.ts')(avoid=1)
 :marked
@@ -671,20 +673,20 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="03-03"></a>Interfaces
-  #### <a href="#03-03">Style 03-03</a>
+  ### <a id="03-03"></a>인터페이스
+  #### <a href="#03-03">스타일 03-03</a>
 
 .s-rule.do
   :marked
-    **Do** name an interface using upper camel case.
+    대문자 카멜 표기법을 사용하여 인터페이스의 이름을 지으**세요**.
 
 .s-rule.consider
   :marked
-    **Consider** naming an interface without an `I` prefix.
+    `I` 접두사가 없는 인터페이스 이름을 **고려하세요**.
 
 .s-why.s-why-last
   :marked
-    **Why?** When we use types, we can often simply use the class as the type.
+    **왜냐구요?** 타입을 사용할 때, 클래스를 타입으로 간단히 사용할 수 있기 때문입니다.
 
 +makeExample('style-guide/ts/03-03/app/shared/hero-collector.service.avoid.ts', 'example', 'app/shared/hero-collector.service.ts')(avoid=1)
 :marked
@@ -696,28 +698,28 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="03-04"></a>Properties and Methods
-  #### <a href="#03-04">Style 03-04</a>
+  ### <a id="03-04"></a>프로퍼티와 메서드
+  #### <a href="#03-04">스타일 03-04</a>
 
 .s-rule.do
   :marked
-    **Do** use lower camel case to name properties and methods.
+    프로퍼티와 메서드 이름을 짓기 위해 소문자 카멜 표기법을 사용**하세요**.
 
 .s-rule.avoid
   :marked
-    **Avoid** prefixing private properties and methods with an underscore.
+    private 프로퍼티와 메서드에 언더스코어를 접두사로 붙이는 것을 **피하세요**.
 
 .s-why
   :marked
-    **Why?** Follows conventional thinking for properties and methods.
+    **왜냐구요?** 프로퍼티와 메서드에 대해 관례적 사고를 따르기 위함입니다.
 
 .s-why
   :marked
-    **Why?** JavaScript lacks a true private property or method.
+    **왜냐구요?** JavaScript는 실제로는 private 프로퍼티 혹은 메서드를 표현하지 못합니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** TypeScript tooling makes it easy to identify private vs public properties and methods.
+    **왜냐구요?** TypeScript의 사용이 private과 public 프로퍼티와 메서드 구분을 쉽게 해줄 겁니다.
 
 +makeExample('style-guide/ts/03-04/app/shared/toast.service.avoid.ts', 'example', 'app/shared/toast.service.ts')(avoid=1)
 :marked
@@ -730,15 +732,15 @@ a(href="#toc") Back to top
 .l-main-section
 :marked
   ### <a id="03-05"></a>Import Destructuring Spacing
-  #### <a href="#03-05">Style 03-05</a>
+  #### <a href="#03-05">스타일 03-05</a>
 
 .s-rule.do
   :marked
-    **Do** leave one whitespace character inside of the `import` statements' curly braces when destructuring.
+    임포트 구문의 중괄호 내 앞 뒤로 각각 한 개의 화이트스페이스를 두도록 **하세요**.
 
 .s-why.s-why-last
   :marked
-    **Why?** Whitespace makes it easier to read the imports.
+    **왜냐구요?** 화이트스페이스가 임포트 구문을 읽기 쉽게 만들어 줄겁니다.
 
 +makeExample('style-guide/ts/03-05/app/+heroes/shared/hero.service.avoid.ts', 'example', 'app/+heroes/shared/hero.service.ts')(avoid=1)
 :marked
@@ -750,28 +752,28 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="03-06"></a>Import Line Spacing
+  ### <a id="03-06"></a>임포트 라인 스페이싱
   #### <a href="#03-06">Style 03-06</a>
 
 .s-rule.do
   :marked
-    **Do** leave one empty line between third party imports and imports of code we created.
+    서드 파티 라이브러리 임포트와 직접 만든 코드의 임포트 사이에 빈 줄 하나를 두도록 **하세요**.
 
 .s-rule.do
   :marked
-    **Do** list import lines alphabetized by the module.
+    모듈 별로 알파벳 순서에 의해 임포트 줄을 나열**하세요**.
 
 .s-rule.do
   :marked
-    **Do** list destructured imported assets alphabetically.
+    임포트 애셋을 알파벳 순서대로 나열**하세요**.
 
 .s-why
   :marked
-    **Why?** The empty line makes it easy to read and locate imports.
+    **왜냐구요?** 빈 줄은 임포트를 읽고 위치시키기 쉽도록 만들어 줍니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Alphabetizing makes it easier to read and locate imports.
+    **왜냐구요?** 알파벳 순서대로 나열하는 것이 임포트를 읽고 위치시키기 쉽도록 만들어 줍니다.
 
 +makeExample('style-guide/ts/03-06/app/+heroes/shared/hero.service.avoid.ts', 'example', 'app/+heroes/shared/hero.service.ts')(avoid=1)
 :marked
@@ -783,141 +785,148 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ## Application Structure
+  ## 애플리케이션 구조
 
-  Have a near term view of implementation and a long term vision. Start small but keep in mind where the app is heading down the road.
+  짧은 기간의 구현 관점 그리고 긴 기간의 비전을 가지도록 하세요.
+  작게 시작하되 앱이 지향하는 바를 마음 속에 두고 계세요.
 
-  All of the app's code goes in a folder named `app`. All content is 1 feature per file. Each component, service, and pipe is in its own file. All 3rd party vendor scripts are stored in another folder and not in the `app` folder. We didn't write them and we don't want them cluttering our app. Use the naming conventions for files in this guide.
+  앱의 전체 코드는 `app`이라는 폴더 내에서 구현될 겁니다. 모든 내용은 파일 하나당 하나의 기능으로 구현될 겁니다. 각각의 컴포넌트, 서비스 그리고 파이프는 각각의 파일 내에 구현해야 합니다. 모든 서드 파티 벤더 스크립트들은 `app` 폴더가 아닌 다른 폴더에 저장되어야 합니다. 그런 서드 파티 벤더 스크립트들을 작성하지 않았으며, 그런 것들이 우리의 앱을 어지럽히는 것을 원치 않습니다. 파일들에 대해서 이 가이드 내에 있는 네이밍 컨벤션을 적용하시기 바랍니다.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
   ### <a id="04-01"></a>LIFT
-  #### <a href="#04-01">Style 04-01</a>
+  #### <a href="#04-01">스타일 04-01</a>
 
 .s-rule.do
   :marked
-    **Do** structure the app such that we can `L`ocate our code quickly, `I`dentify the code at a glance, keep the `F`lattest structure we can, and `T`ry to be DRY.
+    코드를 빠르게 위치시키고(`L`ocate), 단번에 코드를 인식하며(`I`dentify), 할 수 있는 한 가장 무난하도록(`F`lattest) 유지하고, 테스트를 시도**하세요**(`Try`).
 
 .s-rule.do
   :marked
-    **Do** define the structure to follow these four basic guidelines, listed in order of importance.
+    중요한 순서대로 나열된, 이 네 가지 기초 가이드라인을 따르기 위한 구조로 정의**하세요**.
 
 .s-why.s-why-last
   :marked
-    **Why?** LIFT Provides a consistent structure that scales well, is modular, and makes it easier to increase developer efficiency by finding code quickly. Another way to check our app structure is to ask ourselves: How quickly can we open and work in all of the related files for a feature?
+    **왜냐구요?** LIFT는 규모가 잘 조정되고, 모듈화되어 있으며, 코드를 빠르게 찾아주어 개발 효율성을 증가시키기 쉬운 일관된 구조를 제공합니다. 앱 구조를 확인하기 위한 또 다른 방법은 우리 자신에게 묻는 것입니다: 어떤 기능에 대한 연관된 모든 파일들을 얼마나 빨리 열어서 작업할 수 있을까?
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="04-02"></a>Locate
-  #### <a href="#04-02">Style 04-02</a>
+  ### <a id="04-02"></a>위치
+  #### <a href="#04-02">스타일 04-02</a>
 
 .s-rule.do
   :marked
-    **Do** make locating our code intuitive, simple and fast.
+    코드를 이해하기 쉽고, 간단하며 빠르게 위치시키**세요**.
 
 .s-why.s-why-last
   :marked
-    **Why?** We find this to be super important for a project. If we cannot find the files we need to work on quickly, we will not be able to work as efficiently as possible, and the structure will need to change. We may not know the file name or where its related files are, so putting them in the most intuitive locations and near each other saves a ton of time. A descriptive folder structure can help with this.
+    **왜냐구요?** 프로젝트에 대해서 이런 것들이 매우 중요하다는 것을 깨닫게 될 겁니다. 만약 필요로 하는 파일들을 빠르게 찾지 못한다면, 가능한한 효율적으로 일하는 것이 불가능할 것이고, 구조는 변화를 요구하게 될 겁니다.
+    파일 이름이 무엇인지, 관련된 파일이 어디 있는지를 모를 수도 있기에, 가장 알기 쉬운 곳 그리고 서로 가까운 곳에 두는 것이 굉장한 시간을 절약해줄 것입니다. 기술하는 폴더 구조는 이러한 것들을 도와줄 것입니다.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="04-03"></a>Identify
-  #### <a href="#04-03">Style 04-03</a>
+  ### <a id="04-03"></a>인식
+  #### <a href="#04-03">스타일 04-03</a>
 
 .s-rule.do
   :marked
-    **Do** name the file such that we instantly know what it contains and represents.
+    파일이 담고 있고 표현하고자 하는 것이 무엇인지를 바로 알 수 있도록 이름을 지으**세요**.
 
 .s-rule.do
   :marked
-    **Do** be descriptive with file names and keep the contents of the file to exactly one component.
+    파일 이름에 기술하고 파일의 내용이 정확히 하나의 컴포넌트가 되도록 만드**세요**.
 
 .s-rule.avoid
   :marked
-    **Avoid** files with multiple components, multiple services, or a mixture.
+    파일 내에 여러 컴포넌트, 여러 서비스 혹은 그것들을 섞어서 만들지 **마세요**.
 
 .s-why.s-why-last
   :marked
-    **Why?** We spend less time hunting and pecking for code, and become more efficient. If this means we want longer file names, then so be it.
+    **왜냐구요?** 코드를 찾아 돌아다니는데 더 적은 시간이 들고, 좀 더 효율적으로 변하게 될 겁니다. 좀 더 긴 파일이 필요한 경우를 의미한다면, 그렇게 하세요.
 
 .l-sub-section
   :marked
-    There are deviations of the 1 per file rule when we have a set of very small features that are all related to each other, as they are still easily identifiable.
+    모두 서로 관련되어 있는 아주 작은 기능 집합이 있는 경우 파일 당 한 개 규칙에는 예외가 있을 수 있습니다. 여전히 인식하기 쉽다면 말이죠.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
   ### <a id="04-04"></a>Flat
-  #### <a href="#04-04">Style 04-04</a>
+  #### <a href="#04-04">스타일 04-04</a>
 
 .s-rule.do
   :marked
-    **Do** keep a flat folder structure as long as possible.
+    가능한 길게 플랫한 폴더 구조를 유지하도록 **하세요**.
 
 .s-rule.consider
   :marked
-    **Consider** creating folders when we get to seven or more files.
+    7개 이상의 파일이 존재한다면 구분하기 위한 폴더 생성을 **고려하세요**.
 
 .s-why.s-why-last
   :marked
-    **Why?** Nobody wants to search seven levels of folders to find a file. In a folder structure there is no hard and fast number rule, but when a folder has seven to ten files, that may be time to create subfolders. We base it on our comfort level. Use a flatter structure until there is an obvious value (to help the rest of LIFT) in creating a new folder.
+    **왜냐구요?** 어느 누구도 파일을 찾기 위해 7단계의 폴더를 검색하는 것을 원치 않습니다.
+    폴더 구조 내에 명백하고 빠른 번호 매기기 규칙이 없을테지만, 폴더 내에 7개에서 10개의 파일이 존재한다면, 그것은 어쩌면 서브 폴더를 만들어야 한다는 신호일지도 모릅니다.
+    우리는 폴더 내부를 쾌적한 상태로 유지할 겁니다.
+    새로운 폴더를 만들면서 (LIFT의 남은 부분들을 위한) 명백한 값이 존재할 때까지 좀 더 평평한 구조를 사용하세요.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="04-05"></a>T-DRY (Try to be DRY)
-  #### <a href="#04-05">Style 04-05</a>
+  ### <a id="04-05"></a>T-DRY (DRY하도록 해보세요)
+  #### <a href="#04-05">스타일 04-05</a>
 
 .s-rule.do
   :marked
-    **Do** be DRY (Don't Repeat Yourself)
+    DRY(Don't Repeat Yourself)하도록 **하세요**.
 
 .s-rule.avoid
   :marked
-    **Avoid** being so DRY that we sacrifice readability.
+    가독성을 해칠 만큼 너무 DRY 하는 것을 **피하세요**.
 
 .s-why.s-why-last
   :marked
-    **Why?** Being DRY is important, but not crucial if it sacrifices the others in LIFT, which is why we call it T-DRY. We don’t want to type `hero-view.component.html` for a view because, well, it’s obviously a view. If it is not obvious or by convention, then we name it.
+    **왜냐구요?** DRY 하는 것은 중요하지만, LIFT의 다른 것들을 희생할 만큼 결정적이지는 않습니다. 그것이 우리가 T-DRY라고 부르는 이유입니다.
+    뷰를 위해 `hero-view.component.html`라고 이름 짓는 것을 원하는 아니에요. 왜냐면, 음, 그건 분명히 뷰이기 때문이죠.
+    아닌 것이 분명하거나 관례에 따른 것이라면, 그렇게 이름 지어도 됩니다.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="04-06"></a>Overall Structural Guidelines
-  #### <a href="#04-06">Style 04-06</a>
+  ### <a id="04-06"></a><a id="04-06"></a>전체적인 구조를 위한 가이드라인
+  #### <a href="#04-06"><a href="#04-06">스타일 04-06</a>
+  
+.s-rule.do
+  :marked
+    작게 시작**하세요**. 그러나 앱이 더 커지리라는 것을 염두해두세요.
 
 .s-rule.do
   :marked
-    **Do** start small but keep in mind where the app is heading down the road.
+    단기 관점의 구현과 장기간의 비전을 가지도록 **하세요**.
 
 .s-rule.do
   :marked
-    **Do** have a near term view of implementation and a long term vision.
-
-.s-rule.do
-  :marked
-    **Do** put all of the app's code in a folder named `app`.
+    앱의 모든 코드를 `app`이라는 폴더 내에 두도록 **하세요**.
 
 .s-rule.consider
   :marked
-    **Consider** creating a folder for each component including its `.ts`, `.html`, `.css` and `.spec` file.
+    `.ts`, `.html`, `.css` 그리고 `.spec` 파일을 포함하는 각각의 컴포넌트에 대해 폴더를 만드는 것을 **고려하세요**.
 
 .s-why
   :marked
-    **Why?** Helps us keep the app structure small and easy to maintain in the early stages, while being easy to evolve as the app grows.
+    **왜냐구요?** 앱이 커지면서 발달하기 쉬워짐에 따라, 초기 단계에서 앱 구조를 작고 쉽게 유지하는데 도움이 됩니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Components often have four files (e.g. `*.html`, `*.css`, `*.ts`, and `*.spec.ts`) and can clutter a folder quickly.
+    **왜냐구요?** 컴포넌트는 종종 네 개의 파일(이를테면, `*.html`, `*.css`, `*.ts`, and `*.spec.ts`)를 갖게 되기에 폴더가 빠르게 지저분해질 수 있기 때문이죠.
 
 .example-title Overall Folder and File Structure
 .filetree
@@ -953,30 +962,31 @@ a(href="#toc") Back to top
 
 .l-sub-section
   :marked
-    While we prefer our Components to be in their own dedicated folder, another option for small apps is to keep Components flat (not in a dedicated folder). This adds up to four files to the existing folder, but also reduces the folder nesting. Be consistent.
+    컴포넌트를 전용 폴더 내에 두는 것을 더 선호하게 되면서, 작은 앱을 위한 또 다른 옵션은 컴포넌트를 평평하게 유지하는 것입니다(전용 폴더 내에서가 아니라).
+    이렇게 하면 4개의 파일을 기존 폴더로 다시 올려놓게 되지만, 폴더 내재화를 줄일 수 있게 됩니다. 좀 더 밀착하게 되는 거죠.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="04-07"></a>Shared Folder
-  #### <a href="#04-07">Style 04-07</a>
+  ### <a id="04-07"></a><a id="04-07"></a>공유 폴더
+  #### <a href="#04-07"><a href="#04-07">스타일 04-07</a>
 
 .s-rule.do
   :marked
-    **Do** put all shared files within a component feature in a `shared` folder.
+    `shared` 폴더 내에 컴포넌트 기능의 모든 공유 파일들을 넣어두도록 **하세요**.
 
 .s-rule.consider
   :marked
-    **Consider** creating a folder for each component including its `.ts`, `.html`, `.css` and `.spec` file.
+    `.ts`, `.html`, `.css` 그리고 `.spec` 파일을 포함하는 각각 컴포넌트에 대한 폴더 생성을 **고려하세요**.
 
 .s-why
   :marked
-    **Why?** Separates shared files from the components within a feature.
+    **왜냐구요?** 기능 내 컴포넌트로부터 공유 파일을 분리해내고자 함입니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Makes it easier to locate shared files within a component feature.
+    **왜냐구요?** 컴포넌트 기능 내에서 공유 파일을 위치시키기 쉽게 만들기 위해서 입니다.
 
 .example-title Shared Folder
 .filetree
@@ -1019,31 +1029,31 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="04-08"></a>Folders-by-Feature Structure
-  #### <a href="#04-08">Style 04-08</a>
+  ### <a id="04-08"></a><a id="04-08"></a>기능에 의한 폴더 구조
+  #### <a href="#04-08"><a href="#04-08">스타일 04-08</a>
 
 .s-rule.do
   :marked
-    **Do** create folders named for the feature they represent.
+    표현하고자 하는 기능에 대해 이름지어진 폴더를 만드**세요**.
 
 .s-why
   :marked
-    **Why?** A developer can locate the code, identify what each file represents at a glance, the structure is as flat as it can be, and there is no repetitive nor redundant names.
+    **왜냐구요?** 개발자는 각 파일이 무엇을 나타내는지 순간적으로 인식하도록 코드를 위치시키게 되며, 구조는 할 수 있을 만큼 평평해지고, 반복이나 중독되는 이름들이 없게 됩니다.
 
 .s-why
   :marked
-    **Why?** The LIFT guidelines are all covered.
+    **왜냐구요?** LIFT 가이드라인이 모두 커버됩니다.
 
 .s-why
   :marked
-    **Why?** Helps reduce the app from becoming cluttered through organizing the content and keeping them aligned with the LIFT guidelines.
+    **왜냐구요?** 컨텐츠 구성을 통해 점점 혼란스러워지는 것을 줄여주고 LIFT 가이드라인으로 파일들의 정렬을 유지하는데 도움이 됩니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** When there are a lot of files (e.g. 10+) locating them is easier with a consistent folder structures and more difficult in flat structures.
+    **왜냐구요?** 많은 파일이 있는 경우(대략 10개 이상), 그 파일들의 위치를 잡는 것이 일관된 폴더 구조로는 더 쉬워지고 평평한 구조로는 좀 더 어려워집니다.
 
 :marked
-  Below is an example of a small app with folders per component.
+  아래는 컴포넌트 당 폴더를 가지고 있는 작은 앱의 예제입니다.
 
 .example-title Folders per Component
 .filetree
@@ -1093,24 +1103,24 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="04-09"></a>Layout Components
-  #### <a href="#04-09">Style 04-09</a>
+  ### <a id="04-09"></a><a id="04-09"></a>레이아웃 컴포넌트
+  #### <a href="#04-09"><a href="#04-09">스타일 04-09</a>
 
 .s-rule.do
   :marked
-    **Do** put components that define the overall layout in a `shared` folder.
+    전체 레이아웃을 정의하는 컴포넌트를 `shared` 폴더에 두도록 **하세요**.
 
 .s-rule.do
   :marked
-    **Do** put shared layout components in their own folder, under the `shared` folder.
+    공유된 레이아웃 컴포넌트를 `shared` 폴더 아래에 각자의 폴더에 두도록 **하세요**.
 
 .s-why
   :marked
-    **Why?** We need a place to host our layout for our app. Our navigation bar, footer, and other aspects of the app that are needed for the entire app.
+    **왜냐구요?** 앱의 레이아웃을 호스트하기 위한 공간이 필요합니다. 전체 앱에서 필요로 하는 네비게이션 바나 푸터, 그리고 앱의 다른 측면들 말이죠.
 
 .s-why.s-why-last
   :marked
-    **Why?** Organizes all layout in a consistent place re-used throughout the application.
+    **왜냐구요?** 애플리케이 어디에서나 사용되는 일관된 장소에 모든 레이아웃을 구성하게 됩니다.
 
 .example-title Folder for Layout Components
 .filetree
@@ -1143,36 +1153,36 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="04-10"></a>Create and Import Barrels
-  #### <a href="#04-10">Style 04-10</a>
+  ### <a id="04-10"></a>베럴 생성과 임포트
+  #### <a href="#04-10">스타일 04-10</a>
 
 .s-rule.consider
   :marked
-    **Consider** creating a file that imports, aggregates, and re-exports items. We call this technique a **barrel**.
+    아이템을 임포트하고 집계하며 다시 익스포트하는 파일을 만드는 것을 **고려하세요**. 우린 이런 기술을 **베럴**이라고 부릅니다.
 
 .s-rule.consider
   :marked
-    **Consider** naming this barrel file `index.ts`.
-
-.s-why
-  :marked
-    **Why?** A barrel aggregates many imports into a single import.
-
-.s-why
-  :marked
-    **Why?** A barrel reduces the number of imports a file may need.
+    이 베럴 파일의 이름을 `index.ts`라고 짓는 걸 **고려하세요**.
     
 .s-why
   :marked
-    **Why?** A barrel provides a consistent pattern to import everything exported in the barrel from a folder.
+    **왜냐구요?** 베럴은 단일 임포트 내에 많은 임포트를 모아줍니디.
+
+.s-why
+  :marked
+    **왜냐구요?** 베럴은 파일이 필요로 하는 임포트의 개수를 줄여줍니다.**왜냐구요?** 베럴은 파일이 필요로 하는 임포트의 개수를 줄여줍니다.
     
 .s-why
   :marked
-    **Why?** This is consistent with a pattern from Node, which imports the index.js|ts file from a folder.
+    **왜냐구요?** 베럴은 폴더에서 베럴 내로 익스포트된 모든 것을 임포트하기 위한 일정한 패턴을 제공하기 때문이죠.
+    
+.s-why
+  :marked
+    **왜냐구요?** 이것은 폴더 내 index.js|ts 파일을 임포트하는, 노드의 패턴과 함께 일관되기 때문입니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** A barrel shortens import statements.
+    **왜냐구요?** 베럴은 임포트 구문을 짧게 해줍니다.
 
 +makeTabs(
   `style-guide/ts/04-10/app/shared/index.ts,
@@ -1232,41 +1242,41 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="04-11"></a>Lazy Loaded Folders
-  #### <a href="#04-11">Style 04-11</a>
-  A distinct application feature or workflow may be *lazy loaded* or *loaded on demand* rather than when the application starts.
+  ### <a id="04-11"></a><a id="04-11"></a>느리게 로드되는 폴더
+  #### <a href="#04-11"><a href="#04-11">스타일 04-11</a>
+  드물지만 어떤 애플리케이션 기능 혹은 워크플로우는 애플리케이션이 시작되는 시점 보다 *느리게 로드*되거나 *필요할 때 로드*될 수도 있습니다.
 
 .s-rule.do
   :marked
-    **Do** put the contents of lazy loaded features in a *lazy loaded folder*.
-    A typical *lazy loaded folder* contains a *routing component*, its child components, and their related assets and modules.
+    느리게 로드되는 기능의 컨텐츠들을 *느리게 로드되는 폴더*내에 두도록 **하세요**.
+    전형적인 *느리게 로드되는 폴더*는 *라우팅 컴포넌트*, 그것의 하위 컴포넌트 그리고 그와 관려된 애셋과 모듈들을 포함하게 됩니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** The folder makes it easy to identify and isolate the feature content.
+    **왜냐구요?** 해당 폴더가 기능의 컨텐츠를 식별하고 구분하기 쉽도록 해줍니다.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="04-12"></a>Prefix Lazy Loaded Folders with +
-  #### <a href="#04-12">Style 04-12</a>
+  ### <a id="04-12"></a>느리게 로드되는 폴더에 +를 접두사로 붙이기
+  #### <a href="#04-12">스타일 04-12</a>
 
 .s-rule.do
   :marked
-    **Do** prefix the name of a *lazy loaded folder* with a (+) e.g., `+dashboard/`.
+    *느리게 로드되는 폴더*의 이름에 (+)를 접두사로 붙이**세요**. 예를 들자면, `+dashboard/`
 
 .s-why
   :marked
-    **Why?** Lazy loaded code paths are easily identifiable by their `+` prefix.
+    **왜냐구요?** 느리게 로드되는 코드 경로를 `+` 접두사로 쉽게 인식 가능합니다.
 
 .s-why
   :marked
-    **Why?** Lazy loaded code paths are easily distinguishable from non lazy loaded paths.
+    **왜냐구요?** 느리게 로드되는 코드 경로를 느리게 로드되지 않는 경로와 쉽게 구분할 수 있습니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** If we see an `import` path that contains a `+`, we can quickly refactor to use lazy loading.
+    **왜냐구요?** `+`을 포함하는 `import` 경로를 보게 된다면, 느린 로딩을 사용하도록 빠르게 리팩토링할 수 있습니다.
 
 .example-title Lazy Loaded Folders
 .filetree
@@ -1302,16 +1312,16 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="04-14"></a>Lazy Loaded Folders May Import From a Parent
-  #### <a href="#04-14">Style 04-14</a>
+  ### <a id="04-14"></a>느리게 로드되는 폴더를 상위 모듈에서 임포트할 수도 있습니다.
+  #### <a href="#04-14">스타일 04-14</a>
 
 .s-rule.do
   :marked
-    **Do** allow lazy loaded modules to import a module from a parent folder.
+    상위 폴더로부터 느리게 로드된 모듈을 임포트하도록 허용**하세요**.
 
 .s-why.s-why-last
   :marked
-    **Why?** A parent module has already been loaded by the time the lazy loaded module imports it.
+    **왜냐구요?** 상위 모듈은 느리게 로드된 모듈이 그것을 임포트한 시점에 이미 로드되어 있습니다.
 
 +makeExample('style-guide/ts/04-14/app/+heroes/heroes.component.ts', 'example', 'app/+heroes/heroes.component.ts')
 :marked
@@ -1320,33 +1330,33 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="04-15"></a>Use Component Router to Lazy Load
-  #### <a href="#04-15">Style 04-15</a>
+  ### <a id="04-15"></a>느린 로드를 위해 컴포넌트 라우터를 사용하세요
+  #### <a href="#04-15">스타일 04-15</a>
 
 .s-rule.do
   :marked
-    **Do** use the Component Router to lazy load routable features.
+    라우팅 가능한 기능을 느리게 로드하기 위해 컴포넌트 라우터를 사용**하세요**.
 
 .s-why.s-why-last
   :marked
-    **Why?** That's the easiest way to load a module on demand.
+    **왜냐구요?** 이것은 요구에 따라 모듈을 로드하기 위한 가장 쉬운 방법입니다.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ## Components
+  ## 컴포넌트
 
-  ### <a id="05-02"></a>Components Selector Naming
-  #### <a href="#05-02">Style 05-02</a>
+  ### <a id="05-02"></a>컴포넌트 셀렉터 네이밍
+  #### <a href="#05-02">스타일 05-02</a>
 
 .s-rule.do
   :marked
-    **Do** use `kebab-case` for naming the element selectors of our components.
+    컴포넌트의 요소 셀렉터의 네이밍을 위해 `kebab-case` 사용**하세요**.
 
 .s-why.s-why-last
   :marked
-    **Why?** Keeps the element names consistent with the specification for [Custom Elements](https://www.w3.org/TR/custom-elements/).
+    **왜냐구요?** [Custom Elements](https://www.w3.org/TR/custom-elements/)에 대한 스펙으로 요소 이름을 일관되게 유지할 수 있습니다.
 
 +makeExample('style-guide/ts/05-02/app/heroes/shared/hero-button/hero-button.component.avoid.ts', 'example', 'app/heroes/shared/hero-button/hero-button.component.ts')(avoid=1)
 :marked
@@ -1363,24 +1373,25 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="05-03"></a>Components as Elements
-  #### <a href="#05-03">Style 05-03</a>
+  ### <a id="05-03"></a>요소로써의 컴포넌트
+  #### <a href="#05-03">스타일 05-03</a>
 
 .s-rule.do
   :marked
-    **Do** define Components as elements via the selector.
+    셀렉터를 통해 컴포넌트를 요소로써 정의**하세요**.
 
 .s-why
   :marked
-    **Why?** Components have templates containing HTML and optional Angular template syntax. They are most associated with putting content on a page, and thus are more closely aligned with elements.
+    **왜냐구요?** 컴포넌트는 HTML과 부가적인 Angular 템플릿 문법을 포함하는 템플릿을 가지고 있습니다.
+    템플릿은 페이지 상에 컨텐츠를 디스플레이하는 것과 밀접한 관련이 있으며, 그렇기에 요소들과 더 긴밀히 연계되어 있습니다.
 
 .s-why
   :marked
-    **Why?** Components are derived from Directives, and thus their selectors can be elements, attributes, or other selectors. Defining the selector as an element provides consistency for components that represent content with a template.
+    **왜냐구요?** 컴포넌트는 디렉티브로부터 파생되었는데, 그렇기에 셀렉터는 요소, 어트리뷰트 혹은 다른 셀렉터가 될 수도 있습니다. 셀렉터를 요소로 정의하는 것은 템플릿으로 컨텐츠를 표현하는 컴포넌트에 일관성을 제공합니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** It is easier to recognize that a symbol is a component vs a directive by looking at the template's html.
+    **왜냐구요?** 템플릿의 HTML을 살펴봐서 심볼이 컴포넌트인지 디렉티브인지를 인식하는 것이 쉬워집니다.
 
 +makeExample('style-guide/ts/05-03/app/heroes/shared/hero-button/hero-button.component.avoid.ts', 'example', 'app/heroes/hero-button/hero-button.component.ts')(avoid=1)
 :marked
@@ -1400,28 +1411,28 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="05-04"></a>Extract Template and Styles to Their Own Files
-  #### <a href="#05-04">Style 05-04</a>
+  ### <a id="05-04"></a>템플릿과 스타일의 각자의 파일에 두기
+  #### <a href="#05-04">스타일 05-04</a>
 
 .s-rule.do
   :marked
-    **Do** extract templates and styles into a separate file, when more than 3 lines.
+    3줄이 넘어간다면, 템플릿과 스타일을 분리된 파일에 두**세요**.
 
 .s-rule.do
   :marked
-    **Do** name the template file `[component-name].component.html`, where [component-name] is our component name.
+    [component-name]이 컴포넌트 이름이라면, 템플릿 파일 이름을 `[component-name].component.html`으로 지으**세요**.
 
 .s-rule.do
   :marked
-    **Do** name the style file `[component-name].component.css`, where [component-name] is our component name.
+    [component-name]이 컴포넌트 이름이라면, 스타일 파일 이름을 `[component-name].component.css`으로 지으**세요**.
 
 .s-why
   :marked
-    **Why?** Syntax hints for inline templates in (*.js and *.ts) code files are not supported by some editors.
+    **왜냐구요?** 코드 파일(*.js와 *.ts) 내에서 인라인 템플릿을 위한 문법 힌트가 어떤 에디터에서는 제공되지 않습니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** A component file's logic is easier to read when not mixed with inline template and styles.
+    **왜냐구요?** 컴포넌트 파일의 로직은 인라인 템플릿과 스타일이 석여있지 않을 때 읽기 쉽습니다.
 
 +makeExample('style-guide/ts/05-04/app/heroes/heroes.component.avoid.ts', 'example', 'app/heroes/heroes.component.ts')(avoid=1)
 :marked
@@ -1440,32 +1451,34 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="05-12"></a>Decorate Input and Output Properties Inline
-  #### <a href="#05-12">Style 05-12</a>
+  ### <a id="05-12"></a>입력과 출력 프로퍼티를 인라인으로 데코레이트하기
+  #### <a href="#05-12">스타일 05-12</a>
 
 .s-rule.do
   :marked
-    **Do** use [`@Input`](https://angular.io/docs/ts/latest/api/core/Input-var.html) and [`@Output`](https://angular.io/docs/ts/latest/api/core/Output-var.html) instead of the `inputs` and `outputs` properties of the [`@Directive`](https://angular.io/docs/ts/latest/api/core/Directive-decorator.html) and [`@Component`](https://angular.io/docs/ts/latest/api/core/Component-decorator.html) decorators:
+    [`@Directive`](https://angular.io/docs/ts/latest/api/core/Directive-decorator.html)와 [`@Component`](https://angular.io/docs/ts/latest/api/core/Component-decorator.html) 데코레이터의 `inputs`과 `outputs` 프로퍼티 대신에
+    [`@Input`](https://angular.io/docs/ts/latest/api/core/Input-var.html)과 [`@Output`](https://angular.io/docs/ts/latest/api/core/Output-var.html)을 사용**하세요**:
 
 .s-rule.do
   :marked
-    **Do** place the `@Input()` or `@Output()` on the same line as the property they decorate.
+    데코레이트하는 프로퍼티와 같은 줄에 `@Input()`나 `@Output()`를 두도록 **하세요**.
 
 .s-why
   :marked
-    **Why?** It is easier and more readable to identify which properties in a class are inputs or outputs.
+    **왜냐구요?** 클래스 내 어떤 프로퍼티가 입력인지 출력인지를 식별하는게 쉬워지고 가독성도 좋아집니다.
 
 .s-why
   :marked
-    **Why?** If we ever need to rename the property or event name associated to [`@Input`](https://angular.io/docs/ts/latest/api/core/Input-var.html) or [`@Output`](https://angular.io/docs/ts/latest/api/core/Output-var.html) we can modify it on a single place.
+    **왜냐구요?** [`@Input`](https://angular.io/docs/ts/latest/api/core/Input-var.html) 혹은 [`@Output`](https://angular.io/docs/ts/latest/api/core/Output-var.html)와 연계된
+    프로퍼티 혹은 이벤트 이름을 바꿔야 할 때가 온다면, 한군데서 그것을 수정할 수 있게 됩니다.
 
 .s-why
   :marked
-    **Why?** The metadata declaration attached to the directive is shorter and thus more readable.
+    **왜냐구요?** 디렉티브에 붙어있는 메타데이터 선언이 더 짧아져서 가독성이 좀 더 좋아집니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Placing the decorator on the same line makes for shorter code and still easily identifies the property as an input or output.
+    **왜냐구요?** 같은 줄에 데코레이터를 두는 것은 코드를 더 짧게 만들어주며, 프로퍼티가 입력인지 출력인지를 좀 더 쉽게 인식할 수 있도록 해줍니다.
 
 +makeExample('style-guide/ts/05-12/app/heroes/shared/hero-button/hero-button.component.avoid.ts', 'example', 'app/heroes/shared/hero-button/hero-button.component.ts')(avoid=1)
 :marked
@@ -1477,16 +1490,16 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="05-13"></a>Avoid Renaming Inputs and Outputs
-  #### <a href="#05-13">Style 05-13</a>
+  ### <a id="05-13"></a>입력과 출력의 이름을 다시 짓지 않도록 하기
+  #### <a href="#05-13">스타일 05-13</a>
 
 .s-rule.avoid
   :marked
-    **Avoid** renaming inputs and outputs, when possible.
+    가능하다면, 입력과 출력의 이름을 다시 짓는 것을 **피하세요**.
 
 .s-why.s-why-last
   :marked
-    **Why?** May lead to confusion when the output or the input properties of a given directive are named a given way but exported differently as a public API.
+    **왜냐구요?** 주어진 디렉티브의 출력 혹은 입력 프로퍼티가 주어진 방법으로 이름지어졌으나 공개 API와 다르게 익스포트되는 경우 혼란을 초래할지도 모릅니다.
 
 +makeExample('style-guide/ts/05-13/app/heroes/shared/hero-button/hero-button.component.avoid.ts', 'example', 'app/heroes/shared/hero-button/hero-button.component.ts')(avoid=1)
 :marked
@@ -1506,20 +1519,20 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="05-14"></a>Member Sequence
-  #### <a href="#05-14">Style 05-14</a>
+  ### <a id="05-14"></a>멤버 시퀀스
+  #### <a href="#05-14">스타일 05-14</a>
 
 .s-rule.do
   :marked
-    **Do** place properties up top followed by methods.
+    프로퍼티를 위에 두고 메서드를 아래에 두도록 **하세요**.
 
 .s-rule.do
   :marked
-    **Do** place private members after public members, alphabetized.
+    알파벳 순서대로, public 멤버 다음에 private 멤버를 두도록 **하세요**.
 
 .s-why.s-why-last
   :marked
-    **Why?** Placing members in a consistent sequence makes it easy to read and helps we instantly identify which members of the component serve which purpose.
+    **왜냐구요?** 일정한 순서에 맞춰 멤버를 두는 것이 읽기 편하고 컴포넌트 내 멤버가 어떤 목적을 위해 있는 것인지 즉각적으로 인식하는데 도움을 줍니다.
 
 +makeExample('style-guide/ts/05-14/app/shared/toast/toast.component.avoid.ts', 'example', 'app/shared/toast/toast.component.ts')(avoid=1)
 :marked
@@ -1531,32 +1544,32 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="05-15"></a>Put Logic in Services
-  #### <a href="#05-14">Style 05-15</a>
+  ### <a id="05-15"></a>서비스 내에 로직 두기
+  #### <a href="#05-14">스타일 05-15</a>
 
 .s-rule.do
   :marked
-    **Do** limit logic in a component to only that required for the view. All other logic should be delegated to services.
+    뷰에서 요구하는 것 외에 컴포넌트 내 로직을 두는 것을 제한**하세요**. 다른 모든 로직들은 서비스에게 위임해야 합니다.
 
 .s-rule.do
   :marked
-    **Do** move reusable logic to services and keep components simple and focused on their intended purpose.
+    재사용 가능한 로직들은 서비스로 옮기고 컴포넌트는 간단하고 원래의 목적에 집중하도록 유지**하세요**.
 
 .s-why
   :marked
-    **Why?** Logic may be reused by multiple components when placed within a service and exposed via a function.
+    **왜냐구요?** 로직은 서비스 내에 위치하고 함수를 통해 공개되어야 여러 컴포넌트에 의해 재사용될 수도 있습니다.
 
 .s-why
   :marked
-    **Why?** Logic in a service can more easily be isolated in a unit test, while the calling logic in the component can be easily mocked.
+    **왜냐구요?** 서비스 내 로직은 컴포넌트 내에서 호출되는 로직이 쉽게 mock될 수 있기에 유닛 테스트와 좀 더 쉽게 분리될 수 있습니다.
 
 .s-why
   :marked
-    **Why?** Removes dependencies and hides implementation details from the component.
+    **왜냐구요?** 의존성이 제거되고 컴포넌트로부터 구현의 세부사항을 숨길 수 있습니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Keeps the component slim, trim, and focused.
+    **왜냐구요?** 컴포넌트를 슬림하고 쓸모없는 부분이 없으며 눈에 익숙해지도록 유지할 수 있습니다.
 
 +makeExample('style-guide/ts/05-15/app/heroes/hero-list/hero-list.component.avoid.ts', '', 'app/heroes/hero-list/hero-list.component.ts')(avoid=1)
 :marked
@@ -1568,24 +1581,25 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="05-16"></a>Don't Prefix Output Properties
-  #### <a href="#05-16">Style 05-16</a>
+  ### <a id="05-16"></a>출력 프로퍼티에 접두사를 붙이지 않기
+  #### <a href="#05-16">스타일 05-16</a>
 
 .s-rule.do
   :marked
-    **Do** name events without the prefix `on`.
+    `on` 접두사를 붙이지 않고 이벤트 이름을 만드**세요**.
 
 .s-rule.do
   :marked
-    **Do** name our event handler methods with the prefix `on` followed by the event name.
+    이벤트 핸들러 메서드의 이름을 이벤트 이름에 접두사 `on`을 붙여 만드**세요**.
 
 .s-why
   :marked
-    **Why?** This is consistent with built-in events such as button clicks.
+    **왜냐구요?** 이것은 버튼 클릭과 같은 빌트인 이벤트와 일관성을 유지시켜줍니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Angular allows for an [alternative syntax](https://angular.io/docs/ts/latest/guide/template-syntax.html#!#binding-syntax) `on-*`. If the event itself was prefixed with `on` this would result in an `on-onEvent` binding expression.
+    **왜냐구요?** Angular는 [대체 문법](https://angular.io/docs/ts/latest/guide/template-syntax.html#!#binding-syntax)에 대해 `on-*`을 허용합니다.
+    이벤트 자체가 `on`으로 접두사 처리되어 있었다면, 이로 인해 `on-onEvent` 바인딩 표현식의 결과를 낳게 될 것입니다.
 
 +makeExample('style-guide/ts/05-16/app/heroes/hero.component.avoid.ts', 'example', 'app/heroes/hero.component.ts')(avoid=1)
 :marked
@@ -1605,20 +1619,20 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="05-17"></a>Put Presentation Logic in the Component Class
-  #### <a href="#05-17">Style 05-17</a>
+  ### <a id="05-17"></a>컴포넌트 클래스에 프레렌테이션 로직 두기
+  #### <a href="#05-17">스타일 05-17</a>
 
 .s-rule.do
   :marked
-    **Do** put presentation logic in the Component class, and not in the template.
+    프로젠테이션 로직을 템플릿이 아닌 컴포넌트 내에 두도록 **하세요**.
 
 .s-why
   :marked
-    **Why?** Logic will be contained in one place (the Component class) instead of being spread in two places.
+    **왜냐구요?** 두 군데 흩어지지 않고 한 군데(컴포넌트 클래스)로 로직이 모아질 겁니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Keeping the component's presentation logic in the class instead of the template improves testability, maintainability, and reusability.
+    **왜냐구요?** 컴포넌트의 프레젠테이션 로직을 템플릿 대신 클래스 내에 유지하는 것은 테스트 가능성, 유지보수성, 그리고 재사용성을 높여줍니다.
 
 +makeExample('style-guide/ts/05-17/app/heroes/hero-list/hero-list.component.avoid.ts', 'example', 'app/heroes/hero-list/hero-list.component.ts')(avoid=1)
 :marked
@@ -1630,26 +1644,26 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ## Directives
+  ## 디렉티브
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="06-01"></a>Use Directives to Enhance an Existing Element
-  #### <a href="#06-01">Style 06-01</a>
+  ### <a id="06-01"></a>기존 요소를 향상시키기 위해 디렉티브 사용하기
+  #### <a href="#06-01">스타일 06-01</a>
 
 .s-rule.do
   :marked
-    **Do** use attribute directives when you have presentation logic without a template.
+    템플릿 없이 프레젠테이션 로직을 가지고 있을 경우 어트리뷰트 디렉티브를 사용**하세요**.
 
 .s-why
   :marked
-    **Why?** Attributes directives don't have an associated template.
+    **왜냐구요?** 어트리뷰트 디렉티브는 연계된 템플릿을 가지고 있지 않습니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** An element may have more than one attribute directive applied.
+    **왜냐구요?** 요소는 한 개 이상의 적용된 어트리뷰트 디렉티브를 가지고 있을 수도 있습니다.
 
 +makeExample('style-guide/ts/06-01/app/shared/highlight.directive.ts', 'example', 'app/shared/highlight.directive.ts')
 :marked
@@ -1661,20 +1675,21 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="06-03"></a>Use HostListener and HostBinding Class Decorators
-  #### <a href="#06-03">Style 06-03</a>
+  ### <a id="06-03"></a>HostListener와 HostBinding 클래스 데코레이터 사용하기
+  #### <a href="#06-03">스타일 06-03</a>
 
 .s-rule.do
   :marked
-    **Do** use @HostListener and @HostBinding instead of the host property of the @Directive and @Component decorators:
+    @Directive와 @Component 데코레이터의 host 프로퍼티 대신에 @HostListener와 @HostBinding을 사용**하세요**:
 
 .s-why
   :marked
-    **Why?** The property or method name associated with @HostBinding or respectively @HostListener should be modified only in a single place - in the directive's class. In contrast if we use host we need to modify both the property declaration inside the controller, and the metadata associated to the directive.
+    **왜냐구요?** @HostBinding 혹은 @HostListener 각각에 연계된 프로퍼티 혹은 메서드 이름은 오로지 한 군데(디렉티브 클래스 내)에서만 수정하면 됩니다.
+    이에 반해 host를 사용한다면 컨트롤러 내부의 프로퍼티 선언과 디렉티브와 연계된 메타데이터 양쪽 모두 수정해야 합니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** The metadata declaration attached to the directive is shorter and thus more readable.
+    **왜냐구요?** 디렉티브에 붙은 메타데이터 선언이 좀 더 짧아지며 그래서 가독성이 좋아집니다.
 
 +makeExample('style-guide/ts/06-03/app/shared/validator.directive.avoid.ts', 'example', 'app/shared/validator.directive.ts')(avoid=1)
 :marked
@@ -1686,22 +1701,22 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ## Services
+  ## 서비스
 
-  ### <a id="07-01"></a>Services are Singletons in Same Injector
-  #### <a href="#07-01">Style 07-01</a>
+  ### <a id="07-01"></a>서비스는 동일한 주입자 내에서 싱글턴입니다
+  #### <a href="#07-01">스타일 07-01</a>
 
 .s-rule.do
   :marked
-    **Do** use services as singletons within the same injector. Use them for sharing data and functionality.
+    동일한 주입자 내에서 서비스를 싱글턴으로 사용**하세요**. 데이터 공유와 기능성을 위해 그렇게 사용하시기 바랍니다.
 
 .s-why
   :marked
-    **Why?** Services are ideal for sharing methods across a feature area or an app.
+    **왜냐구요?** 서비스는 기능 구역 혹은 앱에 걸쳐 메서드를 공유하는데 이상적입니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Services are ideal for sharing stateful in-memory data.
+    **왜냐구요?** 서비스는 상태가 있는 인메모리 데이터 공유에 있어 이상적입니다.
 
 +makeExample('style-guide/ts/07-01/app/heroes/shared/hero.service.ts', 'example', 'app/heroes/shared/hero.service.ts')
 :marked
@@ -1710,51 +1725,51 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="07-02"></a>Single Responsibility
-  #### <a href="#07-02">Style 07-02</a>
+  ### <a id="07-02"></a>단일 책임
+  #### <a href="#07-02">스타일 07-02</a>
 
 .s-rule.do
   :marked
-    **Do** create services with a single responsibility that is encapsulated by its context.
+    컨텍스트에 의해 캡슐화된 단일 책임으로 서비스를 생성**하세요**.
 
 .s-rule.do
   :marked
-    **Do** create a new service once the service begins to exceed that singular purpose.
+    서비스가 그것의 단일 목적을 벗어나기 시작하면 새로운 서비스를 만드**세요**.
 
 .s-why
   :marked
-    **Why?** When a service has multiple responsibilities, it becomes difficult to test.
+    **왜냐구요?** 서비스가 여러 책임을 가진다면, 테스트하기 어려우집니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** When a service has multiple responsibilities, every Component or Service that injects it now carries the weight of them all.
+    **왜냐구요?** 서비스가 여러 책임을 가진다면, 그것을 주입하는 모든 컴포넌트 혹은 서비스들은 그때부터 사용하지도 않는 그 모든 것을 받게 됩니다.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="07-03"></a>Providing a Service
-  #### <a href="#07-03">Style 07-03</a>
+  ### <a id="07-03"></a>서비스 제공하기
+  #### <a href="#07-03">스타일 07-03</a>
 
 .s-rule.do
   :marked
-    **Do** provide services to the Angular 2 injector at the top-most component where they will be shared.
+    서비스가 공유되게 될 최상위 접점 컴포넌트에서 Angular 2 주입자에 서비스를 제공**하세요**.
 
 .s-why
   :marked
-    **Why?** The Angular 2 injector is hierarchical.
+    **왜냐구요?** Angular 2의 주입자는 계층적입니다.
 
 .s-why
   :marked
-    **Why?** When providing the service to a top level component, that instance is shared and available to all child components of that top level component.
+    **왜냐구요?** 서비스가 최상위 계층의 컴포넌트에서 제공되게 되면, 해당 인스턴트는 최상위 계층 컴포넌트의 모든 하위 컴포넌트에 공유되며 사용 가능해집니다.
 
 .s-why
   :marked
-    **Why?** This is ideal when a service is sharing methods or state.
+    **왜냐구요?** 서비스가 메서드 혹은 상태를 공유하고 있는 경우 이상적입니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** This is not ideal when two different components need different instances of a service. In this scenario it would be better to provide the service at the component level that needs the new and separate instance.
+    **왜냐구요?** 서로 다른 두 개의 컴포넌트가 서비스의 다른 인스턴스를 필요로 하는 경우에는 이상적이지 않습니다. 이 시나리오 상에서는 새로운 구분된 인스턴스를 필요로 하는 컴포넌트 계층에 서비스를 제공하는 것이 더 좋습니다.
 
 +makeTabs(
   `style-guide/ts/07-03/app/app.component.ts,
@@ -1768,20 +1783,20 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="07-04"></a>Use the @Injectable() Class Decorator
-  #### <a href="#07-04">Style 07-04</a>
+  ### <a id="07-04"></a>@Injectable() 클래스 데코레이터를 사용하세요
+  #### <a href="#07-04">스타일 07-04</a>
 
 .s-rule.do
   :marked
-    **Do** use the `@Injectable` class decorator instead of the `@Inject` parameter decorator when using types as tokens for the dependencies of a service.
+    서비스의 의존성을 위해 타입을 토큰으로 사용 중일 때 `@Inject` 파라메터 데코레이터 대신에 `@Injectable` 클래스 데코레이터를 사용**하세요**.
 
 .s-why
   :marked
-    **Why?** The Angular DI mechanism resolves all the dependencies of our services based on their types declared with the services' constructors.
+    **왜냐구요?** Angular DI 메카니즘은 서비스의 생성자로 선언된 타입들에 기반하여 서비스의 모든 의존성들을 분석합니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** When a service accepts only dependencies associated with type tokens, the `@Injectable()` syntax is much less verbose compared to using `@Inject()` on each individual constructor parameter.
+    **왜냐구요?** 서비스가 타입 토큰과 연계된 의존성만을 받아들이는 경우, `@Injectable()` 문법은 각각의 생성자 파라메터에 개별적으로 `@Inject()`을 사용하는 것과 비교하여 코드가 간단합니다.
 
 +makeExample('style-guide/ts/07-04/app/heroes/shared/hero-arena.service.avoid.ts', 'example', 'app/heroes/shared/hero-arena.service.ts')(avoid=1)
 :marked
@@ -1793,54 +1808,57 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ## Data Services
+  ## 데이터 서비스
 
-  ### <a id="08-01"></a>Separate Data Calls
-  #### <a href="#08-01">Style 08-01</a>
-
-.s-rule.do
-  :marked
-    **Do** refactor logic for making data operations and interacting with data to a service.
+  ### <a id="08-01"></a>데이터 호출 분리
+  #### <a href="#08-01">스타일 08-01</a>
 
 .s-rule.do
   :marked
-    **Do** make data services responsible for XHR calls, local storage, stashing in memory, or any other data operations.
+    데이터 오퍼레이션을 만들고 데이터로 서비스와 상호작용하기 위한 로직을 리팩토링**하세요**.
+
+.s-rule.do
+  :marked
+    데이터 서비스로 하여금 XHR 호출, 로컬 스토리지, 메모리 내 보관 혹은 기타 데이터 오퍼레이션 등에 대해 책임지도록 만드**세요**.
 
 .s-why
   :marked
-    **Why?** The component's responsibility is for the presentation and gathering of information for the view. It should not care how it gets the data, just that it knows who to ask for it. Separating the data services moves the logic on how to get it to the data service, and lets the component be simpler and more focused on the view.
+    **왜냐구요?** 컴포넌트의 책임은 뷰에 대한 정보 프레젠이션과 수집입니다. 데이터를 어떻게 가져오는지에 대해서는 신경쓸 필요가 없고 단지 누구에게 요청해야 하는지를 알면 될 뿐입니다.
+    데이터 서비스 분리는 데이터를 어떻게 가져올지에 대한 로직을 데이터 서비스로 옮겨주고 컴포넌트를 좀 더 간단하고 뷰에 집중할 수 있도록 도와줍니다.
 
 .s-why
   :marked
-    **Why?** This makes it easier to test (mock or real) the data calls when testing a component that uses a data service.
+    **왜냐구요?** 데이터 서비스를 사용하는 컴포넌트를 테스트하는 중에 데이터 호출을 테스트(가짜든 진짜든)하기 쉽게 만들어 줍니다.
 
 .s-why.s-why-last
   :marked
-    **Why?** Data service implementation may have very specific code to handle the data repository. This may include headers, how to talk to the data, or other services such as `Http`. Separating the logic into a data service encapsulates this logic in a single place hiding the implementation from the outside consumers (perhaps a component), also making it easier to change the implementation.
+    **왜냐구요?** 데이터 서비스 구현은 데이터 저장소를 다루기 위한 매우 특성화된 코드를 가지고 있을지도 모릅니다.
+    데이터를 요청하는 방법인 헤더 혹은 `Http`와 같은 다른 서비스를 포함하고 있을 수도 있습니다.
+    데이터 서비스 내로 로직을 분리하는 것은 외부의 컨슈머(아마도 컴포넌트가 되겠죠)로부터 구현을 숨기도록 하나의 장소에 해당 로직들을 캡슐화할 뿐만 아니라 구현을 변경하기 쉽도록 만들어 줍니다.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ## Lifecycle Hooks
+  ## 생명주기 후크
 
-  Use Lifecycle Hooks to tap into important events exposed by Angular.
+  Angular에 의해 제공되는 중요한 이벤트를 이용하기 위해 생명주기 후크를 사용하세요.
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="09-01"></a>Implement Lifecycle Hooks Interfaces
-  #### <a href="#09-01">Style 09-01</a>
+  ### <a id="09-01"></a>생명주기 후크 인터페이스를 구현하세요
+  #### <a href="#09-01">스타일 09-01</a>
 
 .s-rule.do
   :marked
-    **Do** implement the lifecycle hook interfaces.
+    생명주기 후크 인터페이스를 구현**하세요**.
 
 .s-why.s-why-last
   :marked
-    **Why?** We get strong typing for the method signatures.
-    The compiler and editor can call our attention to misspellings.
+    **왜냐구요?** 메서드 시그니처에 의한 강력한 타이핑을 얻게 됩니다.
+    컴파일러와 에디터는 잘못된 스펠링을 알려줄 겁니다.
 
 +makeExample('style-guide/ts/09-01/app/heroes/shared/hero-button/hero-button.component.avoid.ts', 'example', 'app/heroes/shared/hero-button/hero-button.component.ts')(avoid=1)
 :marked
@@ -1852,48 +1870,49 @@ a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ## Appendix
+  ## 부록
 
-  Useful tools and tips for Angular 2.
+  유용한 도구와 Angular 2를 위한 팁
 
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
   ### <a id="A-01"></a>Codelyzer
-  #### <a href="#A-01">Style A-01</a>
-
+  #### <a href="#A-01"><a href="#A-01">스타일 A-01
+  
 .s-rule.do
   :marked
-    **Do** use [codelyzer](https://www.npmjs.com/package/codelyzer) to follow this guide.
+    이 가이드를 따르려면 [codelyzer](https://www.npmjs.com/package/codelyzer)를 사용**하세요**.
 
 .s-rule.consider
   :marked
-    **Consider** adjusting the rules in codelyzer to suit your needs.
-
+    당신의 요구사항에 맞도록 codelyzer 내 규칙 조정을 **고려하세요**.
+    
 a(href="#toc") Back to top
 
 .l-main-section
 :marked
-  ### <a id="A-02"></a>File Templates and Snippets
-  #### <a href="#A-02">Style A-02</a>
+  ### <a id="A-02"></a><a id="A-02"></a>파일 템플릿과 스니펫
+  #### <a href="#A-02">스타일 A-02</a>
 
 .s-rule.do
   :marked
-    **Do** use file templates or snippets to help follow consistent styles and patterns. Here are templates and/or snippets for some of the web development editors and IDEs.
+    일관된 스타일과 패턴을 따르기 위해 파일 템플릿과 스니펫을 사용**하세요**.
+    다음은 웹 개발 에디터와 IDE들을 위한 템플릿과 스니펫입니다.
 
 .s-rule.consider
   :marked
-    **Consider** using [snippets](https://marketplace.visualstudio.com/items?itemName=johnpapa.Angular2) for [Visual Studio Code](https://code.visualstudio.com/) that follow these styles and guidelines.
+    [Visual Studio Code](https://code.visualstudio.com/)을 위한 [스니펫](https://marketplace.visualstudio.com/items?itemName=johnpapa.Angular2) 사용을 고려**하세요**.
 
     <a href="https://marketplace.visualstudio.com/items?itemName=johnpapa.Angular2">
       <img src="https://github.com/johnpapa/vscode-angular2-snippets/raw/master/images/use-extension.gif", width="80%", alt="Use Extension">
     </a>  
 
-    **Consider** using [snippets](https://atom.io/packages/angular-2-typescript-snippets) for [Atom](https://atom.io/) that follow these styles and guidelines.
+    [Atom](https://atom.io/)을 위한 [스니펫](https://atom.io/packages/angular-2-typescript-snippets) 사용을 고려**하세요**.
 
-    **Consider** using [snippets](https://github.com/orizens/sublime-angular2-snippets) for [Sublime Text](http://www.sublimetext.com/) that follow these styles and guidelines.
+    [Sublime Text](http://www.sublimetext.com/)을 위한 [스니펫](https://github.com/orizens/sublime-angular2-snippets) 사용을 고려**하세요**.
 
-    **Consider** using [snippets](https://github.com/mhartington/vim-angular2-snippets) for [Vim](http://www.vim.org/) that follow these styles and guidelines.
+    [Vim](http://www.vim.org/)을 위한 [스니펫](https://github.com/mhartington/vim-angular2-snippets) 사용을 고려**하세요**.
 
 a(href="#toc") Back to top

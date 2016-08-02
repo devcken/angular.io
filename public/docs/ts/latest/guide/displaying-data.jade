@@ -3,265 +3,241 @@ include ../_util-fns
 <!-- http://plnkr.co/edit/x9JYbC -->
 
 :marked
-  We typically display data in Angular by binding controls in an HTML template
-  to properties of an Angular component.
+  우리는 일반적으로 HTML 템플릿 내 컨트롤을 Angular 컴포넌트의 프로퍼티에 바인딩하여 Angular 내에서 데이터를 디스플레이 합니다.
 
-  In this chapter, we'll create a component with a list of heroes. Each hero has a name.
-  We'll display the list of hero names and
-  conditionally show a selected hero in a detail area below the list.
+  이 챕터에서, 우리는 영웅들의 목록으로 컴포넌트를 만들어 볼 겁니다. 각각의 영웅들은 이름을 가지고 있는데,
+  영웅의 이름 목록을 디스플레이할 것이며 조건에 따라 목록 아래에 상세 정보 영역에 선택된 영웅을 보여주도록 할 것입니다.
 
-  The final UI looks like this:
+  최종 UI는 다음과 같을 겁니다:
 
 figure.image-display
   img(src="/resources/images/devguide/displaying-data/final.png" alt="Final UI")
   
 :marked
-  # Table Of Contents
+  # 목차
   
-  * [Showing component properties with interpolation](#interpolation)
-  * [Showing an array property with NgFor](#ngFor)
-  * [Conditional display with NgIf](#ngIf)
+  * [어구 삽입으로 컴포넌트 프로퍼티 보여주기](#interpolation)
+  * [NgFor로 배열 프로퍼티 보여주기](#ngFor)
+  * [NgIf로 조건에 따라 디스플레이하기](#ngIf)
   
 .l-sub-section
   :marked
-    The [live example](/resources/live-examples/displaying-data/ts/plnkr.html)
-    demonstrates all of the syntax and code snippets described in this chapter.
+    [라이브 예제](/resources/live-examples/displaying-data/ts/plnkr.html)는 이 챕터 내에서 설명하고 있는 모든 문법과 코드 조각들에 대한 예제입니다.
 
 <a id="interpolation"></a>
 .l-main-section
 :marked
-  ## Showing component properties with interpolation
-  The easiest way to display a component property
-  is to bind the property name through interpolation.
-  With interpolation, we put the property name in the view template, enclosed in double curly braces: `{{myHero}}`.
+  ## 어구 삽입으로 컴포넌트 프로퍼티 보여주기
+  컴포넌트 프로퍼티를 디스플레이하는 가장 쉬운 방법은 어구 삽입을 통해 프로퍼티 이름을 바인딩하는 것입니다.
+  어구 삽입의 경우, 뷰 템플릿 내에 이중 중괄호로 둘러싼 프로퍼티 이름을 놓도록 합니다: `{{myHero}}`.
 
-  Let's build a small illustrative example together.
+  함께 작은 예제를 만들어보죠.
 
-  Create a new project folder (`displaying-data`) and follow the steps in the [QuickStart](../quickstart.html).
+  새로운 프로젝트 폴더(`displaying-data`)를 만들고 [퀵스타트](../quickstart.html)에서의 단계를 따라해 보죠.
 
 include ../_quickstart_repo
 :marked
-  Then modify the `app.component.ts` file by changing the template and the body of the component.
-  When we're done, it should look like this:
+  그런 뒤 `app.component.ts` 파일에서 컴포넌트의 템플릿과 그 몸체를 변경하도록 합니다. 
+  다 완료되고 나면, 다음과 같을 것입니다:
 
 +makeExample('displaying-data/ts/app/app.component.1.ts', null, 'app/app.component.ts')
 
 :marked
-  We added two properties to the formerly empty component: `title` and `myHero`.
+  예전에는 비어있던 컴포넌트에 두 개의 프로퍼티를 추가했습니다: `title` and `myHero`.
 
-  Our revised template displays the two component properties using double curly brace
-  interpolation:
+  수정된 템플릿은 이중 중괄호인 어구 삽입을 사용해 두 개의 컴포넌트 프로퍼티를 디스플레이합니다:
 
 +makeExample('displaying-data/ts/app/app.component.1.ts', 'template')(format=".")
 .l-sub-section
   :marked
-    The template is a multi-line string within ECMAScript 2015 backticks (\`).
-    The backtick (\`) &mdash; which is *not* the same character as a single
-    quote (') &mdash; has many nice features. The feature we're exploiting here
-    is the ability to compose the string over several lines, which makes for
-    much more readable HTML.
+    템플릿은 ECMAScript 2015 역따옴(\`) 사이에서는 멀티라인 문자열이 됩니다.
+    역따옴표(\`) &mdash; 단일 따옴표(')와 다른 문자 &mdash; 은 많은 좋은 특징들을 가지고 있습니다.
+    여기서 칭찬하려고 하는 특징은 여러 줄에 걸치 문자열을 구성하는 능력으로, 좀 더 읽기 좋은 HTML을 만들어줍니다.
 
 :marked
-  Angular automatically pulls the value of the `title` and `myHero` properties from the component and
-  inserts those values into the browser. Angular updates the display
-  when these properties change.
+  Angular는 자동으로 컴포넌트에서 `title`과 `myHero` 프로퍼티의 값을 가져오고 브라우저 내로 그 값들을 삽입합니다.
+  Angular는 이 프로퍼티들이 변경되면 디스플레이를 갱신합니다.
 .l-sub-section
   :marked
-    More precisely, the redisplay occurs after some kind of asynchronous event related to
-    the view such as a keystroke, a timer completion, or an async `XHR` response.
-    We don't have those in this sample.
-    But then the properties aren't changing on their own either. For the moment we must operate on faith.
+    좀 더 정확하게는, keystroke, 타이머 완료 혹은 비동기 `XHR` 응답과 같은 뷰와 관련된 비동기 이벤트가 발생하고 나면 다시 디스플레이하게 됩니다.
+    이 샘플 내에서는 그러한 것들이 없습니다.
+    그러나 프로퍼티는 그것들 중 한 개에서 변하지 않습니다. 그 순간에는 믿음을 가지고 진행해야 합니다.
 :marked
-  Notice that we haven't called **new** to create an instance of the `AppComponent` class.
-  Angular is creating an instance for us. How?
+  `AppComponent` 클래스의 인스턴스를 만들기 위해 **new**를 호출하지 않는다는 것을 알아두시기 바랍니다.
+  Angular는 인스턴스를 만들어 내죠. 그런데 어떻게 만들까요?
 
-  Notice the CSS `selector` in the `@Component` decorator that specifies an element named "my-app".
-  Remember back in QuickStart that we added the `<my-app>` element to the body of our `index.html`
+  "my-app"이라는 이름의 요소를 지정하는 `@Component` 데코레이터 내에서 CSS `selector`를 보시기 바랍니다.
+  퀵스타트에서 `index.html`의 body에 `<my-app>` 요소를 추가했던 것을 다시 기억해보시기 바랍니다.
 +makeExample('displaying-data/ts/index.html', 'my-app')(format=".")
 
 :marked
-  When we bootstrap with the `AppComponent` class (see `main.ts`), Angular looks for a `<my-app>`
-  in the `index.html`, finds it, instantiates an instance of `AppComponent`, and renders it
-  inside the `<my-app>` tag.
+  `AppComponent` 클래스로 부트스랩트할 때, Angular는 `index.html` 내에서 `<my-app>`을 찾고 `AppComponent`의 인스턴스를 초기화하며 `<my-app>` 태그 내로 렌더링합니다.
 
-  We're ready to see changes in a running app by firing up the npm script that both compiles and serves our applications
-  while watching for changes.
+  변경사항을 감시하면서 애플리케이션을 컴파일하고 서브하는 npm 스크립트를 실행하여 실행중인 앱에서의 변화를 지켜볼 수 있습니다.
 code-example(format="").
   npm start
 :marked
-  We should see the title and hero name:
+  우리는 타이틀과 영웅의 이름을 봐야 합니다:
 figure.image-display
   img(src="/resources/images/devguide/displaying-data/title-and-hero.png" alt="Title and Hero")
 :marked
-  Let's review some of the choices we made and consider alternatives.
+  우리가 내리고 대안으로 생각했던 몇 가지 결정들에 대해서 다시 살펴보도록 하겠습니다. 
 
-  ## Template inline or template file?
+  ## 템플릿 인라인 혹은 템플릿 파일?
 
-  We can store our component's template in one of two places.
-  We can define it *inline* using the `template` property, as we do here.
-  Or we can define the template in a separate HTML file and link to it in
-  the component metadata using the `@Component` decorator's `templateUrl` property.
+  우리는 컴포넌트의 템플릿을 두 군데 중 한 곳에 저장할 수 있습니다.
+  우리가 앞서 했던 것처럼 `template` 프로퍼티를 사용해 *인라인*으로 정의할 수 있습니다.
+  혹은 개별 HTML에 템플릿을 정의하고 그것을 `@Component` 데코레이터의 `templateUrl` 프로퍼티를 사용해 컴포넌트 메타데이터에 연결할 수도 있습니다
 
-  The choice between inline and separate HTML is a matter of taste,
-  circumstances, and organization policy.
-  Here we're using inline HTML because the template is small, and the demo
-  is simpler without the HTML file.
+  인라인과 개별 HTML 파일 사이의 선택은 취향, 환경 그리고 조직내 정책의 문제입니다.
+  여기서 우리는 인라인 HTML을 사용하고 있는데 그 이유는 템플릿이 작고 데모의 경우 HTML 파일에 저장하는 것보다 더 간단하기 때문입니다.
 
-  In either style, the template data bindings have the same access to the component's properties.
+  그 두 스타일 모두, 템플릿 데이터 바인딩이 컴포넌트의 프로퍼티에 대해 동일하게 접근 가능합니다.
 
-  ## Constructor or variable initialization?
+  ## 생성자 혹은 변수 초기화?
 
-  We initialized our component properties using variable assignment.
-  This is a wonderfully concise and compact technique.
+  변수 할당을 이용해 컴포넌트 프로퍼티를 초기화했습니다.
+  이것은 놀랄 만큼 간결하고 작은 기술입니다.
 
-  Some folks prefer to declare the properties and initialize them within a constructor like this:
+  어떤 분들은 다음과 같이 프로퍼티를 선언하고 생성자 내에서 초기화하는 방식을 더 선호하기도 합니다:
 +makeExample('displaying-data/ts/app/app-ctor.component.ts', 'app-ctor')(format=".")
 
 :marked
-  That's fine too. The choice is a matter of taste and organization policy.
-  We'll adopt the more terse "variable assignment" style in this chapter simply because
-  there will be less code to read.
+  그것 역시 괜찮습니다. 선택은 취향과 조직내 정책의 문제일 뿐입니다.
+  우리는 이 챕터에서 좀 더 간결한 "변수 할당" 스타일을 선택하려고 하는데 이는 읽을 코드가 더 적기 때문입니다.
 
 <a id="ngFor"></a>
 .l-main-section
 :marked
-  ## Showing an array property with ***ngFor**
+  ## ***NgFor**로 배열 프로퍼티 보여주기
 
-  We want to display a list of heroes. We begin by adding a mock heroes name array to the component,
-  just above `myHero`, and redefine `myHero` to be the first name in the array.
+  우리는 영웅들의 목록을 디스플레이하려고 합니다. 우리는 `myHero` 바로 위에 있는 영웅들의 이름 배열을 컴포넌트에 추가하는 것을 시작으로, 배열 내의 첫번째 이름을 `myHero`로 재정의합니다.
 +makeExample('displaying-data/ts/app/app.component.2.ts', 'mock-heroes', 'app/app.component.ts (class)')(format=".")
 
 :marked
-  Now we use the Angular `ngFor` "repeater" directive in the template to display
-  each item in the `heroes` list.
-
+  이제 `heroes` 목록 내의 각각의 아이템들을 디스플레이하기 위해 템플릿 내에서 Angular의 `ngFor` "반복자" 디렉티브를 사용합니다.
 +makeExample('displaying-data/ts/app/app.component.2.ts', 'template','app/app.component.ts (template)')(format=".")
 
 :marked
-  Our presentation is the familiar HTML unordered list with `<ul>` and `<li>` tags. Let's focus on the `<li>` tag.
+  잘 알려져 있는 HTML인 `<ul>`과 `<li>` 태그로 이루어진 정렬되지 않은 리스트가 나타납니다. `<li>` 태그에 집중해보죠.
 +makeExample('displaying-data/ts/app/app.component.2.ts', 'li-repeater')(format=".")
 
 :marked
-  We added a somewhat mysterious `*ngFor` to the `<li>` element.
-  That's the Angular "repeater" directive.
-  Its presence on the `<li>` tag marks that `<li>` element (and its children) as the "repeater template".
-
+  `<li>` 요소에 뭔가 좀 미스테리한 `*ngFor`를 추가했습니다.
+  그것은 Angular의 "반복자" 디렉티브입니다.
+  `<li>` 태그 상에서 그것을 사용한 것은 `<li>` 요소(그리고 그것의 하위 요소)를 "반복자 템플릿"으로 지정한 것입니다.
+  
 .alert.is-important
   :marked
-    Don't forget the leading asterisk (\*) in `*ngFor`. It is an essential part of the syntax.
-    Learn more about this and `ngFor` in the [Template Syntax](./template-syntax.html#ngFor) chapter.
+    `*ngFor`에서 앞에 있는 아스테리스크(\*)를 잊지 마세요. 그것은 문법 상 필수적인 부분입니다.
+    이것과 `ngFor`에 관해 [템플릿 문법](./template-syntax.html#ngFor)에서 좀 더 자세히 알아보시기 바랍니다.
 
 :marked
-  Notice the `hero` in the `ngFor` double-quoted instruction; 
-  it is an example of a [template input variable](./template-syntax.html#ngForMicrosyntax).
+  `ngFor`의 쌍따옴표 내 `hero`를 보시기 바랍니다;
+  그것은 [템플릿 입력 변수](./template-syntax.html#ngForMicrosyntax)의 한 예입니다.
 
-  Angular duplicates the `<li>` for each item in the list, setting the `hero` variable
-  to the item (the hero) in the current iteration. Angular uses that variable as the
-  context for the interpolation in the double curly braces.
+  Angular는 반복 간에 `hero` 변수를 현재의 아이템에 설정하여, 목록 내 각각의 아이템에 대해 `<li>`를 복제하게 됩니다.
+  Angular는 이중 중괄호 내 어구 삽입에 대한 컨텍스트로써 해당 변수를 사용합니다.
 
 .l-sub-section
   :marked
-    We happened to give `ngFor` an array to display.
-    In fact, `ngFor` can repeat items for any [iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
-    object.
+    디스플레이하기 위해 `ngFor`를 사용하는 것은 흔한 일입니다.
+    사실, `ngFor`는 어떤 [iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols) 객체의 아이템이라면 무엇이든 반복시킬 수 있습니다.
 :marked
-  Assuming we're still running under the `npm start` command,
-  we should see heroes appearing in an unordered list.
+  `npm start` 명령어를 이용해 여전히 서버를 실행시키고 있다고 가정한다면,
+  정렬되지 않은 목록 내에서 나타나는 영웅들을 볼 수 있을 겁니다.
 
 figure.image-display
   img(src="/resources/images/devguide/displaying-data/hero-names-list.png" alt="After ngfor")
 
 .l-main-section
 :marked
-  ## Creating a class for the data
+  ## 데이터를 위한 클래스 생성하기
 
-  We are defining our data directly inside our component.
-  That's fine for a demo but certainly isn't a best practice. It's not even a good practice.
-  Although we won't do anything about that in this chapter, we'll make a mental note to fix this down the road.
+  우리는 컴포넌트 내부에 데이터를 직접 정의하고 있습니다.
+  데모라면 괜찮지만 분명히 최상의 방법은 아닙니다. 좋은 방식도 아닙니다. 
+  이 챕터 내에서 그와 관련된 어떠한 것도 하지 않는다해도, 차후에 이걸 고치도록 마음 속으로 기억하고 있어야 합니다.
 
-  At the moment, we're binding to an array of strings. We do that occasionally in real applications, but
-  most of the time we're displaying objects &mdash; potentially instances of classes.
+  지금은 문자열의 배열에 바인딩하고 있습니다. 실제 애플리케이션 내에서 종종 그렇게 하긴 하지만 대부분의 경우 객체를 디스플레이합니다; 아마도 클래스의 인스턴트겠죠. 
 
-  Let's turn our array of hero names into an array of `Hero` objects. For that we'll need a `Hero` class.
+  영웅 이름 배열을 `Hero` 객체의 배열로 변경해보죠. 그러기 위해서는 `Hero` 클래스가 필요합니다.
 
-  Create a new file in the `app/` folder called `hero.ts` with the following short bit of code.
+  `app/` 폴더 내에 `hero.ts`라는 새로운 파일을 다음의 코드를 내용으로 만들어보세요.
 +makeExample('displaying-data/ts/app/hero.ts', null, 'app/hero.ts')(format = ".")
 
 :marked
-  We've defined a class with a constructor and two properties: `id` and `name`.
+  한 개의 생성자와 두 개의 프로퍼티(`id`와 `name`)으로 이루어진 클래스를 정의했습니다.
 
-  It might not look like we have properties, but we do. We're taking
-  advantage of a TypeScript shortcut in our declaration of the constructor parameters.
+  우리가 프로퍼티를 가지고 있는 것처럼 보이지 않지만 실제로는 그렇습니다.
+  생성자 파라메터 선언에서 TypeScript의 단축 기능의 이점을 사용하고 있기 때문이죠.
 
-  Consider the first parameter:
+  첫번째 파라메터를 보죠:
 +makeExample('displaying-data/ts/app/hero.ts', 'id-parameter')
 
 :marked
-  That brief syntax does a lot:
-  * declares a constructor parameter and its type
-  * declares a public property of the same name
-  * initializes that property with the corresponding argument when we "new" an instance of the class
+  이 간략한 문법은 많은 걸 합니다:
+  * 생성자 파라메터와 그것의 타입을 선언합니다
+  * 동일한 이름의 public 프로퍼티를 선언합니다
+  * 클래스의 인스턴스를 "new"로 생성할 때 인자에 대응하는 프로퍼티를 초기화합니다
 
 .l-main-section
 :marked
-  ## Using the Hero class
-  Let's redefine the `heroes` property in our component to return an array of these Hero objects
-  and also set the `myHero` property with the first of these mock heroes.
+  ## Hero 클래스 사용하기
+  이 Hero 객체의 배열을 반환하기 위해 컴포넌트 내에서 `heroes` 프로퍼티를 정의하고 `myHero` 프로퍼티를 이 가짜 영웅들 중 첫번째 영웅으로 설정해보죠.
 +makeExample('displaying-data/ts/app/app.component.3.ts', 'heroes', 'app.component.ts (excerpt)')(format=".")
 
 :marked
-  We'll have to update the template.
-  At the moment it displays the entire `hero` object, which used to be a string value.
-  Let's fix that so we interpolate the `hero.name` property.
+  우리는 템플릿을 갱신해야 합니다.
+  현재는 문자열 값이던 전체 `hero` 객체를 디스플레이합니다.
+  그걸 수정해서 `hero.name` 프로퍼티를 삽입해보죠.
 +makeExample('displaying-data/ts/app/app.component.3.ts', 'template','app.component.ts (template)')(format=".")
 
 :marked
-  Our display looks the same, but now we know much better what a hero really is.
+  디스플레이되는 내용은 동일하지만 이제 hero가 정말 무엇인지 좀 더 잘 알게 되었습니다.
 
 <a id="ngIf"></a>
 .l-main-section
 :marked
-  ## Conditional display with NgIf
+  ## NgIf로 조건에 따라 디스플레이하기
 
-  Sometimes the app should display a view or a portion of a view only under specific circumstances.
+  때때로 앱은 오직 특정 환경 내애세만 뷰 혹은 뷰의 일부분을 디스플레이해야 할 때가 있습니다.
 
-  In our example, we'd like to display a message if we have a large number of heroes &mdash; say, more than 3.
+  예를 들어 많은 수의 영웅(3명 이상의)을 가지고 있는 경우 메시지를 디스플레이하고 싶을 수도 있습니다.
 
-  The Angular `ngIf` directive inserts or removes an element based on a truthy/falsey condition.
-  We can see it in action by adding the following paragraph at the bottom of the template:
+  Angular의 `ngIf` 디렉티브는 truthy/falsey 조건에 따라 요소를 삽입하거나 제거합니다.
+  템플릿 아래에 다음 단락을 추가하여 동작하는 모습을 볼 수 있습니다.
 +makeExample('displaying-data/ts/app/app.component.ts', 'message')
 .alert.is-important
   :marked
-    Don't forget the leading asterisk (\*) in `*ngIf`. It is an essential part of the syntax.
-    Learn more about this and `ngIf` in the [Template Syntax](./template-syntax.html#ngIf) chapter.
+    `*ngIf`에서 앞에 아스테리스크(\*)를 잊지 마세요. 그건 문법에 있어 필수적인 부분입니다.
+    `ngIf`에 대해 좀 더 알아보고 싶다면 [템플릿 문법](./template-syntax.html#ngIf) 챕터를 참고하시기 바랍니다.
 
 :marked
-  The [template expression](./template-syntax.html#template-expressions) inside the double quotes
-  looks much like JavaScript and it _is_ much like JavaScript.
-  When the component's list of heroes has more than 3 items, Angular adds the paragraph to the DOM and the message appears.
-  If there are 3 or fewer items, Angular omits the paragraph, so no message appears.
+  쌍따옴표 안에 [템플릿 표현식](./template-syntax.html#template-expressions)은 상당히 JavaScript처럼 보이며 상당 부분 JavaScript이기도 합니다.
+  컴포넌트의 영웅 목록이 3개 아이템 이상을 가진다면, Angular는 DOM에 단락을 추가하고 메시지를 출력할 겁니다.
+  만약 3개 혹은 그보다 작다면, Angular는 단락을 생략할 것이고 메시지는 출력되지 않습니다.
 
 .alert.is-helpful
   :marked
-    Angular isn't showing and hiding the message. It is adding and removing the paragraph element from the DOM.
-    That hardly matters here. But it would matter a great deal, from a performance perspective, if
-    we were conditionally including or excluding a big chunk of HTML with many data bindings.
+    Angular는 메시지를 보여주거나 감추지 않습니다. DOM에 단락 요소를 추가하거나 제거합니다.
+    그것은 이런 부분에서 꽤나 문제가 됩니다. 그러나 우리가 조건부로 많은 데이터 바인딩을 가진 아주 큰 HTML를 포함하거나 제외시키고 있는 경우라면,
+    성능 측면에서 봤을 때 그것은 매우 중요합니다.
 
 :marked
-  Try it out. Because the array has four items, the message should appear.
-  Go back into `app.component.ts` and delete or comment out one of the elements from the hero array.
-  The browser should refresh automatically and the message should disappear.
+  한 번 해보세요. 배열이 네 개의 아이템을 가지고 있기 때문에, 메시지가 나타나야 합니다.
+  `app.component.ts`로 돌아가 hero 배열에서 요소 한 개를 지우거나 주석 처리해보세요.
+  브라우저가 자동으로 리프레쉬되고 메시지가 사라지게 될 겁니다.
 
 .l-main-section
 :marked
-  ## Summary
-  Now we know how to use:
-  - **interpolation** with double curly braces to display a component property
-  - **`ngFor`** to display a list of items
-  - a TypeScript class to shape the **model data** for our component and display properties of that model
-  - **`ngIf`** to conditionally display a chunk of HTML based on a boolean expression
+  ## 요약
+  이제 사용법을 알게 되었습니다:
+  - 컴포넌트 프로퍼티를 디스플레이하기 위한 중괄호로 이루어진 어구 삽입
+  - 아이템 목록을 디스플레이하기 위한 **`ngFor`**
+  - 컴포넌트에 대한 **모델 데이터**를 형성하고 모델의 프로퍼티를 디스플레이하기 위한 TypeScript 클래스
+  - 조건 부로 boolean 표현식에 따라 HTML 덩어리를 디스플레이하기 위한 **`ngIf`**
 
-  Here's our final code:
+  다음은 최종 코드입니다:
 
 +makeTabs(`displaying-data/ts/app/app.component.ts,
            displaying-data/ts/app/hero.ts,

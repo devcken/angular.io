@@ -1,26 +1,26 @@
 include ../_util-fns
 
 :marked
-  Angular 2 is a framework to help us build client applications in HTML and JavaScript.
+  Anuglar 2는 우리가 HTML과 JavaScript로 클라이언트 애플리케이션을 만드는데 도움을 주는 프레임워크입니다.
   
-  The framework consists of several cooperating libraries, some of them core and some optional.
+  이 프레임워크는 어떤 것은 핵심적이고 나머지는 부가적인, 서로 협력하는 몇 가지 라이브러리들로 이루어져 있습니다.
   
-  We write applications by composing HTML *templates* with Angularized-markup, 
-  writing *component* classes to manage those templates, adding application logic in *services*,
-  and handing the top root component to Angular's *bootstrapper*. 
+  우리는 Angular로 작성된 마크업으로 HTML *템플릿*을 구성하고,
+  그 템플릿들을 관리하기 위한 *컴포넌트* 클래스를 작성하고,
+  *서비스* 내에서 애플리케이션 로직을 추가하며,
+  Angular의 *bootstrapper*에 주어진 가장 최상위 컴포넌트를 다루도록 애플리케이션 작성합니다.  
   
-  Angular takes over, presenting our application content in a browser and responding to user interactions
-  according to the instructions we provided.
-  
+  Angular는 브라우저 내에서 애플리케이션을 표현하고 제공된 지시사항에 따라 사용자 인터렉션에 반응하도록 되어 있습니다.
+
 <!-- figure img(src="/resources/images/devguide/architecture/airplane.png" alt="Us" align="left" style="width:200px; margin-left:-40px;margin-right:10px" ) -->
 :marked
-  Of course there is more to it than this. We'll learn the details when we dive into the guide chapters.
-  Let's get the big picture first.
+  물론 말한 내용 외에도 더 많은 것들이 존재합니다. 가이드 챕터에서 좀 더 자세한 내용들을 살펴보게 될 것입니다.
+  여기서는 우선 큰 그림을 보도록 하죠.
 
 figure
   img(src="/resources/images/devguide/architecture/overview2.png" alt="overview" style="margin-left:-40px;" width="700")
 :marked
-  The architecture diagram identifies the eight main building blocks of an Angular 2 application:
+  위 아키텍쳐 다이어그램은 Angular 2 애플리케이션의 8가지 주요 빌딩 블록을 표현합니다.
   1. [Module](#module)   
   1. [Component](#component)
   1. [Template](#template)
@@ -30,513 +30,471 @@ figure
   1. [Service](#service)
   1. [Dependency Injection](#dependency-injection)
 
-  Learn these eight and we're on our way.
+  이 8가지에 대해서 알아보도록 하죠.
 
 .l-sub-section
   :marked
-      The code referenced in this chapter is available as a [live example](/resources/live-examples/architecture/ts/plnkr.html).
+    이 챕터 내 코드들은 [라이브 예제](/resources/live-examples/architecture/ts/plnkr.html)를 통해 경험해 보실 수 있습니다.
 <a id="module"></a>
 .l-main-section
 :marked
-  ## The Module
+  ## 모듈
 figure
   img(src="/resources/images/devguide/architecture/module.png" alt="Component" align="left" style="width:240px; margin-left:-40px;margin-right:10px" )
 :marked
-  Angular apps are modular. 
+  Anuglar 앱들은 모듈화되어 있습니다.
   
-  In general we assemble our application from many **modules**.
+  보통 우리는 많은 **모듈**들로 애플리케이션을 조립하게 됩니다.
   
-  A typical module is a cohesive block of code dedicated to a single purpose.
-  A module **exports** something of value in that code, typically one thing such as a class.
+  전형적인 모듈은 단일 목적만을 위해 응집된 코드 블록입니다. 
+  모듈은 코드 내에서 어떤 값을 **익스포트**하는데, 일반적으로 클래스가 같은 것입니다.
   <br clear="all"><br>
 .l-sub-section
   :marked
-     ### Modules are optional
-     We highly recommend modular design. TypeScript has great support for ES2015 module syntax and our chapters assume we're taking a modular
-     approach using that syntax. That's why we list *Module* among the basic building blocks.
-     
-     Angular itself doesn't require a modular approach nor this particular syntax. Don't use it if you don't want it.
-     Each chapter has plenty to offer after you steer clear of the `import` and `export` statements.
-     
-     Find setup and organization clues in the JavaScript track (select it from the combo-box at the top of this page) 
-     which demonstrates Angular 2 development with plain old JavaScript and no module system. 
+    ### 모듈은 옵션입니다.
+    우리는 모듈화된 설계를 강력하게 추천합니다. TypeScript는 ES2016 모듈 문법을 완벽하게 지원하며,
+    이 챕터 내에서 우리는 해당 문법을 사용해 모듈화 접근법을 사용하도록 할겁니다.
+    그것이 우리가 기본 빌딩 블록 중에서 *Module*을 나열한 이유입니다.
+    
+    Angular 자체는 모듈화된 접근법뿐 만 아니라 특수한 문법도 요구하지 않습니다. 원하지 않는다면 사용하지 마세요. 
+    각 챕터는 당신이 `import`와 `export` 구문에 대해 잘 알고 있다고 가정하고 많은 예제를 제공하고 있습니다.
+    
+    보통의 옛날 자바스크립트와 모듈 시스템 없이 Angular 2 개발 과정을 설명하는
+    자바스크립트 트랙(이 페이지 상단의 콤보 박스에서 선택하세요)에서 셋업과 구성의 실마리를 찾아보세요.
 :marked
-  Perhaps the first module we meet is a module that exports a *component* class. 
-  The component is one of the basic Angular blocks, we write a lot of them,
-  and we'll talk about components in the next segment. For the moment it is enough to know that a
-  component class is the kind of thing we'd export from a module.
+  아마도 우리가 봤던 첫번째 모듈은 *component* 클래스를 익스포트하는 모듈이었을 겁니다.
+  컴포넌트는 Angular 기본 블록 중 하나로, 많은 컴포넌트들을 작성하게 될 것이며, 다음 세그먼트에서 컴포넌트에 대해 이야기해볼 겁니다.
+  지금 당장은 컴포넌트 클래스가 모듈로부터 익스포트되는 것 중 하나라는 것을 아는 것으로 충분합니다.
   
-  Most applications have an `AppComponent`. By convention, we'll find it in a file named `app.component.ts`. 
-  Look inside such a file and we'll see an `export` statement like this one.
+  대부분의 애플리케이션들은 관례에 따라 `AppComponent`를 가지는데, 그것을 `app.component.ts`라는 이름의 파일에서 볼 수 있을 겁니다.
+  그 파일의 안을 들여다보면 이와 같은 `export` 구문을 볼 수 있을 겁니다.
 +makeExample('architecture/ts/app/app.component.ts', 'export', 'app/app.component.ts (excerpt)')(format=".")
 :marked
-  The `export` statement tells TypeScript that this is a module whose
-  `AppComponent` class is public and accessible to other modules of the application.
+  이 `export` 구문은 `AppComponent` 클래스가 공개되어 있고 애플리케이션의 다른 모듈에서 접근 가능한 모듈이라고 TypeScript에게 알려줍니다.
   
-  When we need a reference to the `AppComponent`, we **import** it like this:
+  `AppComponent`에 대한 참조가 필요하다면, 다음과 같이 **import**하면 됩니다:
 +makeExample('architecture/ts/app/main.ts', 'import', 'app/main.ts (excerpt)')(format=".")
 :marked
-  The `import` statement tells the system it can get an `AppComponent` from a module named `app.component`
-  located in a neighboring file. 
-  The **module name** (AKA module id) is often the same as the filename without its extension.
-  ### Library Modules 
+  `import` 구문은 파일 근처에 위치한 `app.component`라는 이름의 모듈에서 `AppComponent`를 가져올 수 있다고 시스템에게 알려줍니다.
+  **모듈 이름**(모듈 id를 통한)은 그것의 확장자를 제외한 파일 이름과 동일한 경우가 많습니다.
+  ### 라이브러리 모듈
 figure
   img(src="/resources/images/devguide/architecture/library-module.png" alt="Component" align="left" style="width:240px; margin-left:-40px;margin-right:10px" )
 :marked
-  Some modules are libraries of other modules.
+  어떤 모듈들은 다른 모듈들의 라이브러리일 수도 있습니다.
   
-  Angular itself ships as a collection of library modules within several npm packages.
-  Their names begin with the `@angular` prefix. 
-  Each Angular library contains a [barrel](../glossary.html#barrel) module
-  that is actually a public façade over several logically-related private modules.
+  Angular 자체는 몇 가지 npm 패키지 내 라이브러리 모듈의 컬렉션으로 제공됩니다. 
+  그들의 이름은 `@angular`라는 접두사로 시작되죠.
+  각각의 Angular 라이브러리는 [barrel](../glossary.html#barrel)이라는 모듈을 포함하는데,
+  그 모듈은 실제로 논리적으로 연관되어 있는 몇 가지 private 모듈들에 대한 공개된 외관(파사드)입니다.
   
-  The `@angular/core` library is the primary Angular library module from which we get most of what we need.
+  `@angular/core` 라이브러리는 우리가 필요로 하는 것들 대부분을 얻을 수 있는 가장 주요한 Angular 라이브러리입니다.
   <br clear="all">
   
-  There are other important Angular library modules too such as `@angular/common`, `@angular/router`, and `@angular/http`.
+  `@angular/common`, `@angular/router`, 그리고 `@angular/http`와 같이 다른 중요한 Angular 라이브러리들도 있습니다.
 
-  We import what we need from an Angular library module in much the same way.
-  For example, we import the Angular **`Component` *function*** from the *@angular/core* module like this:
+  앞서 본 방법과 거의 똑같은 방법으로 Angular 라이브러리에서 필요한 것들을 임포트하게 됩니다.
+  예를 들어, *@angular/core* 모듈에서 Angular의 **`Component` *함수***를 임포트하려면 다음과 같이 합니다:
 +makeExample('architecture/ts/app/app.component.ts', 'import')(format=".")
 :marked
-  Compare that syntax to our previous import of `AppComponent`.
+  이전에 `AppComponent`의 임포트 문법과 비교해보세요.
 +makeExample('architecture/ts/app/main.ts', 'import')(format=".")
 :marked
-  Notice the difference? 
-  In the first case, when importing from an Angular library module,
-  the import statement refers to the bare module name, `@angular/core`, *without a path prefix*.
+  다른 점이 있나요?
+  첫 번째 경우, Angular 라이브러리 모듈에서 임포트하는데, 임포트 구문은 *경로에 대한 접두사없이* 기본적인 모듈 이름인 `@angular/core`를 참조하고 있습니다. 
   
-  When we import from one of *our* own files, we prefix the module name with the file path.
-  In this example we specify  a relative file path (./). That means the
-  source module is in the same folder (./) as the module importing it.
-  We could path up and around the application folder structure if the source module were somewhere else.
+  *우리가 작성한* 파일 중 하나를 임포트하는 경우에, 파일의 경로로 모듈 이름을 접두화합니다. 
+  이 예제에서는 상대적인 파일 경로(./)를 지정했습니다. 그것은 소스 모듈이 그것을 임포트하는 모듈과 동일한 폴더(./)에 있다는 것을 의미합니다.
+  소스 모듈이 어디에 있든지 애플리케이션 폴더 구조 내에 있다면 그 경로를 참조할 수 있습니다.
 .l-sub-section
   :marked
-    We import and export in the ECMAScript 2015 (ES2015) module syntax. 
-    Learn more about that syntax [here](http://www.2ality.com/2014/09/es6-modules-final.html)
-    and many other places on the web.
+    우리는 ECMAScript 2015(ES2015) 모듈 문볍으로 임포트하고 익스포트하고 있습니다.
+    해당 문법에 대해서는 [여기](http://www.2ality.com/2014/09/es6-modules-final.html)와 웹 상의 다른 많은 내용들을 참고하시기 바랍니다.
     
-    The infrastructure *behind* module loading and importing is an important subject.
-    But it's a subject outside the scope of this introduction to Angular. 
-    While we're focused on our application, *import* and *export*
-    is about all we need to know.
+    모듈 로딩과 임포트 *뒤*의 인프라는 중요한 주제입니다.
+    그러나 그것은 Angular를 소개하는 범주 밖의 주제입니다.
+    *import*와 *export*는 알 필요가 있는 내용이므로 꼭 따로 공부해두시기 바랍니다.
 :marked
-  The key take-aways are:
-  * Angular apps are composed of modules.
-  * Modules export things &mdash; classes, function, values &mdash; that other modules import.
-  * We prefer to write our application as a collection of modules, each module exporting one thing.
+  알아야 할 중요한 점들은:
+  * Angular 앱들은 모듈로 구성됩니다.
+  * 모듈은 (다른 모듈들이 임포트하는)클래스, 함수, 값 등을 익스포트합니다.
+  * 애플리케이션을 각각의 모듈이 한 가지를 익스포트하는 모듈의 컬렉션으로 작성하는 것이 좋습니다.
   
-  The first module we write will most likely export a component.
+  우리가 작성하는 첫번째 모듈은 필시 컴포넌트를 익스포트할 겁니다.
 .l-main-section
 <a id="component"></a>
 :marked
-  ## The Component
+  ## 컴포넌트
 figure
   img(src="/resources/images/devguide/architecture/hero-component.png" alt="Component" align="left" style="width:200px; margin-left:-40px;margin-right:10px" )
 :marked
-  A **Component** controls a patch of screen real estate that we could call a *view*. 
-  The shell at the application root with navigation links, that list of heroes, the hero editor ... 
-  they're all views controlled by Components.
+  **컴포넌트**는 우리가 보통 *뷰*라고 부르는 스크린 상의 실제 영역 중 한 부분을 제어합니다.
+  애플리케이션 최상위의 네비게이션 링크들, 영웅들의 목록, 영웅 에디터 등 그 껍데기들...
+  그것들은 모두 컴포넌트에 의해 제어되는 뷰들입니다.
   
-  We define a Component's application logic - what it does to support the view - inside a class.
-  The class interacts with the view through an API of properties and methods. 
+  우리는 컴포넌트의 애플리케이션 로직(뷰를 지원하기 위해 해야 할 일들)을 클래스 내부에서 정의합니다.
+  클래스는 API의 프로퍼티와 메서드를 통해 뷰와 상호작용하게 됩니다. 
   
   <a id="component-code"></a>
-  A `HeroListComponent`, for example, might have a `heroes` property that returns an array of heroes
-  that it acquired from a service.
-  It might have a `selectHero()` method that sets a `selectedHero` property when the user clicks on a hero from that list.
-  It might be a class like this:
+  예를 들어, `HeroListComponent`는 서비스에서 필요로 하는 영웅들의 배열을 반환하는 `heroes` 프로퍼티를 가지고 있을 겁니다.
+  사용자가 해당 리스트에서 영웅을 클릭하게 되면 `seledctedHero` 프로퍼티를 설정해주는 `selectHero()`도 가지고 있을 겁니다.
+  그러니까, 다음과 같은 클래스일 겁니다:
 
 +makeExample('architecture/ts/app/hero-list.component.ts', 'class', 'app/hero-list.component.ts')
 :marked
-  Angular creates, updates, and destroys components as the user moves through the application.
-  The developer can take action at each moment in this lifecycle through optional [Lifecycle Hooks](lifecycle-hooks.html).
+  Angular는 사용자가 애플리케이션을 사용할 때 컴포넌트를 만들고, 갱신하며 제거하기도 합니다.
+  개발자는 부가적인 [생명주기 후크](lifecycle-hooks.html)를 통해 이 생명 주기라는 것 내에서 각각의 순간에 어떤 행위를 넣을 수 있습니다.
 .l-sub-section
   :marked
-    We're not showing those hooks in this example 
-    but we are making a mental note to find out about them later.
+    이 예제에는 해당 후크들이 포함되어 있지는 않습니다만
+    이후에 그것들에 대해서 알아보도록 할 것입니다.
     
-    We may wonder who is calling that constructor? Who provides the service parameter?
-    For the moment, have faith that Angular will call the constructor and deliver an
-    appropriate `HeroService` when we need it.
+    누가 컴포넌트의 생성자를 호출하는지, 누가 서비스 파라메터를 제공하는지가 궁금한가요?
+    현재로써는, Angular가 생성자를 호출하고 필요하면 `HeroService`를 전달해준다는 믿음을 가지도록 하세요.
 
 .l-main-section
 <a id="template"></a>
 :marked
-  ## The Template
+  ## 템플릿
 figure
   img(src="/resources/images/devguide/architecture/template.png" alt="Template" align="left" style="width:200px; margin-left:-40px;margin-right:10px" )
 :marked
-  We define a Component's view with its companion **template**. A template is a form of HTML
-  that tells Angular how to render the Component.
+  우리는 컴포넌트의 뷰를 그것의 짝꿍인 **템플릿**과 함께 정의됩니다. 템플릿은 컴포넌트를 어떻게 렌더링해야 할지를 Angular에게 알려주기 위한 HTML 형식입니다.
 
-  A template looks like regular HTML much of the time ... and then it gets a bit strange. Here is a
-  template for our `HeroList` component.
+  템플릿은 일반적인 HTML과 상당히 닮았습니다만 약간은 다릅니다. 다음은 `HeroList` 컴포넌트의 템플릿입니다.
 +makeExample('architecture/ts/app/hero-list.component.html',null,'app/hero-list.component.html')
 :marked
-  We recognize `<h2>` and  `<div>`. 
-  But there's other markup that no one told us about in school.
-  What are `*ngFor`, `{{hero.name}}`, `(click)`, `[hero]`, and `<hero-detail>`?
+  `<h2>`와 `<div>`을 보셨나요? 그런데 여기에는 우리가 잘 알지 못하는 다른 마크업들이 있습니다.
+  `*ngFor`, `{{hero.name}}`, `(click)`, `[hero]`, 그리고 `<hero-detail>`은 무엇일까요?
   
-  These are examples of Angular's [template syntax](template-syntax.html). 
-  We will grow accustomed to that syntax and may even learn to love it.
-  We'll begin to explain it in a moment.
+  그것들은 Angular의 [템플릿 문법](template-syntax.html)의 예입니다.
+  이 문법에 점점 익숙해지면서 그것을 사랑하는 법 마저 배우게 될 겁니다.
+  조만간 그에 대해 설명하게 될 겁니다.
   
-  Before we do, focus attention on the last line. 
-  The `<hero-detail>` tag is a custom element representing the `HeroDetailComponent`.
+  그전에, 예제의 마지막 라인을 보시기 바랍니다.
+  `<hero-detail>` 태그는 `HeroDetailComponent`를 표현하는 커스텀 요소입니다.
   
-  The `HeroDetailComponent` is a *different* component than the `HeroListComponent` we've been reviewing.
-  The `HeroDetailComponent` (code not shown) presents facts about a particular hero, the
-  hero that the user selects from the list presented by the `HeroListComponent`.
-  The `HeroDetailComponent` is a **child** of the `HeroListComponent`.
+  `HeroDetailComponent`는 우리가 검토해온 `HeroListComponent`과는 *다른* 컴포넌트입니다.
+  `HeroDetailComponent`은 `HeroListComonent`에 의해 나열된 목록에서 사용자가 선택한 특정 영웅에 관한 정보를 표현합니다.
+  `HeroDetailComponent`는 `HeroListComponent`의 **하위** 컴포넌트입니다.
 
 figure
   img(src="/resources/images/devguide/architecture/component-tree.png" alt="Metadata" align="left" style="width:300px; margin-left:-40px;margin-right:10px" )
 :marked
-  Notice how `<hero-detail>` rests comfortably among the HTML elements we already know. 
-  We can mix ... and will mix ... our custom components with native HTML in the same layouts.
+  `<hero-detail>`가 우리가 이미 알고 있는 HTML 요소들 사이에 편안하게 놓여있다는 것을 기억하시기 바랍니다.
+  우리는 동일한 레이아웃 내에서 우리의 커스텀 컴포넌트들을 네이티브 HTML과 함께 섞어놓을 수 있고 그렇게 할 겁니다. 
   
-  And in this manner we can and will compose complex component trees to build out our richly featured application.
+  그리고 이러한 기조로 고도화된 기능들의 애플리케이션을 만들기 위해 복잡한 컴포넌트 트리들을 구성할 수 있고 그렇게 할 겁니다.
 <br clear="all">
 
 .l-main-section
 <a id="metadata"></a>
 :marked
-  ## Angular Metadata
+  ## Angular 메타데이터
 figure
   img(src="/resources/images/devguide/architecture/metadata.png" alt="Metadata" align="left" style="width:150px; margin-left:-40px;margin-right:10px" )
 :marked
 <p style="padding-top:10px">Metadata tells Angular how to process a class.</p>
 <br clear="all">
 :marked
-  [Looking back](#component-code) at the `HeroListComponent`, we see that it's just a class.
-  There is no evidence of a framework, no "Angular" in it at all.
+  `HeroListComponent`로 [되돌아가보면](#component-code), 그게 클래스라는 걸 알 수 있습니다.  
+  프레임워크라는 증거도, Angular라는 것도 전혀 없습니다.
   
-  In fact, it really is *just a class*. It's not a component until we *tell Angular about it*.
+  사실, 그건 정말로 *클래스일 뿐입니다*. 그것에 관해 Angular에게 알려주기 전까지는 컴포넌트도 아닙니다.
   
-  We tell Angular that `HeroListComponent` is a component by attaching **metadata** to the class.
+  우리는 `HeroListComponent`의 클래스에 **메타데이터**를 붙여 그것이 컴포넌트라는 것을 Angular에게 알려줍니다.
   
-  The easy way to attach metadata in TypeScript is with a **decorator**. 
-  Here's some metadata for `HeroListComponent`:
+  TypeScript에서 메타데이터를 붙이는 가장 쉬운 방법은 **데코레이터**를 이용하는 것입니다.
+  다음은 `HeroListComponent`의 메타데이터입니다:
 +makeExample('architecture/ts/app/hero-list.component.ts', 'metadata', 'app/hero-list.component.ts (metadata)')
 :marked
-  Here we see the `@Component` decorator which (no surprise) identifies the class
-  immediately below it as a Component class.
+  여기서 `@Component` 데코레이터를 볼 수 있는데, 이는 (놀랄 것도 없이) 바로 아래 있는 클래스가 컴포넌트 클래스라는 것을 나타냅니다.
   
-  A decorator is a function. Decorators often have a configuration parameter. 
-  The `@Component` decorator takes a required configuration object with the
-  information Angular needs to create and present the component and its view.
+  데코레이터는 함수입니다. 많은 데코레이터들이 설정 파라메터를 갖습니다.
+  `@Component` 데코레이터는 Angular가 컴포넌트와 그것의 뷰를 만들고 표현하는데 필요로 하는 정보를 담고 있는 설정 객체를 파라메터로 받습니다.  
   
-  Here we see a few of the possible `@Component` configuration options:
+  다음은 `@Component`에서 설정 가능한 옵션들의 설명입니다:
   
-  * `selector` - a css selector that tells Angular to create and insert an instance of this component 
-  where it finds a `<hero-list>` tag in *parent* HTML. 
-  If the template of the application shell (a Component) contained
+  * `selector` - CSS 셀렉터로, *상위* HTML 내에 `<hero-list>`가 놓인 위치에 해당 컴포넌트의 인스턴스를 만들고 삽입하라고 Angular에게 알려줍니다.
+   애플리케이션 쉘(컴포넌트)에 템플릿이 포함되어 있다면 말이죠.
 <div style="margin-left:30px">
 code-example(language="html").
     &lt;hero-list>&lt;/hero-list>
 </div>  
 :marked
-  >Angular inserts an instance of the `HeroListComponent` view between those tags.
+  >Angular는 해당 태그 사이에 `HeroListComponent` 뷰의 인스턴스를 삽입하게 됩니다
   
-  * `templateUrl` - the address of this component's template which we showed [above](#template).
+  * `templateUrl` - 우리가 [위](#template)에서 봤던 컴포넌트 템플릿의 주소를 가르킵니다
   
-  * `directives` - an array of the Components or Directives that *this* template requires.
-  We saw in the last line of our template that we expect Angular to insert a `HeroDetailComponent`
-  in the space indicated by `<hero-detail>` tags. 
-  Angular will do so only if we mention the `HeroDetailComponent` in this `directives` array.
+  * `directives` - *해당* 템플릿이 요구하는 컴포넌트 혹은 디렉티브들의 배열.
+  우리는 템플릿의 마지막 라인에 `<hero-detail>` 태그로 표시된 공간 내에 Angular가 `HeroDetailComponent`를 삽입하도록 요구한 걸 봤습니다.
+  Angular는 `directives` 배열 내에 `HeroDetailComponent`를 표기한 경우에만 그렇게 할 겁니다.
   
-  * `providers` - an array of **dependency injection providers** for services that the component requires.
-  This is one way to tell Angular that our component's constructor requires a `HeroService` 
-  so it can get the list of heroes to display. We'll get to dependency injection in a moment.
+  * `providers` - 컴포넌트가 요구하는 서비스에 대한 **의존성 주입 제공자**의 배열입니다.
+  이것은 Angular에게 컴포넌트의 생성자가 `HeroService`를 필요로 한다는 것을 알려주는 한 가지 방법입니다.
+  그렇게 해서 디스플레이하고자 하는 영웅들의 목록을 가져올 수 있습니다. 조만간 의존성 주입에 대해서도 알아볼 것입니다.
 figure
   img(src="/resources/images/devguide/architecture/template-metadata-component.png" alt="Metadata" align="left" style="height:200px; margin-left:-40px;margin-right:10px" )
 :marked
-  The `@Component` function takes the configuration object and turns it into metadata that it attaches
-  to the component class definition. Angular discovers this metadata at runtime and thus knows how to do "the right thing".
+  `@Component` 함수는 설정 객체를 받고 그것을 컴포넌트 클래스 정의에 붙이는 메타데이터로 바꿔줍니다.
+  Angular는 런타임에 이것을 발견하여 이를 처리해야 하는 "최적의 방법"을 알게 됩니다.
   
-  The template, metadata, and component together describe the view.
+  템플릿, 메타데이터 그리고 컴포넌트는 함께 뷰에 관해 설명합니다.
 
-  We apply other metadata decorators in a similar fashion to guide Angular behavior. 
-  The `@Injectable`, `@Input`, `@Output`, `@RouterConfig` are a few of the more popular decorators
-  we'll master as our Angular knowledge grows.
+  Angular가 어떻게 동작해야 할지 알려주기 위해 유사한 관례 속에서 다른 메타데이터 데코레이터들을 제공합니다.
+  `@Injectable`, `@Input`, `@Output`, `@RouterConfig`은 Angular에 대한 지식이 쌓여갈수록 마스터하게 될 자주 쓰이는 데코레이터들입니다.
 <br clear="all">
 :marked
-  The architectural take-away is that we must add metadata to our code
-  so that Angular knows what to do.
+  코드 상에 메타데이터를 추가해야만 하는 구조적인 부담은 있지만 그로 인해 Angular에게 무엇을 해야 하는지 알려줄 수 있습니다.
 
 .l-main-section
 <a id="data-binding"></a>
 :marked
-  ## Data Binding
-  Without a framework, we would be responsible for pushing data values into the HTML controls and turning user responses
-  into actions and value updates. Writing such push/pull logic by hand is tedious, error-prone and a nightmare to
-  read as the experienced jQuery programmer can attest.
+  ## 데이터 바인딩
+  프레임워크 없이, HTML 컨트롤 내로 데이터를 밀어넣는 것과 사용자 응답을 액션 및 값 갱신내로 변환하는 것에 있어서 책임을 질 수 있어야 합니다.
+  직접 그런 push/pull 로직을 작성하는 것은 경험많은 jQuery 개발자가 증언한 데로, 지루하고 오류의 원인이 될 수 있으며 코드 읽기에 있어 악몽이 될 수 있습니다.
 figure
   img(src="/resources/images/devguide/architecture/databinding.png" alt="Data Binding" style="width:220px; float:left; margin-left:-40px;margin-right:20px" )
 :marked
-  Angular supports **data binding**, 
-  a mechanism for coordinating parts of a template with parts of a component.
-  We add binding markup to the template HTML to tell Angular how to connect both sides.
+  Angular는 컴포넌트의 일부분으로 템플릿의 일부분을 조정하기 위한 메커니즘으로 **데이터 바인딩**을 지원합니다.
+  Angular에게 양측이 연결될 수 있는 방법을 알려주기 위해 템플릿 HTML에 바인딩 마크업을 추가하게 됩니다.
   
-  There are four forms of data binding syntax. Each form has a direction - to the DOM, from the DOM, or in both directions -
-  as indicated by the arrows in the diagram.
+  데이터 바인딩 문법에는 네 가지 형식이 존재합니다. 각각의 형식에는 다이어그램에서 화살표가 가르키듯이 방향(컴포넌트에서 DOM으로, DOM에서 컴포넌트로 혹은 양방향으로)이 있습니다.
 <br clear="all">
 :marked
-  We saw three forms of data binding in our [example](#template) template:
+  [예제](#template) 템플릿에서 이 세 가지 형식의 데이터 바인딩을 본적이 있습니다:
 +makeExample('architecture/ts/app/hero-list.component.1.html', 'binding', 'app/hero-list.component.html (excerpt)')(format=".")
 :marked
-  * The `{{hero.name}}` [*interpolation*](displaying-data.html#interpolation) 
-  displays the component's `hero.name` property value within the `<div>` tags.
+  * {{hero.name}} "[어구 삽입](displaying-data.html#interpolation)"은 `<div>` 태그 사이에 컴포넌트의 `hero.name` 프로퍼티 값을 디스플레이합니다.
   
-  * The `[hero]` [*property binding*](template-syntax.html#property-binding) passes the `selectedHero` from
-  the parent `HeroListComponent` to the `hero` property of the child `HeroDetailComponent`.
+  * `[hero]` [프로퍼티 바인딩](template-syntax.html#property-binding)은 상위 컴포넌트인 `HeroListComponent`의 `selectedHero`을
+  하위 컴포넌트인 `HeroDetailComponent`의 `hero` 프로퍼티로 전달합니다.
   
-  * The `(click)` [*event binding*](user-input.html#click) calls the Component's `selectHero` method when the user clicks
-  on a hero's name
+  * `(click)` [이벤트 바인딩](user-input.html#click)은 사용자가 영웅의 이름을 클릭하면 컴포넌트의 `selectHero` 메서드를 호출합니다.
 
-  **Two-way data binding** is an important fourth form
-  that combines property and event binding in a single notation using the `ngModel` directive. 
-  We didn't have a two-way binding in the `HeroListComponent` template; 
-  here's an example from the `HeroDetailComponent` template (not shown):
+  **양방향 데이터 바인딩**은 `ngModel` 디렉티브를 사용하여 단일 표기법 내에서 프로퍼티와 이벤트 바인딩을 혼합하는 중요한 4번째 형식입니다. 
+  `HeroListComponent` 템플릿 내에는 양방향 바인딩이 없습니다;
+  다음은 `HeroDetailComponent`에서의 예제입니다:
 
 +makeExample('architecture/ts/app/hero-detail.component.html', 'ngModel')(format=".")
 :marked
-  In two-way binding, a data property value flows to the input box from the component as with property binding.
-  The user's changes also flow back to the component, resetting the property to the latest value,
-  as with event binding.
+  양방향 바인딩에서, 데이터 프로퍼티 값은 프로퍼티 바인딩에 의해 컴포넌트에서 입력 박스로 전달됩니다.
+  사용자의 변경 내용 또한 이벤트 바인딩에 의해 마지막 값으로 프로퍼티를 재설정하도록 컴포넌트로 전달됩니다.
   
-  Angular processes *all* data bindings once per JavaScript event cycle, 
-  depth-first from the root of the application component tree. 
+  Angular는 애플리케이션 컴포넌트 트르의 최상위로부터, 깊이 우선적으로, 자바스크립트 이벤트 주기 당 한번 모든 데이터 바인딩을 처리합니다.
 figure
   img(src="/resources/images/devguide/architecture/component-databinding.png" alt="Data Binding" style="float:left; width:300px; margin-left:-40px;margin-right:10px" )
 :marked
-  We don't know all the details yet
-  but it's clear from these examples that data binding plays an important role in communication 
-  between a template and its component ...
+  우린 아직 세부적인 내용에 대해 모두 다 알지 못하지만 
+  데이터 바인딩이 템플릿과 그것의 컴포넌트 사이에서 커뮤니케이션의 중요한 역할을 한다는 것을 세 가지 예제를 통해 알게 되었습니다...
 <br clear="all">  
 figure
   img(src="/resources/images/devguide/architecture/parent-child-binding.png" alt="Parent/Child binding" style="float:left; width:300px; margin-left:-40px;margin-right:10px" )
 :marked
-  ... ***and*** between parent and child components
+  ... ***그리고*** 상하위 컴포넌트 내에서도 말이죠
 <br clear="all">
 
 .l-main-section
 <a id="directive"></a>
 :marked
-  ## The Directive
+  ## 디렉티브
 figure
   img(src="/resources/images/devguide/architecture/directive.png" alt="Parent child" style="float:left; width:150px; margin-left:-40px;margin-right:10px" )
 :marked
-  Our Angular templates are *dynamic*. When Angular renders them, it transforms the DOM 
-  according to the instructions given by a **directive**.
+  Angular 템플릿은 *동적*입니다. Angular가 그것을 렌덩링 할 때면, **디렉티브**에 의해 주어진 지시사항에 따라 DOM으로 변형됩니다.
   
-  A directive is a class with directive metadata. In TypeScript we'd apply the `@Directive` decorator
-  to attach metadata to the class.
+  디렉티브는 디렉티브 메타데이터를 가진 클래스입니다. TypeScript에서는 클래스에 메타데이터를 붙이기 위해 `@Directive` 데코레이터를 적용하게 됩니다.
 <br clear="all">
 :marked
-  We already met one form of directive: the component. A component is a *directive-with-a-template*
-  and the `@Component` decorator is actually a `@Directive` decorator extended with template-oriented features.
+  우리는 이미 한 가지 디렉티브 형식을 본 적이 있습니다: 컴포넌트 말이죠. 컴포넌트는 *템플릿을 가진 디렉티브*이며
+  `@Component` 데코레이터는 실제로는 템플릿 지향 기능들로 확장된 `@Directive` 데코레이터입니다.
 
 .l-sub-section
   :marked
-    While the **component is technically a directive**, 
-    it is so distinctive and central to Angular applications that we chose
-    to separate the component from the directive in our architectural overview.
+    **컴포넌트가 기술적으로는 디렉티브**이므로,
+    구조적 관점에서 디렉티브로부터 컴포넌트를 분리시키기기로 했다는 것은 Angular 애플리케이션에 있어 상당히 독특하고 중심이 되는 이야기입니다.
 :marked
-  There are two *other* kinds of directives as well that we call "structural" and "attribute" directives.
+  우리가 "structural" 그리고 "attribute" 디렉티브라고 부르는 두 가지의 *다른* 종류의 디렉티브들이 있습니다.
   
-  They tend to appear within an element tag like attributes, 
-  sometimes by name but more often as the target of an assignment or a binding.
+  그것들은 속성 처럼 요소 태그 내에, 때로는 이름으로 나타나기도 하지만 더 일반적으로는 할당 혹은 바인딩의 대상으로 나오곤 합니다.
   
-  **Structural** directives alter layout by adding, removing, and replacing elements in DOM.
+  **Structural** 디렉티브는 DOM 내 요소들을 추가하고 제거하며 대체함으로써 레이아웃을 수정합니다.
   
-  We see two built-in structural directives at play in our [example](#template) template:
+  [예제](#template) 내에서 동작하는 두 가지 빌트인 structural 디렉티브를 보시죠:
 +makeExample('architecture/ts/app/hero-list.component.1.html', 'structural')(format=".")
 :marked
-  * [`*ngFor`](displaying-data.html#ngFor) tells Angular to stamp out one `<div>` per hero in the `heroes` list.
-  * [`*ngIf`](displaying-data.html#ngIf) includes the `HeroDetail` component only if a selected hero exists.
+  * [`*ngFor`](displaying-data.html#ngFor)은 Angular에게 `heroes` 목록 내의 영웅들에 대해 영웅 한명 당 한 개의 `<div>`를 출력하라고 지시합니다.
+  * [`*ngIf`](displaying-data.html#ngIf)은 선택된 영웅이 존재하는 경우에만 `HeroDetail` 컴포넌트를 포함시킵니다.
   
-  **Attribute** directives alter the appearance or behavior of an existing element. 
-  In templates they look like regular HTML attributes, hence the name.
+  **Attribute** 디렉티브들은 존재하는 요소의 모습이나 행동을 수정합니다. 
+  템플릿 내에서 정규 HTML 속성처럼 보이는데 그렇기 때문에 이름으로 표현됩니다.
   
-  The `ngModel` directive, which implements two-way data binding, is an example of an attribute directive.
+  단방향 데이터 바인딩을 구현하는 `ngModel` 디렉티브는 attribute 디렉티브의 한 예입니다.
 +makeExample('architecture/ts/app/hero-detail.component.html', 'ngModel')(format=".")
 :marked
-  It modifies the behavior of an existing element (typically an `<input>`) 
-  by setting its display value property and responding to change events.
+  이 예제의 디렉티브는 디스플레이할 값 프로퍼티를 설정하고 change 이벤트에 응답하게끔 함으로써 현재 요소(일반적으로는 `<input>`)의 동작을 수정합니다.
   
-  Angular ships with a few other directives that either alter the layout structure 
-  (e.g. [ngSwitch](template-syntax.html#ngSwitch))
-  or modify aspects of DOM elements and components 
-  (e.g. [ngStyle](template-syntax.html#ngStyle) and [ngClass](template-syntax.html#ngClass)).
+  Angular는 레이아웃 구조([ngSwitch](template-syntax.html#ngSwitch)과 같이)를 바꾸거나
+  DOM 요소와 컴포넌트의 외관을 수정([ngStyle](template-syntax.html#ngStyle)과 [ngClass](template-syntax.html#ngClass)처럼)하는
+  몇 가지 다른 디렉티브들을 제공합니다.
   
-  And of course we can write our own directives.
+  그리고 당연히 자신의 디렉티브도 작성할 수 있습니다.
 
 .l-main-section
 <a id="service"></a>
 :marked
-  ## The Service
+  ## 서비스
 figure
   img(src="/resources/images/devguide/architecture/service.png" alt="Service" style="float:left; margin-left:-40px;margin-right:10px" )
 :marked
-  "Service" is a broad category encompassing any value, function or feature that our application needs.
+  "서비스"는 애플리케이션에서 필요로 하는 값, 함수 혹은 기능들을 포함하는 포괄적인 카테고리입니다.
   
-  Almost anything can be a service. 
-  A service is typically a class with a narrow, well-defined purpose. It should do something specific and do it well.
+  거의 모든 것이 서비스가 될 수 있습니다.
+  서비스는 일반적으로 엄밀하게 잘 정의된 목적을 가진 클래스입니다. 서비스는 하고자 하는 것을 명확하게 하고 잘 수행해야 합니다.
 <br clear="all">
 :marked
-  Examples include:
-  * logging service
-  * data service
-  * message bus
-  * tax calculator
-  * application configuration
+  예로 들자면:
+  * 로깅 서비스
+  * 데이터 서비스
+  * 메시지 버스
+  * 세금 계산기
+  * 애플리케이션 설정
   
-  There is nothing specifically *Angular* about services. Angular itself has no definition of a *service*. 
-  There is no *ServiceBase* class.
+  서비스와 관련하여 *Angular*에는 특별할 것이 아무것도 없습니다. Angular 자체는 *서비스*를 정의하지 않습니다.
+  *ServiceBase*라는 클래스도 없습니다.
   
-  Yet services are fundamental to any Angular application. 
+  어떤 Angular 애플리케이션이든지 서비스는 필수적입니다. 
   
-  Here's an example of a service class that logs to the browser console
+  다음은 브라우저 콘솔에 로그를 기록하는 서비스 클래스 예제입니다
 +makeExample('architecture/ts/app/logger.service.ts', 'class', 'app/logger.service.ts (class only)')(format=".")
 :marked
-  Here's a `HeroService` that fetches heroes and returns them in a resolved [promise](http://exploringjs.com/es6/ch_promises.html). 
-  The `HeroService` depends on the `LoggerService` and another `BackendService` that handles the server communication grunt work.
+  다음은 가져온 영웅들을 잘 처리된 [promise](http://exploringjs.com/es6/ch_promises.html) 안에 넣어 반환하는 `HeroService`입니다. 
+  이 `HeroService`은 `LoggerService` 그리고 서버 커뮤니케이션과 관련된 지루하고 고된 일을 다루는 `BackendService`에 의존합니다.
 +makeExample('architecture/ts/app/hero.service.ts', 'class', 'app/hero.service.ts (class only)')(format=".")
 :marked
-  Services are everywhere. 
+  서비스는 모든 곳에 있습니다. 
 
-  Our components are big consumers of services. They depend upon services to handle most chores. 
-  They don't fetch data from the server, they don't validate user input, they don't log directly to the console. 
-  They delegate such tasks to services.
+  우리의 컴포넌트는 서비스의 주 사용처입니다. 그것들은 대부분의 잡일들을 처리하는 서비스에 의존합니다. 
+  컴포넌트는 서버로부터 데이터를 가져오지 않으며, 사용자 입력의 유효성을 검증하지 않으며 콘솔에 직접적으로 로그를 남기지 않습니다. 
+  그것들은 그러한 업무들을 서비스에 일임합니다.
   
-  A component's job is to enable the user experience and nothing more. It mediates between the view (rendered by the template)
-  and the application logic (which often includes some notion of a "model").  A good component presents
-  properties and methods for data binding. It delegates everything non-trivial to services.
+  컴포넌트가 할 일은 사용자 경험 활성화 외에는 없습니다. 그것은 (템플릿에 의해 렌더링된)뷰와
+  애플리케이션 로직(종종 "모델"의 어떤 개념을 포함하는) 사이를 중개합니다.
+  좋은 컴포넌트는 데이터 바인딩을 위한 프로퍼티와 메서드들을 제공합니다. 그것은 중요한 모든 내용들을 서비스에 일임합니다.
 
-  Angular doesn't *enforce* these principles. 
-  It won't complain if we write a "kitchen sink" component with 3000 lines.
+  Angular는 이러한 원칙들을 *강제*하지는 않습니다.
+  Angular는 우리가 3000 라인이나 되는 "상상 가능한" 컴포넌트를 작성한다고 해도 불평하지 않을 겁니다.
   
-  Angular does help us *follow* these principles by making it easy to factor our
-  application logic into services and make those services available to components through *dependency injection*.
+  Angular는 애플리케이션 로직을 서비스 내부로 들여보내고 그러한 서비스들을 *의존성 주입*을 통해 사용 가능하도록 용이하게 함으로써
+  이러한 원칙들을 *따르는데* 도움을 줍니다.
 
 .l-main-section
 <a id="dependency-injection"></a>
 :marked
-  ## Dependency Injection
+  ## 의존성 주입
 figure
   img(src="/resources/images/devguide/architecture/dependency-injection.png" alt="Service" style="float:left; width:200px; margin-left:-40px;margin-right:10px" )
 :marked
-  "Dependency Injection" is a way to supply a new instance of a class 
-  with the fully-formed dependencies it requires. Most dependencies are services.
-  Angular uses dependency injection to provide new components with the services they need.
+  "의존성 주입"은 요구되는 완전히 형성된 의존성으로 클래스의 새로운 인스턴스를 제공하는 방법입니다. 대부분의 의존성은 서비스들이 될 겁니다. 
+  Angular는 새로운 컴포넌트에 그들이 필요로 하는 서비스들을 제공하기 위해 의존성 주입을 사용합니다.
 <br clear="all">
 :marked
-  In TypeScript, Angular can tell which services a component needs by looking at the types of its constructor parameters.
-  For example, the constructor of our `HeroListComponent` needs the `HeroService`:
+  TypeScript에서, Angular는 컴포넌트의 생성자 파라메터의 타입을 보고 컴포넌트를 서비스하는 것이 무엇인지 알 수 있습니다.
+  예를 들어, `HeroListComponent`의 생성자는 `HeroService`를 필요로 합니다:
 +makeExample('architecture/ts/app/hero-list.component.ts', 'ctor', 'app/hero-list.component (constructor)')(format=".")
 :marked
-  When Angular creates a component, it first asks an **Injector** for
-  the services that the component requires. 
+  Angular가 컴포넌트를 만들면, 먼저 컴포넌트가 요구하는 서비스를 주입하기 위한 **Injector**를 요청합니다. 
   
-  An `Injector` maintains a container of service instances that it has previously created.
-  If a requested service instance is not in the container, the injector makes one and adds it to the container
-  before returning the service to Angular. 
-  When all requested services have been resolved and returned, 
-  Angular can call the component's constructor with those services as arguments.
-  This is what we mean by *dependency injection*.
+  `Injector`는 이전에 만들어졌던 서비스 인스턴스의 컨테이너를 유지합니다.
+  요청된 서비스의 인스턴스가 컨테이너 내에 존재하지 않는다면, injector는 새로 하나를 만들고 그것을 Angular에게 반환하기 전에 컨테이너에 추가하게 됩니다.
+  요청된 모든 서비스들이 잘 처리되어 반환되면, Angular는 그 서비스들을 인자로 둔 컴포넌트의 생성자를 호출할 수 있게 됩니다. 
+  이것이 바로 *의존성 주입*이 의미하는 바입니다.
   
-  The process of `HeroService` injection looks a bit like this:
+  `HeroService` 주입의 과정은 다음과 비슷합니다:
 figure
   img(src="/resources/images/devguide/architecture/injector-injects.png" alt="Service" )
 :marked
-  If the `Injector` doesn't have a `HeroService`, how does it know how to make one?
+  `Injector`가 `HeroService`를 가지고 있지 않은 경우, 새로운 인스턴스를 만드는 방법을 어떻게 알고 있을까요?
   
-  In brief, we must have previously registered a **provider** of the `HeroService` with the `Injector`.
-  A provider is something that can create or return a service, typically  the service class itself.
+  간단히 말하자면, 이전에 `Injector`로 `HeroService`의 **제공자(provider)**를 등록했어야 합니다.
   
-  We can register providers at any level of the application component tree.
-  We often do so at the root when we bootstrap the application so that
-  the same instance of a service is available everywhere.
+  제공자는 서비스를 생성하고 반환하는 그 무언가인데, 일반적으로는 서비스 클래스 그 자체를 생성하고 반환합니다.
+  
+  우리는 애플리케이션 컴포넌트 트리의 어느 레벨에서든 제공자를 등록할 수 있습니다.
+  서비스의 동일한 인스턴스가 모든 곳에서 사용될 수 있도록 하려면 애플리케이션이 부트스트랩되는 루트 상에서 등록되어야 합니다.
 +makeExample('architecture/ts/app/main.ts', 'bootstrap','app/main.ts (excerpt)')(format=".")
 :marked
+  그외에는 컴포넌트 계층에서 등록되겠죠...
   Alternatively, we might register at a component level ...
 +makeExample('architecture/ts/app/hero-list.component.ts', 'providers','app/hero-list.component.ts (excerpt)')(format=".")
 :marked
-  ... in which case we get a new instance of the
-  service with each new instance of that component.
+  컴포넌트의 새로운 인스턴스마다 서비스의 새로운 인스턴스를 필요로 하는 경우에 말이죠...
   
-  We've vastly over-simplified dependency injection for this overview.
-  We can learn the full story in the [Dependency Injection](dependency-injection.html) chapter.
+  이 개요에서는 의존성 주입을 굉장히 심하게 간소화하여 설명했습니다. 
+  [의존성 주입](dependency-injection.html) 챕터에서 이에 대한 전부를 알아볼 수 있습니다.
   
-  The points to remember are:
-  * dependency injection is wired into the framework and used everywhere.<br><br>
-  * the `Injector` is the main mechanism.
-    * an injector maintains a *container* of service instances that it created.
-    * an injector can create a new service instance using a *provider*.
-  * a *provider* is a recipe for creating a service.
+  기억해야 할 중요한 점들은:
+  * 의존성 주입은 프레임워크 내로 연결되며 모든 곳에서 사용됩니다.<br><br>
+  * `Injector`은 주요 메카니즘입니다.
+    * Injector는 서비스 인스턴스의 *컨테이너*를 유지합니다.
+    * Injector는 *제공자*를 사용해 새로운 서비스를 만들 수 있습니다.
+  * *제공자*는 서비스 생성을 위한 레시피입니다.
  
-  * we register *providers* with injectors.
+  * Injector와 함께 *제공자*를 등록하게 됩니다.
 
 <a id="other-stuff"></a>  
 .l-main-section
 :marked
   ## Wrap up
-  We've learned just a bit about the eight main building blocks of an Angular application
+  우리는 Angualr 애플리케이션의 8가지 주요 빌딩 블록에 관해 약간씩 배워보았습니다
   
-  1. [Module](#module)   
-  1. [Component](#component)
-  1. [Template](#template)
-  1. [Metadata](#metadata)
-  1. [Data Binding](#data-binding)
-  1. [Directive](#directive)
-  1. [Service](#service)
-  1. [Dependency Injection](#dependency-injection)
+  1. [모듈](#module)   
+  1. [컴포넌트](#component)
+  1. [템플릿](#template)
+  1. [메타데이터](#metadata)
+  1. [데이터 바인딩](#data-binding)
+  1. [디렉티브](#directive)
+  1. [서비스](#service)
+  1. [의존성 주입](#dependency-injection)
   
-  That's a foundation for everything else in an Angular application
-  and it's more than enough to get going.
-  But it doesn't include everything we'll need or want to know.
+  그것은 Angular 애플리케이션의 다른 모든 것들을 위한 기초 내용이며
+  이것만 알아도 시작하는데 무리가 없습니다.
+  그러나 우리가 앞으로 필요로 하고 알고 싶어하는 모든 것을 포함하고 있지는 않습니다.
     
 <a id="other-stuff"></a>  
 .l-main-section
 :marked
-  ## The Other Stuff
+  ## 다른 내용들
+  다음의 간단하고 알파멧 순서로된 목록들은 Angular의 다른 중요한 기능과 서비스들입니다.
+  그들 중 대부분은 이 개발자 가이드에서 다루고 있습니다(혹은 그럴 예정입니다):
   
-  Here is a brief, alphabetical list of other important Angular features and services. 
-  Most of them are covered in this Developers Guide (or soon will be):
-  
-  >**Animations** - A forthcoming animation library makes it easy for developers to animate component behavior
-  without deep knowledge of animation techniques or css.
+  >**애니메이션** - 곧 나올 애니메이션 라이브러리는 애니메이션 기술 혹은 CSS에 대한 깊은 지식없이도 컴포넌트 동작을 애니메이션 처리하기 쉽게 만들어줍니다.
     
-  >**Bootstrap** - A method to configure and launch the root application component.
+  >**부트스트랩** - 루트 애플리케이션 컴포넌트를 설정하고 시작시키기 위한 메서드
   
-  >**Change Detection** - Learn how Angular decides that a component property value has changed and 
-  when to update the screen. 
-  Learn how it uses **zones** to intercept asynchronous activity and run its change detection strategies. 
+  >**변화 감지** - 컴포넌트 프로퍼티 값의 변화와 스크린 갱신 시점을 Angular가 결정하는 방법을 배웁니다.
+  비동기 활동을 가로채고 변화 감지 전략을 실행하기 위해 **zones**를 사용하는 방법에 대해서도 배웁니다. 
   
-  >**[Component Router](router.html)** - With the Component Router service, users can navigate a multi-screen application 
-  in a familiar web browsing style using URLs.
+  >**[컴포넌트 라우터](router.html)** - 컴포넌트 라우터 서비스로, 사용자는 URL을 사용해 웹 브라우징 스타일과 비슷하게 다중 스크린 애플리케이션 내부를 
+  네비게이트할 수 있습니다.
   
-  >**Events** - The DOM raises events. So can components and services. Angular offers mechanisms for
-  publishing and subscribing to events including an implementation of the [RxJS Observable](https://github.com/zenparsing/es-observable) proposal.
+  >**이벤트** - DOM은 이벤트를 일으킵니다. 컴포넌트와 서비스도 그렇게 할수 있죠. Angular는 [RxJS Observable](https://github.com/zenparsing/es-observable) 제안의
+  구현을 포함하여 이벤트를 개시하고 구독하는 메카니즘을 제공합니다.
   
-  >**[Forms](forms.html)** - Support complex data entry scenarios with HTML-based validation and dirty checking.
+  >**[폼](forms.html)** - HTML 기반의 유효성 검증과 더티 체킹으로 복잡한 데이터 엔트리 시나리오를 제공합니다.
   
-  >**[HTTP](server-communication.html)** - Communicate with a server to get data, save data, and invoke server-side actions with this Angular HTTP client.
+  >**[HTTP](server-communication.html)** - Angular HTTP 클라이언트로 데이터를 가져오고, 저장하며 서버측 동작을 일으키도록 서버와 통신합니다.
   
-  >**[Lifecycle Hooks](lifecycle-hooks.html)** - We can tap into key moments in the lifetime of a component, from its creation to its destruction, 
-  by implementing the "Lifecycle Hook" interfaces.
+  >**[생명주기 후크](lifecycle-hooks.html)** - "생명주기 후크" 인터페이스를 구현하여, 컴포넌트의 생성부터 소거까지, 컴포넌트의 생애 동안의 주요 순간들에 끼어들 수 있습니다.
   
-  >**[Pipes](pipes.html)** - Services that transform values for display. 
-  We can put pipes in our templates to improve the user experience. For example,
-  this `currency` pipe expression,
+  >**[파이프](pipes.html)** - 디스플레이하기 위한 값들을 변형해주는 서비스를 말합니다. 
+  사용자 경험을 증진시키기 위해 템플릿 내에 파이프를 넣을 수 있습니다. 예를 들어,
+  이 `currency` 파이프 표현식은,
 <div style="margin-left:40px">
 code-example(language="javascript" linenumbers=".").
   price | currency:'USD':true
 </div>
 :marked
-  >displays a price of "42.33" as `$42.33`.
+  >"42.33"이라는 가격으로 `$42.33`으로 디스플레이합니다.
   
-  >**[Testing](testing.html)** - Angular provides a testing library for "unit testing" our application parts as they
-  interact with the Angular framework.
+  >**[테스팅](../testing/index.html)** - Angular는 Angular 프레임워크와 상호작용하여 애플리케이션을 단위 테스트하기 위한 테스팅 라이브러리를 제공합니다.

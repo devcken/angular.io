@@ -3,74 +3,69 @@ block includes
   - var _thisDot = 'this.';
 
 :marked
-  **Dependency injection** is an important application design pattern.
-  Angular has its own dependency injection framework, and
-  we really can't build an Angular application without it.
-  It's used so widely that almost everyone just calls it _DI_.
+  **의존성 주입**은 중요한 애플리케이션 디자인 패턴입니다.
+  Angular는 자신만의 의존성 주입 프레임워크를 가지고 있으며, 실제로 해당 프레임워크 없이는 Angular 애플리케이션을 빌드하는 것이 불가능합니다.
+  의존성 프레임워크는 거의 모든이들이 그냥 _DI_라고 부를 정도로 꽤 널리 사용되고 있습니다.
 
-  In this chapter we'll learn what DI is and why we want it.
-  Then we'll learn [how to use it](#angular-di) in an Angular app.
+  이 챕터에서 우리는 DI가 무엇인지 그리고 우리가 그걸 왜 사용해야 하는지에 대해서 배워볼 겁니다.
+  그런 뒤에 Angular 앱에서 [의존성 주입을 어떻게 사용해야 하는지](#angular-di)에 대해서 배워보도록 하겠습니다.
 
-  - [Why dependency injection?](#why-dependency-injection)
-  - [Angular dependency injection](#angular-dependency-injection)
-  - [Injector providers](#injector-providers)
-  - [Dependency injection tokens](#dependency-injection-tokens)
-  - [Summary](#summary)
+  - [왜 의존성 주입일까요?](#why-dependency-injection)
+  - [Angular 의존성 주입](#angular-dependency-injection)
+  - [주입자 프로바이더](#injector-providers)
+  - [의존성 주입 토큰](#dependency-injection-tokens)
+  - [요약](#summary)
 
-p Run the #[+liveExampleLink2()].
+p #[+liveExampleLink2()]를 실행해보세요.
 
 .l-main-section#why-di
+
 :marked
-  ## Why dependency injection?
+  ## 왜 의존성 주입일까요?
 
-  Let's start with the following code.
-
+  다음 코드로부터 시작해보죠.
 +makeExample('dependency-injection/ts/app/car/car-no-di.ts', 'car', 'app/car/car.ts (without DI)')
 
 :marked
-  Our `Car` creates everything it needs inside its constructor.
-  What's the problem?
-  The problem is that our `Car` class is brittle, inflexible, and hard to test.
+  `Car`는 생성자 내에서 필요로 하는 모든 것을 생성합니다.
+  문제가 뭐죠?
+  `Car` 클래스가 불안정하고, 유연하지 못하며 테스트하기 어렵다는게 문제입니다.
 
-  Our `Car` needs an engine and tires. Instead of asking for them,
-  the `Car` constructor instantiates its own copies from
-  the very specific classes `Engine` and `Tires`.
+  `Car`는 엔진과 타이어를 필요로 합니다. `Car` 생성자는, 그것들을 요구하는 대신에, 매우 특화된 클래스인 `Engine` 그리고 `Tires`로부터
+  자신의 복사본을 초기화합니다.
 
-  What if the `Engine` class evolves and its constructor requires a parameter?
-  Our `Car` is broken and stays broken until we rewrite it along the lines of
-  `#{_thisDot}engine = new Engine(theNewParameter)`.
-  We didn't care about `Engine` constructor parameters when we first wrote `Car`.
-  We don't really care about them now.
-  But we'll *have* to start caring because
-  when the definition of `Engine` changes, our `Car` class must change.
-  That makes `Car` brittle.
+  `Engine` 클래스가 점점 발달하면서 생성자에서 파라메터를 필요로 한다면 어떨까요?
+  `Car`는 `#{prefix}engine = new Engine(theNewParameter)`와 같이 수정하기 전까지는 오류를 발생시키는 상태로 남아있을 겁니다.
+  처음에 `Car`를 작성했을 때는 `Engine` 생성자의 파라메터에 관해서는 전혀 신경쓰지 않았습니다. 
+  지금은 그런 것들을 걱정하고 있지는 않습니다.
+  그러나 신경*써야 할 겁니다*. 왜냐하면 `Engine`의 정의가 변경되면 `Car` 클래스가 변해야 하기 때문이죠.
+  그런 점들에서 `Car`는 부서지기 쉬운 구조입니다.
 
-  What if we want to put a different brand of tires on our `Car`? Too bad.
-  We're locked into whatever brand the `Tires` class creates. That makes our `Car` inflexible.
+  `Car`에 다른 종류의 브랜드의 타이어를 끼고 싶다면 어떨까요? 쉽지 않을 거 같네요. 
+  `Tires` 클래스가 어떤 브랜드의 것인지 정할 수 없습니다. 이런 점이 `Car`를 유연하지 못하게 만듭니다.
 
+  각각의 새로운 차는 자신의 엔진을 갖습니다. 다른 차들과는 엔진을 공유할 수 없습니다.
   Right now each new car gets its own engine. It can't share an engine with other cars.
-  While that makes sense for an automobile engine,
-  we can think of other dependencies that should be shared, such as the onboard
-  wireless connection to the manufacturer's service center. Our `Car` lacks the flexibility
-  to share services that have been created previously for other consumers.
+  그것이 자동차 엔진에 있어서는 타당한 이야기지만,
+  제조사의 서비스 센터로 연결하기 위한 온보드 무선 연결과 같은, 공유되어야 하는 다른 의존성에 대해 생각해볼 수 있습니다.
+  `Car`은 다른 소비자들을 위해 이전에 만들어졌던 서비스를 공유하기 위한 유연성이 결여되어 있습니다.
 
-  When we write tests for our `Car` we're at the mercy of its hidden dependencies.
-  Is it even possible to create a new `Engine` in a test environment?
-  What does `Engine`itself depend upon? What does that dependency depend on?
-  Will a new instance of `Engine` make an asynchronous call to the server?
-  We certainly don't want that going on during our tests.
+  우리가 `Car`에 대해 테스트를 작성할 때 숨겨진 의존성에 휘둘리게 됩니다.
+  테스트 환경에서 새로운 `Engine`을 생성하는 것이 가능키나 한가요?
+  `Engine` 그 자체는 무엇에 의존적일까요? 그 의존성은 또 무엇에 의존하고 있을까요?
+  `Engine`의 새로운 인스턴스는 서버에 비동기 호출을 하고 있을지도 모릅니다.
+  확실한건 우리가 테스트를 진행하는 동안은 그런 것들이 이루어지지 않길 바란다는 것입니다.
 
-  What if our `Car` should flash a warning signal when tire pressure is low?
-  How do we confirm that it actually does flash a warning
-  if we can't swap in low-pressure tires during the test?
+  타이어 압력이 낮을 때 `Car`가 경고 신호등를 깜빡인다면 어떨까요? 
+  테스트를 진행하는 동안 타이어를 저기압 상태로 바꾸지 않고, 실제로 경고를 깜빡이는지 어떻게 확인할 수 있을까요?
 
-  We have no control over the car's hidden dependencies.
-  When we can't control the dependencies, a class becomes difficult to test.
+  우리는 차의 숨겨진 의존성들에 대해서는 제어권이 없습니다.
+  의존성을 제어할 수 없을 경우 클래스는 테스트하기 어려워집니다.
 
-  How can we make `Car` more robust, flexible, and testable?
+  어떻게 하면 `Car`를 좀 더 탄탄하고 유연하면서 테스트 가능하도록 만들 수 있을까요?
 
   <a id="ctor-injection"></a>
-  That's super easy. We change our `Car` constructor to a version with DI:
+  그건 정말로 쉽습니다. `Car` 생성자를 DI를 이용한 버전으로 바꾸면 됩니다:
 
 +makeTabs(
   'dependency-injection/ts/app/car/car.ts, dependency-injection/ts/app/car/car-no-di.ts',
@@ -78,107 +73,94 @@ p Run the #[+liveExampleLink2()].
   'app/car/car.ts (excerpt with DI), app/car/car.ts (excerpt without DI)')(format=".")
 
 :marked
-  See what happened? We moved the definition of the dependencies to the constructor.
-  Our `Car` class no longer creates an engine or tires.
-  It just consumes them.
+  어떤 변화가 있죠? 의존성 정의를 생성자로 이동시켰습니다. 
+  더 이상 `Car` 클래스는 엔진이나 타이어를 생성하지 않습니다.
+  그들을 소비할 뿐이죠.
 
 block ctor-syntax
   .l-sub-section
     :marked
-      We also leveraged TypeScript's constructor syntax for declaring
-      parameters and properties simultaneously.
+      우리는 파라메터와 프로퍼티를 동시에 선언하기 위해 TypeScript의 생성자 문법도 이용합니다.
 
 :marked
-  Now we create a car by passing the engine and tires to the constructor.
+  이제 생성자로 엔진과 타이어를 전달하여 차를 생성하게 됐습니다.
 
 +makeExample('dependency-injection/ts/app/car/car-creations.ts', 'car-ctor-instantiation', '')(format=".")
 
 :marked
-  How cool is that?
-  The definition of the engine and tire dependencies are
-  decoupled from the `Car` class itself.
-  We can pass in any kind of engine or tires we like, as long as they
-  conform to the general API requirements of an engine or tires.
-
-  If someone extends the `Engine` class, that is not `Car`'s problem.
-
+  얼마나 좋은가요?
+  엔진과 타이어 의존성의 정의는 `Car` 클래스 자체와 분리되었습니다.
+  엔진 혹은 타이어에 대한 일반적인 API 요구사항을 따른다면 얼마든지 원하는데로 어떤 종류의 엔진 혹은 타이어든지 전달할 수 있습니다.
+  
+  누군가 `Engine` 클래스를 확장한다면, 그건 `Car`의 문제가 아닙니다.
+  
 .l-sub-section
   :marked
-    The _consumer_ of `Car` has the problem. The consumer must update the car creation code to
-    something like this:
+    `Car`의 _소비자_는 문제를 가지고 있습니다. 차 생성 코드를 다음과 같이 갱신해야 하기 때문이죠:
 
   - var stylePattern = { otl: /(new Car.*$)/gm };
   +makeExample('dependency-injection/ts/app/car/car-creations.ts', 'car-ctor-instantiation-with-param', '', stylePattern)(format=".")
 
   :marked
-    The critical point is this: `Car` itself did not have to change.
-    We'll take care of the consumer's problem soon enough.
+    중요한 점은 이겁니다: `Car` 자체는 변해서는 안된다는 것이죠. 우린 곧 소비자 측 문제를 다루게 될 겁니다.
 
 :marked
-  The `Car` class is much easier to test because we are in complete control
-  of its dependencies.
-  We can pass mocks to the constructor that do exactly what we want them to do
-  during each test:
-
+  `Car` 클래스는 테스트하기 더 쉬워졌는데, 우리가 의존성 제어를 완벽히 가지고 있기 때문입니다.
+  각각의 테스트 진행하는 동안 어떻게 하면 좋을지를 정확히 하도록 생성자에 가짜 객체(mock)을 전달할 수 있습니다:
+  
 - var stylePattern = { otl: /(new Car.*$)/gm };
 +makeExample('dependency-injection/ts/app/car/car-creations.ts', 'car-ctor-instantiation-with-mocks', '', stylePattern)(format=".")
 
 :marked
-  **We just learned what dependency injection is**.
+  **우리는 방금 의존성 주입이 무엇인지를 배웠습니다**.
 
-  It's a coding pattern in which a class receives its dependencies from external
-  sources rather than creating them itself.
+  그것은 클래스가 자체적으로 의존성의 인스턴스를 생성하지 않고 외부 소수로부터 전달받도록 하는 코딩 패턴입니다.
 
-  Cool! But what about that poor consumer?
-  Anyone who wants a `Car` must now
-  create all three parts: the `Car`, `Engine`, and `Tires`.
-  The `Car` class shed its problems at the consumer's expense.
+  좋아요! 하지만 그 불쌍한 소비자들은 어쩌죠?
+  `Car`를 요구하는 소비자들은 이제 누구든지 모두 세 가지 파트를 만들어야 합니다: `Car`, `Engine` 그리고 `Tires`.
+  `Car` 클래스는 자신의 문제를 소비자의 역할로 넘겼습니다.
+  우리는 이 파트들을 
   We need something that takes care of assembling these parts for us.
 
-  We could write a giant class to do that:
-
+  우리는 그렇게 동작하는 자이언트 클래스를 만들수 있습니다:
 +makeExample('dependency-injection/ts/app/car/car-factory.ts', null, 'app/car/car-factory.ts')
 
 :marked
-  It's not so bad now with only three creation methods.
-  But maintaining it will be hairy as the application grows.
-  This factory is going to become a huge spiderweb of
-  interdependent factory methods!
+  세개의 생성 메서드만 있다면 그리 나쁜 것만은 아닐 겁니다.
+  그러나 그것을 유지하는 것은 애플리케이션이 커지면서 점점 더 무거워질겁니다.
+  이 팩토리는 서로 의존하는 팩토리 메서드들의 거대한 거미줄처럼 되어갈 것입니다.
 
-  Wouldn't it be nice if we could simply list the things we want to build without
-  having to define which dependency gets injected into what?
+  무언가로 주입될 의존성이 어떤 것인지 결정해야 하는 상황없이 우리가 빌드하고 싶은 것들을 간단히 나열할 수만 있다면 좋아지지 않을까요? 
 
-  This is where the dependency injection framework comes into play.
-  Imagine the framework had something called an _injector_.
-  We register some classes with this injector, and it figures out how to create them.
+  이것은 의존성 주입 프레임워크가 동작하게 되는 곳입니다.
+  프레임워크가 _주입자_라고 불리는 무언가를 가지고 있다고 상상해보세요.
+  우리는 그 주입자로 몇 가지 클래스를 등록시키고 해당 주입자는 그것들을 어떻게 생성해야 하는지 알아낼 것입니다.
 
-  When we need a `Car`, we simply ask the injector to get it for us and we're good to go.
-
+  `Car`가 필요하다면, 그것을 주입자에게 요구할테고 계속 진행하는데 문제가 없을 겁니다.
 +makeExample('dependency-injection/ts/app/car/car-injector.ts','injector-call')(format=".")
 
 :marked
-  Everyone wins. The `Car` knows nothing about creating an `Engine` or `Tires`.
-  The consumer knows nothing about creating a `Car`.
-  We don't have a gigantic factory class to maintain.
-  Both `Car` and consumer simply ask for what they need and the injector delivers.
+  모두에게 좋은 상황입니다. `Car`는 `Engine` 혹은 `Tires`를 생성하는 것에 대해 전혀 알지 못합니다.
+  소비자는 `Car`를 생성하는 것에 대해서 전혀 알지 못합니다.
+  유지보수를 위한 엄청 거대한 팩토리 클래스를 가지고 있지도 않습니다.
+  `Car` 그리고 소비자 모두 그들이 필요로 하는 것과 주입자가 전달해야하는 것들을 요청할 뿐입니다.
 
-  This is what a **dependency injection framework** is all about.
+  이것이 **의존성 주입 프레임워크**에 대한 모든 것입니다.
 
-  Now that we know what dependency injection is and appreciate its benefits,
-  let's see how it is implemented in Angular.
+  이제 우리는 의존성 주입이 무엇인지 그리고 그것의 이점이 무엇인지를 알게 되었으므로,
+  Angular에서 그것을 어떻게 구현하는지에 대해서 알아보도록 하죠.
 
 .l-main-section#angular-di
+  
 :marked
-  ## Angular dependency injection
+  ## Angular 의존성 주입
 
-  Angular ships with its own dependency injection framework. This framework can also be used
-  as a standalone module by other applications and frameworks.
+  Angular는 자체적인 의존성 주입 프레임워크와 함께 제공됩니다. 이 프레임워크는 다른 애플리케이션과 프레임워크의 표준 모듈로써 사용되기도 합니다.
 
-  That sounds nice. What does it do for us when building components in Angular?
-  Let's see, one step at a time.
+  듣기 좋군요. Angular에서 컴포넌트를 빌드를 할 때 그것의 역할은 무엇일가요?
+  한번에 하나씩 알아보도록 하죠
 
-  We'll begin with a simplified version of the `HeroesComponent`
-  that we built in the [The Tour of Heroes](../tutorial/).
+  [영웅들의 여행](../tutorial/)에서 만들었던 `HeroesComponent`의 간소화된 버전으로 시작해보겠습니다.
 
 +makeTabs(
   `dependency-injection/ts/app/heroes/heroes.component.1.ts,
@@ -192,36 +174,32 @@ block ctor-syntax
   app/heroes/mock-heroes.ts`)
 
 :marked
-  The `HeroesComponent` is the root component of the *Heroes* feature area.
-  It governs all the child components of this area.
-  Our stripped down version has only one child, `HeroListComponent`,
-  which displays a list of heroes.
+  `HeroesComponent`는 *Heroes* 기능 영역의 최상위 컴포넌트입니다.
+  그것은 해당 영역의 모든 하위 컴포넌트를 관리합니다.
+  가장 필요한 부분만 남긴다면 영웅들의 목록을 디스플레이하는 `HeroListComponent`라는 하나의 하위 컴포넌트만 남을 겁니다.
 
 :marked
-  Right now `HeroListComponent` gets heroes from `HEROES`, an in-memory collection
-  defined in another file.
-  That may suffice in the early stages of development, but it's far from ideal.
-  As soon as we try to test this component or want to get our heroes data from a remote server,
-  we'll have to change the implementation of `heroes` and
-  fix every other use of the `HEROES` mock data.
+  지금 당장은, `HeroListComponent`는 다른 파일에 정의되어 있는 인메모리 컬렉션인 `HEROES`로부터 영웅들을 가져옵니다.
+  그것은 개발 초기 스테이지에서는 충분하지만 그리 이상적인 것은 아닙니다.
+  이 컴포넌트를 테스트하거나 원격 서버로부터 영웅들의 데이터를 가져오려고 한다면 되도록 빨리,
+  `heroes`의 구현을 변경하고 `HEROES` 목(mock) 데이터의 다른 모든 사용처를 수정해야만 할 겁니다.
 
-  Let's make a service that hides how we get hero data.
+  우리가 영웅 데이터를 가져오는 방법을 숨겨주는 서비스를 만들어보죠.
 
 .l-sub-section
   :marked
-    Given that the service is a
-    [separate concern](https://en.wikipedia.org/wiki/Separation_of_concerns),
-    we suggest that you
-    write the service code in its own file.
+    서비스가 [관심사의 분리](https://en.wikipedia.org/wiki/Separation_of_concerns)인 것을 고려했을 때,
+    우리는 당신이 서비스 자체 파일에 서비스 코드를 작성할 것을 제안할 수 있을 겁니다.
+    
   +ifDocsFor('ts')
     :marked
-      See [this note](#one-class-per-file) for details.
-
+      자세한 내용은 [이 노트](#forward-ref)를 참고하세요.
+      
 +makeExample('dependency-injection/ts/app/heroes/hero.service.1.ts',null, 'app/heroes/hero.service.ts' )
 
 :marked
-  Our `HeroService` exposes a `getHeroes` method that returns
-  the same mock data as before, but none of its consumers need to know that.
+  `HeroService`는 전처럼 동일한 목(mock) 데이터를 반환하는 `getHeroes` 메서드를 가지고 있는데,
+  그것의 사용처에서는 그 내용을 알 필요가 없습니다.
 .l-sub-section
   :marked
     Notice the `@Injectable()` #{_decorator} above the service class.
@@ -230,68 +208,66 @@ block ctor-syntax
 - var _perhaps = _docsFor == 'dart' ? '' : 'perhaps';
 .l-sub-section
   :marked
-    We aren't even pretending this is a real service.
-    If we were actually getting data from a remote server, the API would have to be 
-    asynchronous, #{_perhaps} returning a !{_PromiseLinked}.
-    We'd also have to rewrite the way components consume our service.
-    This is important in general, but not to our current story.
+    우리는 이것이 진짜 서비스라고 한적 조차도 없습니다.
+    우리가 정말로 원격 서버에서 데이터를 가져오려고 했다면,
+    API는 #{_perhaps} !{_PromiseLinked}를 반환하도록, 비동기여야 할 겁니다.
+    또 컴포넌트가 서비스를 사용하는 방법도 다시 구현해야 할 겁니다.
+    이것은 일반적으로는 중요하지만 현재의 내용에서는 그렇지 않습니다.
 
 :marked
-  A service is nothing more than a class in Angular 2.
-  It remains nothing more than a class until we register it with an Angular injector.
+  서비스는 Angular2에서 클래스일뿐 아무것도 아닙니다.
+  Angular 주입자로 그것을 등록하기 이전까지는 클래스일뿐입니다.
 
 #bootstrap
-:marked
-  ### Configuring the injector
 
-  We don't have to create an Angular injector.
-  Angular creates an application-wide injector for us during the bootstrap process.
+:marked
+  ### 주입자 설정하기
+
+  Angular 주입자를 꼭 생성해야 하는 건 아닙니다.
+  Angular는 부트스트랩 과정 중에 애플리케이션 전반에서 사용 가능한 주입자를 생성합니다.
 
 +makeExample('dependency-injection/ts/app/main.ts', 'bootstrap', 'app/main.ts (excerpt)')(format='.')
 
 :marked
-  We do have to configure the injector by registering the **providers**
-  that create the services our application requires.
-  We'll explain what [providers](#providers) are later in this chapter.
-  Before we do, let's see an example of provider registration during bootstrapping:
+  애플리케이션이 필요로 하는 서비스를 생성하는 **프로바이더**를 등록하여 주입자를 설정해야 합니다.
+  이 챕터에서 이후에 [프로바이더](#providers)가 무엇인지에 대해 설명할 겁니다.
+  그러기 전에, 부트스트랩 중 provider를 등록하는 예제를 살펴보도록 하죠:
 
 +makeExample('dependency-injection/ts/app/main.1.ts', 'bootstrap-discouraged')(format='.')
 
 :marked
-  The injector now knows about our `HeroService`.
-  An instance of our `HeroService` will be available for injection across our entire application.
+  주입자는 이제 `HeroService`에 관해 알게 됐습니다.
+  `HeroService`의 인스턴스는 전체 애플리케이션에 걸쳐 주입에 이용될 수 있습니다.
 
+  물론 
   Of course we can't help wondering about that comment telling us not to do it this way.
-  It *will* work. It's just not a best practice.
-  The bootstrap provider option is intended for configuring and overriding Angular's own
-  preregistered services, such as its routing support.
+  그건 동작*할 겁니다*. 그것은 단지 최상의 방식이 아닐 뿐이죠.
+  부트스트랩 프로바이더 옵션은 라우팅 지원과 같은, Angular 자체의 기등록 서비스를 설정하고 재정의를 염두해둔 것입니다.
 
-  The preferred approach is to register application providers in application components.
-  Because the `HeroService` is used within the *Heroes* feature area &mdash;
-  and nowhere else &mdash; the ideal place to register it is in the top-level `HeroesComponent`.
+  더 나은 해결책은 애플리케이션 컴포넌트 내에서 애플리케이션 프로바이더를 등록하는 것입니다.
+  `HeroService`가 *Heroes* 기능 영역 &mdash; 그외에는 사용될 곳이 없으므로 &mdash; 내에서 사용되기 때문에,
+  그것을 등록시킬 이상적인 장소는 최상위 레벨인 `HeroesComponent`이 됩니다.
 
 :marked
-  ### Registering providers in a component
-  Here's a revised `HeroesComponent` that registers the `HeroService`.
+  ### 컴포넌트 내에 프로바이더 등록하기
+  다음은 `HeroService`를 등록하는 수정된 `HeroesComponent`입니다.
 
 - var stylePattern = { otl: /(providers:.*),/ };
 +makeExample('dependency-injection/ts/app/heroes/heroes.component.1.ts', 'full','app/heroes/heroes.component.ts', stylePattern)(format='.')
 
 :marked
-  Look closely at the `providers` part of the `@Component` metadata.
-  An instance of the `HeroService` is now available for injection in this `HeroesComponent`
-  and all of its child components.
+  `@Component` 메타데이터의 `providers` 파트를 자세히 보시죠.
+  `HeroService`의 인스턴스는 이제 `HeroesComponent`와 그것의 모든 하위 컴포넌트에서 주입을 통해 이용 가능합니다.
 
-  The `HeroesComponent` itself doesn't happen to need the `HeroService`.
-  But its child `HeroListComponent` does, so we head there next.
+  `HeroesComponent` 그 자체는 `HeroService`를 필요로 할 일이 없습니다.
+  하지만 그것의 하위 컴포넌트인 `HeroListComponent`는 필요로 합니다.
 
 :marked
-  ### Preparing the HeroListComponent for injection
+  ### HeroListComponent에서 주입하기
 
-  The `HeroListComponent` should get heroes from the injected `HeroService`.
-  Per the dependency injection pattern, the component must ask for the service in its 
-  constructor, [as we explained earlier](#ctor-injection).
-  It's a small change:
+  `HeroListComponent`는 주입된 `HeroService`로부터 영웅들을 가져와야 합니다.
+  의존 주입 패턴마다, [초반에 설명한대로](#ctor-injection), 컴포넌트는 생성자 내에서 해당 서비스를 요구해야 합니다.
+  그것이 작은 변화죠:
 
 +makeTabs(
   `dependency-injection/ts/app/heroes/hero-list.component.2.ts,
@@ -302,78 +278,68 @@ block ctor-syntax
 
 .l-sub-section
   :marked
-    #### Focus on the constructor
+    ### 생성자에 주목하세요
 
-    Adding a parameter to the constructor isn't all that's happening here.
+    생성자에 파라메터를 추가하는 것이 전부가 아닙니다.
 
   +makeExample('dependency-injection/ts/app/heroes/hero-list.component.2.ts', 'ctor')(format=".")
 
   :marked
-    Note that the constructor parameter has the type `HeroService`, and that
-    the `HeroListComponent` class has an `@Component` #{_decorator}
-    (scroll up to confirm that fact).
-    Also recall that the parent component (`HeroesComponent`)
-    has `providers` information for `HeroService`.
+    생성자 파라메터는 `HeroService` 타입을 가지고 있으며 `HeroListComponent` 클래스가 `@Component` #{_decorator}를
+    가지고 있다는 것을 알아두시기 바랍니다(그 사실이 확인될 때까지 스크롤하여 위로 올라가 보세요).
+    또한 상위 컴포넌트 (`HeroesComponent`)가 `HeroService`을 위한 `providers` 정보를 가지고 있다느 것도 상기하시기 바랍니다.
 
-    The constructor parameter type, the `@Component` #{_decorator},
-    and the parent's `providers` information combine to tell the
-    Angular injector to inject an instance of
-    `HeroService` whenever it creates a new `HeroListComponent`.
+    생성자 파라메터 타입, `@Component` #{_decorator} 그리고 상위 컴포넌트의 `providers` 정보가 결합하여
+    Angular 주입자에게 새로운 `HeroListComponent`를 만들때면 언제든지 `HeroService`의 인스턴스를 주입해야 한다는 것을 알려줍니다.
 
 #di-metadata
 :marked
-  ### Implicit injector creation
-
-  When we introduced the idea of an injector above, we showed how to
-  use it to create a new `Car`. Here we also show how such an injector
-  would be explicitly created:
-
+  ### 주입자 생성하기(암묵적으로)
+  
+  위에서 주입자에 대한 아이디어를 소개했을 때, 주입자를 생성하고 새로운 `Car`를 만들기 위해 그것을 사용하는 방법에 대해서 보았습니다.
+  다음은 어떤 주입자가 명시적으로 생성되는 방법에 대해서 설명하고 있습니다:
+  
 +makeExample('dependency-injection/ts/app/car/car-injector.ts','injector-create-and-call')(format=".")
 
 :marked
-  We won't find code like that in the Tour of Heroes or any of our other samples.
-  We *could* write code that [explicitly creates an injector](#explicit-injector) if we *had* to, but we rarely do.
-  Angular takes care of creating and calling injectors
-  when it creates components for us &mdash; whether through HTML markup, as in `<hero-list></hero-list>`,
-  or after navigating to a component with the [router](./router.html).
-  If we let Angular do its job, we'll enjoy the benefits of automated dependency injection.
+  우리는 영웅들의 여행 혹은 다른 샘플 들에서 이와 같은 코드를 볼 수 없었습니다.
+  그래야 *했다면* [명시적인 주입자를 이용한 코드](#explicit-injector)를 작성*했겠지만*, 그런 일은 거의 드뭅니다. 
+  Angular는 컴포넌트를 생성할 때 주입자를 만들고 호출해야 할 책임이 있습니다. `<hero-list></hero-list>`와 같은 HTML 마크업이든
+  [라우터](./router.html)를 이용해 컴포넌트로 이동한 이후든지 말이죠.
+  Angular로 이러한 일을 하게 되면, 자동화된 의존성 주입의 혜택을 누리게 될 겁니다.
 
 :marked
-  ### Singleton services
-
-  Dependencies are singletons within the scope of an injector.
-  In our example, a single `HeroService` instance is shared among the
-  `HeroesComponent` and its `HeroListComponent` children.
-
-  However, Angular DI is an hierarchical injection
-  system, which means that nested injectors can create their own service instances.
-  Learn more about that in the [Hierarchical Injectors](./hierarchical-dependency-injection.html) chapter.
+  ### 싱글턴 서비스
+  의존성은 주입자 스코프 내에 있는 싱글턴입니다.
+  예제 중에, 단일 `HeroService` 인스턴스는 `HeroesComponent`과 `HeroListComponent`라는 하위 컴포넌트 가운데 공유됩니다.
+  
+  하지만, Angular DI는 계층적 주입 시스템으로 내재된 주입자들이 자신의 서비스 인스턴스를 생성할 수 있다는 것을 의미합니다.
+  [계층적 주입자](./hierarchical-dependency-injection.html) 챕터에서 그에 대해 좀 더 자세히 알아보시기 바랍니다.
 
 :marked
-  ### Testing the component
+  ### 컴포넌트 테스트하기
+  
+  의존성 주입을 위한 클래스 설계가 클래스를 테스트하기 더 쉽게 만든다고 초기에 강조했었습니다.
+  생성자 파라메터로써 의존성을 나열하는 것은 우리 모두가 애플리케이션의 부분 부분들을 효과적으로 테스트하는데 필요로 하는 것이 될 겁니다. 
 
-  We emphasized earlier that designing a class for dependency injection makes the class easier to test.
-  Listing dependencies as constructor parameters may be all we need to test application parts effectively.
-
-  For example, we can create a new `HeroListComponent` with a mock service that we can manipulate
-  under test:
+  예를 들어, 아래 테스트를 잘 처리할 수 있는 목(mock) 서비스를 이용해 새로운 `HeroListComponent`를 만들 수 있습니다:
 
 +makeExample('dependency-injection/ts/app/test.component.ts', 'spec')(format='.')
 
 .l-sub-section
   :marked
-    Learn more in [Testing](../testing/index.html).
+    [테스트하기](../testing/index.html)에서 좀 더 자세히 알아보세요.
 
 :marked
-  ### When the service needs a service
+  
+  ### 서비스가 서비스를 필요로 하는 경우
+  
+  `HeroService`는 매우 간단합니다. 그 자체로는 어떤 의존성도 갖지 않지요.
 
-  Our `HeroService` is very simple. It doesn't have any dependencies of its own.
+  의존성을 갖는다면 어떨까요? 로깅 서비스를 통해 동작을 보고한다면 어떨까요?
+  `Logger` 파라메터를 받는 생성자를 추가하는, 동일한 *생성자 주입* 패턴을 적용할 겁니다. 
 
-
-  What if it had a dependency? What if it reported its activities through a logging service?
-  We'd apply the same *constructor injection* pattern,
-  adding a constructor that takes a `Logger` parameter.
-
+  다음은 원래의 코드와 수정된 코드의 비교입니다.
   Here is the revision compared to the original.
 
 +makeTabs(
@@ -384,74 +350,67 @@ block ctor-syntax
   app/heroes/hero.service (v1)`)
 
 :marked
-  The constructor now asks for an injected instance of a `Logger` and stores it in a private property called `#{_priv}logger`.
-  We call that property within our `getHeroes` method when anyone asks for heroes.
+  생성자는 이제 `Logger`의 인스턴스 주입을 요구하며 그것을 `#{_priv}logger`라는 private 프로퍼티에 보관합니다.
+  누군가가 영웅 목록을 요청하는 경우 `getHeroes` 메서드 내에서 해당 프로퍼티가 호출될 겁니다.
 
 //- FIXME refer to Dart API when that page becomes available.
 - var injMetaUrl = 'https://angular.io/docs/ts/latest/api/core/index/InjectableMetadata-class.html';
-h3#injectable Why @Injectable()?
+h3#injectable 왜 @Injectable 일까요?
 :marked
-  **<a href="#{injMetaUrl}">@Injectable()</a>** marks a class as available to an
-  injector for instantiation. Generally speaking, an injector will report an
-  error when trying to instantiate a class that is not marked as
-  `@Injectable()`.
+  **<a href="#{injMetaUrl}">@Injectable()</a>**는 초기화에 있어 주입자가 이용 가능한 클래스로 마크해줍니다.
+  일반적으로 말하자면, 주입자는 `@Injectable()`로 마크되지 않은 클래스를 초기화하려고 할 경우 오류를 리포트할 것입니다.
 
 block injectable-not-always-needed-in-ts
   .l-sub-section
     :marked
-      As it happens, we could have omitted `@Injectable()` from our first
-      version of `HeroService` because it had no injected parameters.
-      But we must have it now that our service has an injected dependency.
-      We need it because Angular requires constructor parameter metadata 
-      in order to inject a `Logger`.
+      공교롭게도, 우리는 `HeroService`의 첫번째 버전에서 `@Injectable()`을 생략할 수 있었는데
+      주입된 파라메터가 없었기 때문입니다.
+      그러나 서비스가 주입된 의존성을 갖게 된 지금으로써는 그것을 생략해서는 안됩니다.
+      Angular가 `Logger`를 주입하기 위해 생성자 파라메터 메타데이터를 요구하므로 필요합니다.
 
   .callout.is-helpful
-    header Suggestion: add @Injectable() to every service class
+    header 제안: 모든 서비스 클래스에 @Injectable()를 추가하세요
     :marked
-      We recommend adding `@Injectable()` to every service class, even those that don't have dependencies
-      and, therefore, do not technically require it. Here's why:
+      모든 서비스 클래스에 `@Injectable()`를 추가히길 권장해드립니다.
+      의존성을 갖지 않고 그러므로 그것을 기술적으로 필요로 하지 않는 서비스라도 말이죠.
+      그 이유는 다음과 같습니다:
 
     ul(style="font-size:inherit")
-      li <b>Future proofing:</b> No need to remember <code>@Injectable()</code> when we add a dependency later.
-      li <b>Consistency:</b> All services follow the same rules, and we don't have to wonder why #{_a} #{_decorator} is missing.
+      li <b>미래 대비:</b> 후에 의존성을 추가하더라도 <code>@Injectable()</code>를 기억할 필요가 없습니다.
+      li <b>일관성:</b> 모든 서비스들이 동일한 규칙을 따르게 되고 #{_a} #{_decorator}가 왜 빠져있는지를 고민하지 않아도 됩니다.
 
 :marked
-  Injectors are also responsible for instantiating components
-  like `HeroesComponent`. Why haven't we marked `HeroesComponent` as
-  `@Injectable()`?
+  `HeroesComponent` 역시 주입된 의존성을 가지고 있습니다.
+  `HeroesComponent`에는 왜 `@Injectable()`을 추가하지 않는걸까요?
 
-  We *can* add it if we really want to. It isn't necessary because the
-  `HeroesComponent` is already marked with `@Component`, and this
-  !{_decorator} class (like `@Directive` and `@Pipe`, which we'll learn about later)
-  is a subtype of <a href="#{injMetaUrl}">InjectableMetadata</a>.  It is in
-  fact `InjectableMetadata` #{_decorator}s that
-  identify a class as a target for instantiation by an injector.
+  정말 필요하다면 그것을 추가*할 수* 있습니다.
+  그것이 필요하지 않은 이유는 `HeroesCompnoent`는 이미 `@Component`로 #{decorated}됐기 때문이고,
+  !{_decorator} 클래스 (이후에 배우게 될, `@Directive`와 `@Pipe`)는 <a href="#{injMetaUrl}">InjectableMetadata</a>의 서브 타입이기 때문입니다.
+  그것은 사실 주입자에 의한 초기화를 위해 타겟 클래스로 인식되는 `InjectableMetadata` #{_decorator} 입니다.
 
 block ts-any-decorator-will-do
   .l-sub-section
     :marked
-      Injectors use a class's constructor metadata to determine dependent types as
-      identified by the constructor's parameter types.
-      TypeScript generates such metadata for any class with a decorator, and any decorator will do.
-      But of course, it is more meaningful to mark a class using the appropriate
-      <a href="#{injMetaUrl}">InjectableMetadata</a> #{_decorator}.
+      주입자는 의존성 타입을 결정하기 위해 생성자의 파라메터 타입에 의해 인식되는 것으로 클래스의 생성자 메타데이터를 사용합니다. 
+      TypeScript은 데코레이터를 지닌 클래스라면 그에 대한 메타데이터를 생성하며, 데코레이터도 그렇게 할 겁니다.
+      그러나 물론, 적당한 <a href="#{injMetaUrl}">InjectableMetadata</a> #{_decorator}를 사용해 클래스를 마크하는 것이 좀 더 의미있습니다.
 
 .callout.is-critical
   header Always include the parentheses
   block always-include-paren
     :marked
-      Always write `@Injectable()`, not just `@Injectable`.
-      Our application will fail mysteriously if we forget the parentheses.
+      항상 `@Injectable`가 아닌 `@Injectable()` 사용하시기 바랍니다.
+      괄호를 빼먹는다면 애플리케이션이 이상하게 실패할 겁니다.
 
 .l-main-section#logger-service
 :marked
-  ## Creating and registering a logger service
+  ## 로거 서비스를 만들고 등록하기
 
-  We're injecting a logger into our `HeroService` in two steps:
-  1. Create the logger service.
-  1. Register it with the application.
+  다음 두 단계에 걸쳐 `HeroService` 내에 로거를 주입할 겁니다:
+  1. 로거 서비스를 생성하세요.
+  1. 애플리케이션에 등록하세요.
 
-  Our logger service is quite simple:
+  로거 서비스 구현은 대단한게 아닙니다.
 
 +makeExample('dependency-injection/ts/app/logger.service.ts', null, 'app/logger.service.ts')
 
@@ -459,228 +418,216 @@ block real-logger
   //- N/A
 
 :marked
-  We're likely to need the same logger service everywhere in our application,
-  so we put it in the project's `#{_appDir}` folder, and
-  we register it in the `providers` #{_array} of the metadata for our application root component, `AppComponent`.
-
+  애플리케이션 내 모든 곳에서 동일한 로거 서비스를 필요로 할 거 같아서, `#{_appDir}` 폴더 내에서 애플리케이션의 최상위 층에 그것을 두었고
+  애플리케이션 루트 컴포넌트인 `AppComponent`에 때한 메타데이터 중 `providers` #{_array}에 등록했습니다.
+  
 +makeExcerpt('app/providers.component.ts','providers-logger','app/app.component.ts (excerpt)')
 
 :marked
-  If we forget to register the logger, Angular throws an exception when it first looks for the logger:
+  로거 등록을 잊는다면, Angular는 로거가 처음 보이는 시점에 예외를 던지게 됩니다:
 code-example(format="nocode").
   EXCEPTION: No provider for Logger! (HeroListComponent -> HeroService -> Logger)
 
 :marked
-  That's Angular telling us that the dependency injector couldn't find the *provider* for the logger.
-  It needed that provider to create a `Logger` to inject into a new
-  `HeroService`, which it needed to
-  create and inject into a new `HeroListComponent`.
+  의존성 주입자가 로거에 대한 *provider*를 찾지 못했다고 Angular가 알려주는 것입니다.
+  Angular는 새로운 `HeroService` 내로 주입하려는 `Logger`를 생성해 줄 provider를 필요로 합니다.
+  이 서비스는 새로운 `HeroListComponent`내로 생성되어 주입될 필요가 있습니다.
 
-  The chain of creations started with the `Logger` provider. *Providers* are the subject of our next section.
+  이런 연쇄적인 생성은 `Logger` 프로바이더를 통해 시작됩니다. *Provider*는 다음 섹션의 주제입니다.
 
 .l-main-section#providers
+  
 :marked
-  ## Injector providers
+  ## 주입자 프로바이더
 
-  A provider *provides* the concrete, runtime version of a dependency value.
-  The injector relies on **providers** to create instances of the services
-  that the injector injects into components and other services.
+  프로바이더는 견고하고 실시간 버전의 의존성 값을 *제공합니다*. 
+  주입자가 컴포넌트와 다른 서비스 내로 주입하는 서비스의 인스턴스를 생성하기 위해 주입자는 **providers**에 의존합니다.
 
-  We must register a service *provider* with the injector, or it won't know how to create the service.
+  우리는 반드시 주입자로 서비스 *프로바이더*를 등록해야 합니다. 그렇지 않으면 서비스를 어떻게 생성해야 하는지 알 수가 없습니다.
 
-  Earlier we registered the `Logger` service in the `providers` #{_array} of the metadata for the `AppComponent` like this:
+  초반에 다음과 같이 `AppComponent`의 메티데이터 중 `providers` 배열에 `Logger` 서비스를 생성했었습니다:
 
 +makeExample('dependency-injection/ts/app/providers.component.ts','providers-logger')
 
-- var implements = _docsFor == 'dart' ? 'implements' : 'looks and behaves like a '
-- var objectlike = _docsFor == 'dart' ? '' : 'an object that behaves like '
-- var loggerlike = _docsFor == 'dart' ? '' : 'We could provide a logger-like object. '
+- var implements = _docsFor == 'dart' ? '구현' : '처럼 보이고 동작하는 '
+- var objectlike = _docsFor == 'dart' ? '' : '처럼 동작하는 객체 '
+- var loggerlike = _docsFor == 'dart' ? '' : '객체와 비슷한 로거를 제공할 수 있습니다. '
 :marked
-  There are many ways to *provide* something that #{implements} `Logger`.
-  The `Logger` class itself is an obvious and natural provider.
-  But it's not the only way.
+  `providers` 배열은 서비스 클래스를 설정하도록 되어 있습니다.
+  실제로는 서비스를 생성할 수 있는 [프로바이더](../api/core/Provider-class.html) 클래스의 인스턴스를 설정하도록 되어 있습니다.
 
-  We can configure the injector with alternative providers that can deliver #{objectlike} a `Logger`.
-  We could provide a substitute class. #{loggerlike}
-  We could give it a provider that calls a logger factory function.
-  Any of these approaches might be a good choice under the right circumstances.
+  `Logger` #{implements} 무언가를 *제공하기 위한* 여러 가지 방법이 존재합니다.
+  `Logger` 클래스 자체는 분명히 그리고 그대로의 프로바이더입니다.
+  그러나 그것만이 유일한 방법은 아닙니다.
 
-  What matters is that the injector has a provider to go to when it needs a `Logger`.
+  우리는 `Logger`처럼 해동하는 객체를 전달할 수 있는 대체 프로바이더로 주입자를 설정할 수 있습니다.
+  우리는 대체 클래스를 제공할 수 있다는 것이죠.
+  그 대체 클래스를 로거 팩토리 함수를 호출하는 프로바이더에게 전달할 수 있습니다.
+  이런 해결책 중 어느 것이든 올바른 환경 내에서 좋은 선택이 될 수 있을 겁니다.
+
+  `Logger`가 필요할 경우 주입자가 가져야 할 프로바이더를 가지는 것이 문제될 건 없습니다.
 
 //- Dart limitation: the provide function isn't const so it cannot be used in an annotation.
-- var __andProvideFn = _docsFor == 'dart' ? '' : 'and <i>provide</i> object literal';
+- var __andProvideFn = _docsFor == 'dart' ? '' : '그리고 <i>provide</i> 객체 리터럴';
 #provide
 :marked
-  ### The *Provider* class !{__andProvideFn}
+  ### *프로바이더* 클래스 !{__andProvideFn}
 
 :marked
-  We wrote the `providers` #{_array} like this:
+  다음과 같이 `providers` #{_array}을 작성했었습니다:
 
 +makeExample('dependency-injection/ts/app/providers.component.ts','providers-1')
 
 p
-  | This is actually a short-hand expression for a provider registration
+  | 이것은 실제로 두 개의 프로퍼티를 가지는 <i>provider</i> 객체 리터럴을 사용하는
   block canonical-provider-expr
-    | &nbsp;using a <i>provider</i> object literal with two properties:
-
+    | 프로바이더 등록에 대한 축약형 표현식입니다:
+    
 +makeExample('dependency-injection/ts/app/providers.component.ts','providers-3')
 
 block provider-ctor-args
-  - var _secondParam = 'provider definition object';
+  - var _secondParam = 'provider definition object';  
 
 :marked
-  The first is the [token](#token) that serves as the key for both locating a dependency value
-  and registering the provider.
-
-  The second is a !{_secondParam}, 
-  which we can think of as a *recipe* for creating the dependency value. 
-  There are many ways to create dependency values ... and many ways to write a recipe.
-
+  첫번째는 의존성 값에 대한 위치를 결정하고 프로바이더를 등록하기 위한 키로써 제공되는 [토큰](#token)입니다.
+  
+  두번째는 !{_secondParam}로, 의존성 값을 생성하기 위한 *레시피*로 생각하면 됩니다.
+  의존성 값을 생성하는 방법은 여러 가지고 있고... 레시피를 작성하는 방법에도 여러 가지가 있습니다.
+  
 #class-provider
 :marked
-  ### Alternative class providers
+  <a id="class-provider"></a>
+  ### 대체 클래스 프로바이더
 
-  Occasionally we'll ask a different class to provide the service.
-  The following code tells the injector
-  to return a `BetterLogger` when something asks for the `Logger`.
-
+  때때로 서비스를 제공하기 위해 다른 클래스를 요구하게 될 겁니다.
+  다음 코드는 주입자에게 무언가가 `Logger`를 요청할 경우 `BetterLogger`를 반환하도록 구현된 코드입니다.
+  
 +makeExample('dependency-injection/ts/app/providers.component.ts','providers-4')
 
 block dart-diff-const-metadata
   //- N/A
 
 :marked
-  ### Class provider with dependencies
-  Maybe an `EvenBetterLogger` could display the user name in the log message.
-  This logger gets the user from the injected `UserService`,
-  which happens also to be injected at the application level.
-
+  ### 의존성을 이용한 클래스 프로바이더
+  아마도 `EvenBetterLogger`는 로그 메시지 내에 사용자 이름을 디스플레이할 수 있을 겁니다.
+  이 로거는 애플리케이션 레벨에서 주입된 `UserService`로부터 사용자를 가져옵니다.
+  
 +makeExample('dependency-injection/ts/app/providers.component.ts','EvenBetterLogger')(format='.')
 
 :marked
-  Configure it like we did `BetterLogger`.
-
+  `BetterLogger`를 등록했던 것처럼 `UserService`도 설정합니다.
+  
 +makeExample('dependency-injection/ts/app/providers.component.ts','providers-5')(format=".")
 
 :marked
-  ### Aliased class providers
+  ### 별칭을 붙인 클래스 프로바이더
 
-  Suppose an old component depends upon an `OldLogger` class.
-  `OldLogger` has the same interface as the `NewLogger`, but for some reason
-  we can't update the old component to use it.
+  `OldLogger` 클래스에 의존하는 오래된 컴포넌트를 가정해보죠. 
+  `OldLogger`는 `NewLogger`와 동일한 인터페이스를 가지고 있지만 어떤 이유로 새로운 로거를 사용하기 위해 오래된 컴포넌트를 재작성할 수가 없습니다.
 
-  When the *old* component logs a message with `OldLogger`,
-  we want the singleton instance of `NewLogger` to handle it instead.
+  *오래된* 컴포넌트가 `OldLogger`로 메시지를 기록할 경우,
+  대신 그것을 처리하기 위해 `NewLogger의 싱글턴 인스턴스이 필요합니다.
 
-  The dependency injector should inject that singleton instance
-  when a component asks for either the new or the old logger.
-  The `OldLogger` should be an alias for `NewLogger`.
+  의존성 주입자는 컴포넌트가 새로운 혹은 예전의 로거 중 하나를 요구할 경우 해당 싱글턴 인스턴스를 주입해야 할 겁니다.
 
-  We certainly do not want two different `NewLogger` instances in our app.
-  Unfortunately, that's what we get if we try to alias `OldLogger` to `NewLogger` with `useClass`.
+  앱에서 분명 서로 다른 두 개의 `NewLogger` 인스턴스를 원하지는 않을 겁니다. 
+  운 나쁘게도, 그것이 `useClass`로 `OldLogger`를 `NewLogger`로 별칭지으려고 할 경우가 얻게 되는 결과입니다.
 
 +makeExample('dependency-injection/ts/app/providers.component.ts','providers-6a')(format=".")
 
 :marked
-  The solution: alias with the `useExisting` option.
+  해결책: `useExisting` 옵션으로 별칭짓기
 
 - var stylePattern = { otl: /(useExisting: \w*)/gm };
 +makeExample('dependency-injection/ts/app/providers.component.ts','providers-6b', '', stylePattern)(format=".")
-
+  
 #value-provider
 :marked
-  ### Value providers
+  ### 값 프로바이더
 
 :marked
-  Sometimes it's easier to provide a ready-made object rather than ask the injector to create it from a class.
+  때로는 클래스로부터 만들도록 주입자에게 요청하는 것보다 미리 만들어져 있는 객체를 제공하는 것이 더 쉬울 수도 있습니다.
 
 block dart-diff-const-metadata-ctor
   //- N/A
-
+    
 +makeExample('dependency-injection/ts/app/providers.component.ts','silent-logger')(format=".")
 
 :marked
-  Then we register a provider with the `useValue` option,
-  which makes this object play the logger role.
+  그런 뒤에 해당 객체가 로거 역할을 하도록 만드는 `useValue` 옵션으로 프로바이더를 등록하면 됩니다.
 
 - var stylePattern = { otl: /(useValue: \w*)/gm };
 +makeExample('dependency-injection/ts/app/providers.component.ts','providers-7', '', stylePattern)(format=".")
 
 :marked
-  See more `useValue` examples in the
-  [Non-class dependencies](#non-class-dependencies) and
-  [OpaqueToken](#opaquetoken) sections.
+  [넌-클래스 의존성](#non-class-dependencies)과 [OpaqueToken](#opaquetoken)에서 `useValue` 예제를 참고하시기 바랍니다.
 
 #factory-provider
 :marked
-  ### Factory providers
+  ### 팩토리 프로바이더
 
-  Sometimes we need to create the dependent value dynamically,
-  based on information we won't have until the last possible moment.
-  Maybe the information changes repeatedly in the course of the browser session.
+  때로는 마지막 가능한 순간까지 갖지 못할지도 모르는 정보에 기초해, 다이나믹하게 의존 값을 만들어야 할 필요가 있습니다.
+  아마도 그 정보들은 브라우저 세션의 진행 과정 내에서 반복적으로 변화할 겁니다.
 
-  Suppose also that the injectable service has no independent access to the source of this information.
+  주입 가능한 서비스가 이 정보의 소스에 대해 독립적인 접근하지 않는다고 다시 가정해보죠.
 
-  This situation calls for a **factory provider**.
+  이런 상황에 **팩토리 프로바이더**가 필요합니다.
 
-  Let's illustrate by adding a new business requirement:
-  the HeroService must hide *secret* heroes from normal users.
-  Only authorized users should see secret heroes.
+  새로운 비지니스 요구사항을 추가하는 것을 예로 들어보죠:
+  HeroService는 일반적인 사용자들로부터 *비밀* 영웅들을 숨겨야만 합니다.
+  오로지 승인된 사용자들만이 비밀 영웅들을 볼 수 있다는 것이죠.
 
-  Like the `EvenBetterLogger`, the `HeroService` needs a fact about the user.
-  It needs to know if the user is authorized to see secret heroes.
-  That authorization can change during the course of a single application session,
-  as when we log in a different user.
+  `EvenBetterLogger`처럼, `HeroService`은 사용자에 관한 정보를 필요로 합니다.
+  사용자가 비밀 영웅들을 볼 수 있도록 허가되었는지 알 수 있어야 하죠.
+  그러한 인가는 다른 사용자로 로그인한 경우에 단일 애플리케이션 세션의 과정 중에서 변경될 수 있습니다.
 
-  Unlike `EvenBetterLogger`, we can't inject the `UserService` into the `HeroService`.
-  The `HeroService` won't have direct access to the user information to decide
-  who is authorized and who is not.
+  `EvenBetterLogger`와는 다르게, `HeroService` 내로 `UserService`를 주입할 수 없습니다.
+  `HeroService`는 인가된게 누구이고 그렇지 않은 것이 누구인지를 결정하기 위한 사용자 정보에 직접 접근할 수가 없습니다.
 
 .l-sub-section
   :marked
-    Why? We don't know either. Stuff like this happens.
-
+    왜 그럴까요? 우리도 모릅니다. 그냥 그렇게 됩니다.
+    
 :marked
-  Instead the `HeroService` constructor takes a boolean flag to control display of secret heroes.
-
+  대신 `HeroService` 생성자는 비밀 영웅들의 디스플레이를 제어하기 위해 boolean 플래그를 받습니다.
+  
 +makeExample('dependency-injection/ts/app/heroes/hero.service.ts','internals', 'app/heroes/hero.service.ts (excerpt)')(format='.')
 
 :marked
-  We can inject the `Logger`, but we can't inject the  boolean `isAuthorized`.
-  We'll have to take over the creation of new instances of this `HeroService` with a factory provider.
+  `Logger`를 주입할 수 있지만 boolean 타입인 `isAuthorized`은 주입할 수가 없습니다.
+  그렇기에 `HeroService`의 새로운 인스턴스 생성을 팩토리 프로바이더를 이용하도록 대체해야만 합니다.
 
-  A factory provider needs a factory function:
+  팩토리 프로바이더는 팩토리 함수를 필요로 합니다:
 
 +makeExample('dependency-injection/ts/app/heroes/hero.service.provider.ts','factory', 'app/heroes/hero.service.provider.ts (excerpt)')(format='.')
 
 :marked
-  Although the `HeroService` has no access to the `UserService`, our factory function does.
+  `HeroService`가 `UserService`에 접근할 수 없더라도, 팩토리 함수는 할 수 있죠.
 
-  We inject both the `Logger` and the `UserService` into the factory provider and let the injector pass them along to the factory function:
+  팩토리 프로바이더 내로 `Logger`와 `UserService`를 모두 주입하고 주입자가 그것들을 팩토리 함수에 전달하도록 했습니다:
 
 +makeExample('dependency-injection/ts/app/heroes/hero.service.provider.ts','provider', 'app/heroes/hero.service.provider.ts (excerpt)')(format='.')
 
 .l-sub-section
   :marked
-    The `useFactory` field tells Angular that the provider is a factory function
-    whose implementation is the `heroServiceFactory`.
+    `useFactory` 필드는 프로바이더가 그 구현이 `heroServiceFactory`인 팩토리 함수라는 것을 Angular에게 알려줍니다.
 
-    The `deps` property is #{_an} #{_array} of [provider tokens](#token).
-    The `Logger` and `UserService` classes serve as tokens for their own class providers.
-    The injector resolves these tokens and injects the corresponding services into the matching factory function parameters.
+    `deps` 프로퍼티는 [프로바이더 토큰](#token)의 #{_an} #{_array}입니다.
+    `Logger`와 `UserService` 클래스는 그들 자신의 클래스 프로바이더에 대한 토큰으로써 역할을 합니다.
+    주입자는 이 토큰들을 분석하고 일치하는 팩토리 함수 파라메터 내로 대응하는 서비스들을 주입합니다.
 
-- var exportedvar = _docsFor == 'dart' ? 'constant' : 'exported variable'
-- var variable = _docsFor == 'dart' ? 'constant' : 'variable'
+- var exportedvar = _docsFor == 'dart' ? '상수' : '익스포트된 변수'
+- var variable = _docsFor == 'dart' ? '상수' : '변수'
 :marked
-  Notice that we captured the factory provider in #{_an} #{exportedvar}, `heroServiceProvider`.
-  This extra step makes the factory provider reusable.
-  We can register our `HeroService` with this #{variable} wherever we need it.
+  #{_an} #{exportedvar}인 `heroServiceProvider` 내에서 팩토리 프로바이더를 가져왔다는 것을 기억하시기 바랍니다.
+  이 여분의 과정은 팩토리 프로바이더를 재사용 가능하다록 해줍니다.
+  `HeroService`를 필요로 하는 곳이라면 어디든지 해당 #{variable}를 이용해 등록할 수 있습니다.
 
-  In our sample, we need it only in the `HeroesComponent`,
-  where it replaces the previous `HeroService` registration in the metadata `providers` #{_array}.
-  Here we see the new and the old implementation side-by-side:
-
+  샘플에서, `HeroesComponent`에서만 그것을 필요로 하는데, 메타데이터인 `providers` #{_array} 내에서 예전의 `HeroService` 등록을 대체하도록 했습니다.
+  다음은 각각 새로운 구현과 예전의 구현입니다:
+  
 - var stylePattern = { otl: /(providers.*),$/gm };
+  
 +makeTabs(
   `dependency-injection/ts/app/heroes/heroes.component.ts,
   dependency-injection/ts/app/heroes/heroes.component.1.ts`,
@@ -691,103 +638,94 @@ block dart-diff-const-metadata-ctor
 
 .l-main-section#token
 :marked
-  ## Dependency injection tokens
+  ## 의존성 주입 토큰
 
-  When we register a provider with an injector, we associate that provider with a dependency injection token.
-  The injector maintains an internal *token-provider* map that it references when
-  asked for a dependency. The token is the key to the map.
+  주입자를 이용해 프로바이더를 등록하는 경우, 해당 프로바이더를 의존성 주입 토큰과 연계했습니다.
+  주입자는 의존성을 요구하는 경우 참조 표시를 하는 내부의 *토큰-프로바이더* 맵을 관리합니다.
 
-  In all previous examples, the dependency value has been a class *instance*, and
-  the class *type* served as its own lookup key.
-  Here we get a `HeroService` directly from the injector by supplying the `HeroService` type as the token:
+  이전의 모든 예제에서, 의존성 값은 클래스의 *인스턴스*가 되었으며, 클래스 *타입*은 자신의 색인 키 역할을 합니다. 
+  다음 에제에서는, 토큰으로 `HeroService` 타입을 제공하여 주입자로부터 직접 `HeroService`을 가져오도록 합니다:
 
 +makeExample('dependency-injection/ts/app/injector.component.ts','get-hero-service')(format='.')
 
 :marked
-  We have similar good fortune when we write a constructor that requires an injected class-based dependency.
-  We define a constructor parameter with the `HeroService` class type,
-  and Angular knows to inject the
-  service associated with that `HeroService` class token:
+  우리는 주입된 클래스 기반의 의존성을 요구하는 생성자를 작성하는 경우 유사한 행운을 얻게 됩니다.
+  `HeroService` 클래스 타입으로 생성자 파라메터를 정의하게 되어 Angular는 해당 `HeroService` 클래스 토큰으로 연계된 서비스를 주입해야 한다는 것을 알게 됩니다:
 
 +makeExample('dependency-injection/ts/app/heroes/hero-list.component.ts', 'ctor-signature')
 
 :marked
-  This is especially convenient when we consider that most dependency values are provided by classes.
+  대부분의 의존성 값이 클래스에 의해 제공된다고 간주할 경우 특히 편리합니다.
 
 //- TODO: if function injection is useful explain or illustrate why.
 :marked
-  ### Non-class dependencies
+  ### 클래스가 아닌 의존성
 p
-  | What if the dependency value isn't a class? Sometimes the thing we want to inject is a 
+  | 의존성 값이 클래스가 아니라면 어떨까요? 때로는 우리가 주입하고자 하는 것이 
   block non-class-dep-eg
-    span string, function, or object.
+    span 문자열, 함수, 혹은 객체일 수도 있습니다.
 p
-  | Applications often define configuration objects with lots of small facts 
-  | (like the title of the application or the address of a web API endpoint)
+  | 애플리케이션들은 종종 작은 요인들(애플리케이션 타이틀이나 웹 API 엔드포인트 주소처럼)이 굉장히 많이 들어있는 설정 객체들을 정의하고 합니다
   block config-obj-maps
-    | &nbsp;but these configuration objects aren't always instances of a class.
-    | They can be object literals 
-  | &nbsp;such as this one:
-
+    | &nbsp;하지만 이런 설정 객체들은 매번 클래스의 인스턴스가 아닐 수도 있습니다.
+    | 그것들은 다음과 같이 객체 리터럴일 수도 있죠:
+    
 +makeExample('dependency-injection/ts/app/app.config.ts','config','app/app-config.ts (excerpt)')(format='.')
 
 :marked
-  We'd like to make this configuration object available for injection.
-  We know we can register an object with a [value provider](#value-provider).
+  이런 `config` 객체를 주입 가능하도록 만들고 싶을 겁니다.
+  [값 프로바이더](#value-provider)를 이용해 객체를 등록할 수 있다는 것을 알고 있습니다.
 
 block what-should-we-use-as-token
   :marked
-    But what should we use as the token?
-    We don't have a class to serve as a token.
-    There is no `AppConfig` class.
+    그러나 무엇을 토큰으로 사용해야 할까요?
+    토큰을 서브하는 클래스가 우리에겐 없습니다.
+    `AppConfig` 클래스가 없죠.
 
   .l-sub-section#interface
     :marked
-      ### TypeScript interfaces aren't valid tokens
+      ### TypeScript 인터페이스는 유효한 토큰이 아닙니다
 
-      The `HERO_DI_CONFIG` constant has an interface, `AppConfig`. Unfortunately, we
-      cannot use a TypeScript interface as a token:
+      `HERO_DI_CONFIG` 상수는 `AppConfig`라는 인터페이스를 가지고 있습니다. 운이 나쁘게도 TypeScript 인터페이스를 토큰으로 사용할 수는 없습니다:
     +makeExample('dependency-injection/ts/app/providers.component.ts','providers-9-interface')(format=".")
     +makeExample('dependency-injection/ts/app/providers.component.ts','provider-9-ctor-interface')(format=".")
     :marked
-      That seems strange if we're used to dependency injection in strongly typed languages, where
-      an interface is the preferred dependency lookup key.
-
-      It's not Angular's fault. An interface is a TypeScript design-time artifact. JavaScript doesn't have interfaces.
-      The TypeScript interface disappears from the generated JavaScript.
-      There is no interface type information left for Angular to find at runtime.
+      인터페이스가 우선되는 의존성 색인 키인 강력한 형식 언어 내에서 의존성 주입을 사용해왔다면 그것이 이상하게 느껼질 겁니다.
+      
+      그것은 Angular의 문제가 아닙니다. 인터페이스는 TypeScript 설계에 따른 결과물입니다. JavaScript는 인터페이스를 가지고 있지 않죠.
+      TypeScript 인터페이스는 생성된 자바스크립트에서는 존재하지 않습니다.
+      실행 시에는 Angular에 대해 남아 있는 인터페이스 타입 정보가 존재하지 않습니다.
 
 //- FIXME simplify once APIs are defined for Dart.
 - var opaquetoken = _docsFor == 'dart' ? '<b>OpaqueToken</b>' : '<a href="../api/core/OpaqueToken-class.html"><b>OpaqueToken</b></a>'
 :marked
   ### OpaqueToken
 
-  One solution to choosing a provider token for non-class dependencies is
-  to define and use an !{opaquetoken}.
-  The definition looks like this:
-
+  넌클래스 의존성을 위한 프로바이더 토큰을 고르기 위한 한 가지 해결책은 !{opaquetoken}을 정의하고 사용하는 것입니다.
+  그 정의는 다음과 같습니다:
+  
 +makeExample('dependency-injection/ts/app/app.config.ts','token')(format='.')
 
 :marked
-  We register the dependency provider using the `OpaqueToken` object:
+  `OpaqueToken` 객체를 사용해 의존성 프로바이더를 등록했습니다:
 
 +makeExample('dependency-injection/ts/app/providers.component.ts','providers-9')(format=".")
 
 :marked
-  Now we can inject the configuration object into any constructor that needs it, with
-  the help of an `@Inject` #{_decorator}:
+  이제 우리가 설정 객체를 필요로 하는 어떤 생성자에든, 설정 의존성 값을 찾을 수 있는 방법을 Angular에게 알려주는 `@Inject` #{_decorator}의 도움으로,
+  설정 객체를 주입할 수 있습니다.
 
 +makeExample('dependency-injection/ts/app/app.component.2.ts','ctor')(format=".")
 
 - var configType = _docsFor == 'dart' ? '<code>Map</code>' : '<code>AppConfig</code>'
 .l-sub-section
   :marked
-    Although the !{configType} interface plays no role in dependency injection,
-    it supports typing of the configuration object within the class.
+    !{configType} 인터페이스가 의존성 주입에 있어 아무런 역할을 하지 않더라도,
+    그것은 클래스 사이에서 설정 객체에 대한 타입핑을 제공합니다.
 
 block dart-map-alternative
   :marked
-    Or we can provide and inject the configuration object in our top-level `AppComponent`.
+    혹은 최상위 레벨인 `AppComponent`에서 설정 객체를 제공하고 주입할 수 있습니다.
 
   +makeExcerpt('app/app.component.ts','providers')
 
@@ -805,79 +743,69 @@ block dart-map-alternative
 +makeExample('dependency-injection/ts/app/providers.component.ts','provider-10-ctor', '')(format='.')
 
 :marked
-  When using `@Optional()`, our code must be prepared for a null value. If we
-  don't register a logger somewhere up the line, the injector will set the
-  value of `logger` to null.
+  `@Optional()`을 사용하고 있을 때, 우리의 코드는 반드시 null 값에 대한 대비가 되어 있어야 합니다.
+  코드 라인 어딘가에 로거를 등록하지 않는다면, 주입자는 `logger`의 값을 null로 설정할 겁니다.
 
 .l-main-section
 :marked
-  ## Summary
+  ## 요약
 
-  We learned the basics of Angular dependency injection in this chapter.
-  We can register various kinds of providers,
-  and we know how to ask for an injected object (such as a service) by
-  adding a parameter to a constructor.
+  우리는 이 챕터에서 Angular 의존성 주입의 기초를 알아보았습니다.
+  우리는 다양한 종류의 프로바이더를 등록할 수 있으며, 생성자에 파라메터를 추가하여 주입 객체(서비스와 같은)를 요청하는 방법에 대해 알게 되었습니다.
 
-  Angular dependency injection is more capable than we've described.
-  We can learn more about its advanced features, beginning with its support for
-  nested injectors, in the
-  [Hierarchical Dependency Injection](hierarchical-dependency-injection.html) chapter.
+  Angular 의존성 주입은 우리가 설명한 것보다 더 유용합니다.
+  내제된 주입자에 대한 지원과 함께 시작되는, 진보된 기능들에 관해서도 [계층적 의존성 주입](hierarchical-dependency-injection.html) 챕터에서 알아볼 수 있습니다.
 
 .l-main-section#explicit-injector
 :marked
-  ## Appendix: Working with injectors directly
+  ### 부록: 주입자를 직접적으로 이용하기
 
-  We rarely work directly with an injector, but
-  here's an `InjectorComponent` that does.
+  우리는 거의 주입자를 직접적으로 이용하지 않았습니다.
+  다음의 `InjectorComponent`는 주입자를 직접 이용하도록 만들어졌습니다.
 
 +makeExample('dependency-injection/ts/app/injector.component.ts', 'injector', 'app/injector.component.ts')
 
 :marked
-  An `Injector` is itself an injectable service.
+  `Injector`는 그 자체로 주입가능한 서비스입니다.
 
-  In this example, Angular injects the component's own `Injector` into the component's constructor.
-  The component then asks the injected injector for the services it wants.
+  이 예제에서, Angular는 컴포넌트 생성자 안으로 컴포넌트 자체의 `Injector`를 주입하고 있습니다.
+  그런 뒤 컴포넌트는 그것이 원하는 서비스에 대해 주입된 주입자를 요청합니다.
 
-  Note that the services themselves are not injected into the component.
-  They are retrieved by calling `injector.get`.
+  서비스 자체가 컴포넌트 내로 주입되지 않는다는 것을 알아두시기 바립니다.
+  `injector.get` 호출을 통해 그것들은 가져오고 있습니다.
 
-  The `get` method throws an error if it can't resolve the requested service.
-  We can call `get` with a second parameter (the value to return if the service is not found) 
-  instead, which we do in one case
-  to retrieve a service (`ROUS`) that isn't registered with this or any ancestor injector.
+  요청된 서비스를 해석하지 못한다면 `get` 메서드는 에러를 던질 겁니다.
+  대신 두번째 파라메터(서비스를 찾지 못한 경우 반환될 값)와 함께 `get`을 호출할 수 있는데,
+  예에서 해당 주입자 혹은 어떤 상위 주입자에도 등록되어 있지 않은 서비스(`ROUS`)를 가져오는 경우에 해당됩니다.
 
 .l-sub-section
   :marked
-    The technique we just described is an example of the
-    [service locator pattern](https://en.wikipedia.org/wiki/Service_locator_pattern).
-
-    We **avoid** this technique unless we genuinely need it.
-    It encourages a careless grab-bag approach such as we see here.
-    It's difficult to explain, understand, and test.
-    We can't know by inspecting the constructor what this class requires or what it will do.
-    It could acquire services from any ancestor component, not just its own.
-    We're forced to spelunk the implementation to discover what it does.
-
-    Framework developers may take this approach when they
-    must acquire services generically and dynamically.
+    방금 설명한 기술은 
+    [서비스 로케이터 패턴](https://en.wikipedia.org/wiki/Service_locator_pattern)의 예입니다.
+    
+    우린 정말로 필요한 경우가 아니라면 이 기술을 **피해야 합니다**.
+    이 기술은 여기서 본 것처럼 주의깊지 못한 grab-bag 접근법을 부추깁니다.
+    설명하기도 이해하기도 테스트하기도 어렵습니다.
+    생성자를 봐서는 이 클래스가 요구하는 것이나 해야 할 것을 알아낼 수가 없습니다.
+    그 자신뿐만 아니라, 어떤 상위 컴포넌트에서든지 서비스를 가져올 수 있습니다.
+    그것이 무엇을 하는지 알아내기 위해 구현 내부를 들여다 볼 수 밖에 없습니다.
+    
+    프레임워크 개발자들은 그들이 일반적으로 그리고 다이나믹하게 서비스를 가져와야 하는 경우에만 이 접근법을 취할 겁니다.
 
 block one-class-per-file-ts-tradeoffs
   .l-main-section#one-class-per-file
   :marked
-    ## Appendix: Why we recommend one class per file
+    ## 부록: 파일 하나 당 한 개의 클래스를 권하는 이유
 
-    Having multiple classes in the same file is confusing and best avoided.
-    Developers expect one class per file. Keep them happy.
-
-    If we scorn this advice and, say,
-    combine our `HeroService` class with the `HeroesComponent` in the same file,
-    **define the component last!**
-    If we define the component before the service,
-    we'll get a runtime null reference error.
+    동일 파일 내에 다중 클래스를 두는 것은 혼란스러우며 최선이 아닙니다.
+    개발자들은 파일 하나 당 한 개의 클래스를 예상할 겁니다. 그들이 예상한 대로 되게 해주세요.
+    
+    이러한 충고를 비웃고 하나의 파일 내에 `HeroService`를 `HeroesComponent`와 함께 두려고 한다면,
+    **컴포넌트를 뒤에 정의하세요!**
+    서비스 이전에 컴포넌트를 정의하는 경우, 런타임 null 참조 오류를 보게 될 겁니다.
 
   .l-sub-section
     :marked
-      We actually can define the component first with the help of the `forwardRef()` method as explained
-      in this [blog post](http://blog.thoughtram.io/angular/2015/09/03/forward-references-in-angular-2.html).
-      But why flirt with trouble?
-      Avoid the problem altogether by defining components and services in separate files.
+      [블로그 포스트](http://blog.thoughtram.io/angular/2015/09/03/forward-references-in-angular-2.html)에서 설명한 대로
+      `forwardRef()` 메서드를 통해 컴포넌트를 먼저 정의할 수도 있습니다. 왜 그런 위험을 감수하는 겁니까? 컴포넌트와 서비스를 분리된 파일에 두어서
+      그런 문제를 피하도록 하는게 좋습니다.

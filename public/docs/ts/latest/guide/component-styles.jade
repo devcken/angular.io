@@ -2,257 +2,229 @@ block includes
   include ../_util-fns
 
 :marked
-  Angular 2 applications are styled with regular CSS. That means we can apply
-  everything we know about CSS stylesheets, selectors, rules, and media queries
-  to our Angular applications directly.
+  Angular 2 애플리케이션은 일반적인 CSS로 스타일링됩니다.
+  그것은 우리가 Angular 애플리케이션에 CSS 스타일시트, 셀렉터, 규칙, 그리고 미디어 쿼리에 대해 아는 모든 것을 직접 적용할 수 있다는 것을 의미합니다.
   
-  On top of this, Angular has the ability to bundle *component styles*
-  with our components enabling a more modular design than regular stylesheets.
+  이에 덧붙여, Angular는 일반적인 스타일시트보다는 좀 더 모듈화되어 있는 디자인을 가능케하여 컴포넌트와 함께 *컴포넌트 스타일*을 함께 묶는 능력을 가지고 있습니다. 
   
-  In this chapter we learn how to load and apply these *component styles*.
+  이 챕터에서는 이러한 *컴포넌트 스타일*을 로드하고 적용하는 방법에 대해 배워보도록 하겠습니다.
   
-  # Table Of Contents
+  # 목차
 
-  * [Using Component Styles](#using-component-styles)
-  * [Special selectors](#special-selectors)
-  * [Loading Styles into Components](#loading-styles)
-  * [Controlling View Encapsulation: Emulated, Native, and None](#view-encapsulation)
-  * [Appendix 1: Inspecting the generated runtime component styles](#inspect-generated-css)
-  * [Appendix 2: Loading Styles with Relative URLs](#relative-urls)
+  * [컴포넌트 스타일 사용하기](#using-component-styles)
+  * [특별한 셀렉터](#special-selectors)
+  * [컴포넌트 내로 스타일 불러오기](#loading-styles)
+  * [뷰 캡슐화 제어: Emulated, Native, 그리고 None](#view-encapsulation)
+  * [부록 1: 런타임에 생성된 컴포넌트 스타일 검사](#inspect-generated-css)
+  * [부록 2: 상대적인 URL로 스타일 로드하기](#relative-urls)
 
-p Run the #[+liveExampleLink2()] of the code shown in this chapter.
+p 이 챕터 내 코드의 #[+liveExampleLink2()]을 실행해보세요.
 
 .l-main-section
 :marked
-  ## Using Component Styles
+  ## 컴포넌트 스타일 사용하기
   
-  For every Angular 2 component we write, we may define not only an HTML template,
-  but also the CSS styles that go with that template, 
-  specifying any selectors, rules, and media queries that we need.
+  우리가 작성하는 모든 Angular 2 컴포넌트에 대해서, HTML 템플릿 뿐만 아니라, 우리가 필요로 하는 셀렉터, 규칙 그리고 미디어 쿼리를 지정하여 그 템플릿과 짝을 이루는 CSS 스타일도 정의할 수도 있습니다.
 
-  One way to do this is to set the `styles` property in the component metadata.
-  The `styles` property takes #{_an} #{_array} of strings that contain CSS code.
-  Usually we give it one string as in this example:
+  이를 위한 한 가지 방법은 컴포넌트 메타데이터 내에서 `styles` 프로퍼티를 설정하는 것입니다.
+  `styles` 프로퍼티는 CSS 코드를 포함하는 문자열의 #{_an_array}를 받습니다.
+  보통 우리는 다음 예제와 같이 하나의 문자열을 부여합니다:
   
 +makeExample('component-styles/ts/app/hero-app.component.ts')(format='.')
 
 :marked
-  Component styles differ from traditional, global styles in a couple of ways.
+  컴포넌트의 스타일은 몇 가지 경우에 따라  전통적이고, 글로벌한 스타일과는 차이가 있습니다.
   
-  Firstly, the selectors we put into a component's styles *only apply within the template
-  of that component*. The `h1` selector in the example above only applies to the `<h1>` tag
-  in the template of `HeroAppComponent`. Any `<h1>` elements elsewhere in
-  the application are unaffected.
+  첫번째로, 컴포넌트의 스타일에 부여하는 셀렉터들은 *오직 해당 컴포넌트의 템플릿 내에서만 적용됩니다*.
+  위 예제에서의 `h1` 셀렉터는 오로지 `HeroAppComponent`의 템플릿 내의 `<h1>` 태그에만 적용됩니다. 
+  애플리케이션의 여타 다른 `<h1>` 요소들은 영향을 받지 않습니다.
   
-  This is a big improvement in modularity compared to how CSS traditionally works:
+  이것은 CSS가 전통적으로 동작하는 방식과 비교했을 때 모듈화에 있어 큰 향상을 이룬 것입니다: 
   
-  1. We can use the CSS class names and selectors that make the most sense in the context of each component. 
+  1. 각각의 컴포넌트의 컨텍스트 내에서 가장 의미있는 CSS 클래스 이름과 셀렉터를 사용할 수 있습니다. 
      
-  1. Class names and selectors are local to the component and won't collide with 
-  classes and selectors used elsewhere in the application.
+  1. 클래스 이름과 셀렉터는 컴포넌트에 국한되며 애플리케이션 내 다른 곳에서 사용되는 클래스와 셀렉터들과는 충돌하지 않습니다. 
      
-  1. Our component's styles *cannot* be changed by changes to styles elsewhere in the application.
+  1. 컴포넌트의 스타일은 애플리케이션 내 다른 스타일에 변화가 생긴다고 해도 변경될 수 *없습니다*.
      
-  1. We can co-locate the CSS code of each component with the TypeScript and HTML code of the component,
-     which leads to a neat and tidy project structure.
+  1. 각 컴포넌트의 CSS 코드를 컴포넌트의 TypeScript와 HTML 코드와 함께 같은 위치에 둘 수 있습니다. 덕분에 깔끔하고 작은 프로젝트 구조를 얻게 됩니다.
      
-  1. We can change or remove component CSS code in the future without trawling through the
-     whole application to see where else it may have been used. We just look at the component we're in.
+  1. CSS 스타일이 사용된 곳이 어디인지 살펴보기 위해 전체 애플리케이션을 샅샅이 훑어보지 않고 컴포넌트 CSS 코드를 변경하거나 제거할 수 있습니다.
+     우리는 우리가 현재 보고 있는 컴포넌트만 살펴보면 됩니다.
 
 a(id="special-selectors")
 .l-main-section
 :marked
-  ## Special selectors
+  ## 특별한 셀렉터
   
-  Component styles have a few special *selectors* from the world of 
-  [shadow DOM style scoping](https://www.w3.org/TR/css-scoping-1):
+  컴포넌트 스타일은 [섀도우 DOM 스타일 스코핑](https://www.w3.org/TR/css-scoping-1)의 세계에서 온 몇 가지 특별한 *셀렉터*를 가지고 있습니다:
   
   ### :host
 
-  Use the `:host` pseudo-class selector to target styles in the element that *hosts* the component (as opposed to
-  targeting elements *inside* the component's template):
+  컴포넌트를 *호스트*하는 요소 내의 대상 스타일에 `:host` 가상 클래스 셀렉터를 사용하세요:
   
 +makeExample('component-styles/ts/app/hero-details.component.css', 'host')(format='.')
 
 :marked
-  This is the *only* way we can target the host element. We cannot reach
-  it from inside the component with other selectors, because it is not part of the
-  component's own template. It is in a parent component's template.
+  이것은 호스트 요소를 대상으로 할 수 있는 *유일한* 방법입니다.
+  다른 셀렉터로는 컴포넌트 내부에서 그것에 접근할 수 없는데, 이는 그것의 컴포넌트 자신의 템플릿의 일부분이 아니기 때문입니다.
+  그것은 상위 컴포넌트의 템플릿입니다.
   
-  Use the *function form* to apply host styles conditionally by 
-  including another selector inside parentheses after `:host`.
+  `:host` 뒤 소괄호 안에 다른 셀렉터를 포함시켜서 호스트 스타일을 조건부로 적용하려면 *함수 폼*을 사용하세요.
   
-  In the next example we target the host element again, but only when it also has the `active` CSS class.
+  다음 예제에서는 호스트 요소가 `active` CSS 클래스를 가지는 경우에만 해당 요소를 대상으로 합니다.
   
 +makeExample('component-styles/ts/app/hero-details.component.css', 'hostfunction')(format=".")
   
 :marked
   ### :host-context
   
-  Sometimes it is useful to apply styles based on some condition *outside* a component's view.
-  For example, there may be a CSS theme class applied to the document `<body>` element, and
-  we want to change how our component looks based on that.
+  때때로 컴포넌트 뷰 *밖의* 어떤 조건에 기반하는 스타일을 적용하는 것이 유용할 때가 있습니다. 
+  예를 들어, 문서 내 `<body>` 요소에 적용된 CSS 테마 클래스가 될 수도 있으며, 컴포넌트가 그것에 따로 달라지는 모습을 원할 수도 있습니다.
   
-  Use the `:host-context()` pseudo-class selector. It works just like the function
-  form of `:host()`. It looks for a CSS class in *any ancestor* of the component host element, all the way
-  up to the document root. It's useful when combined with another selector.
+  그럴 때는 `:host-context()` 가상 클래스 셀렉터를 사용하세요.
+  그것은 `:host()` 함수 형식처럼 동작합니다.
+  컴포넌트 호스트 요소의 상위 컴포넌트(문서 루트에 이르기까지) 내에서 CSS 클래스를 찾게 됩니다.
+  다른 셀렉터와 함께 혼재된 경우 유용합니다.
   
-  In the following example, we apply a `background-color` style to all `<h2>` elements *inside* the component, only
-  if some ancestor element has the CSS class `theme-light`.
+  다음 예제에서는, 어떤 상위 요소가 `theme-light`라는 CSS 클래스를 가진 경우에만, 컴포넌트 *내부의* 모든 `<h1>` 요소에 `background-color` 스타일이 적용됩니다.
   
 +makeExample('component-styles/ts/app/hero-details.component.css', 'hostcontext')(format='.')
   
 :marked
   ### /deep/
   
-  Component styles normally apply only to the HTML in the component's own template. 
+  컴포넌트 스타일들은 보통 컴포넌트의 자체 템플릿 내 HTML에만 적용됩니다. 
   
-  We can use the `/deep/` selector to force a style down through the child component tree into all the child component views.
-  The `/deep/` selector works to any depth of nested components, and it applies *both to the view
-  children and the content children* of the component. 
+  우리는 `/deep/` 셀렉터를 모든 하위 컴포넌트 뷰 내의 하위 컴포넌트 트리를 통해 스타일을 적용시킬 용도로 사용할 수 있습니다. 
+  `/deep/` 셀렉터는 내재된 컴포넌트의 깊이가 어떻든 간에 동작하며, 컴포넌트의 *하위 뷰와 하위 컨텐츠 모두에* 적용됩니다.  
   
-  In this example, we target all `<h3>` elements, from the host element down 
-  through this component to all of its child elements in the DOM: 
+  다음 예제에서는, 호스트 요소부터 DOM 내 그 요소의 모든 하위 요소에 이르기 까지, 모든 `<h3>` 요소들을 대상합니다:
 +makeExample('component-styles/ts/app/hero-details.component.css', 'deep')(format=".")
 
 :marked
-  The `/deep/` selector also has the alias `>>>`. We can use either of the two interchangeably.
+  `/deep/` 셀렉터도 `>>>`라는 별칭을 가지고 있습니다. 우리는 두 가지 분기점 모두를 사용할 수 있습니다.
 
 .alert.is-important
   :marked
-    The `/deep/` and `>>>` selectors should only be used with **emulated** view encapsulation.
-    This is the default and it is what we use most of the time. See the
-    [Controlling View Encapsulation](#view-encapsulation)
-    section for more details.
+    `/deep/`과 `>>>` 셀렉터는 **모의** 뷰 캡슐화인 경우에만 사용될 수 있습니다.
+    이것이 기본이며 우리가 대부분의 경우에 사용하는 것입니다.
+    좀 더 자세한 내용을 위해 [뷰 캡슐화 제어](#view-encapsulation) 섹션을 참고하시기 바랍니다.
 
 a(id='loading-styles')
 .l-main-section
 :marked
-  ## Loading Styles into Components
+  ## 컴포넌트 내로 스타일 로드하기
   
-  We have several ways to add styles to a component: 
-  * inline in the template HTML
-  * by setting `styles` or `styleUrls` metadata
-  * with CSS imports
+  컴포넌트 스타일을 추가하는 몇 가지 방법이 있습니다: 
+  * 템플릿 HTML 내 인라인 스타일
+  * `styles` 혹은 `styleUrls` 메타데이터를 통한 설정
+  * CSS 임포트
   
-  The scoping rules outlined above apply to each of these loading patterns.
+  위에 약술된 스코핑 규칙은 각각의 이런 로딩 패턴에 적용됩니다.
   
-  ### Styles in Metadata
+  ### 메타데이터 내 스타일
   
-  We can add a `styles` #{_array} property to the `@Component` #{_decorator}.
-  Each string in the #{_array} (usually just one string) defines the CSS.
+  `@Component` #{_decorator}에 `styles` #{_array} 프로퍼티를 추가할 수 있습니다.
+  #{_array} 내 각각의 문자열은 (보통은 하나의 문자열이지만) CSS를 정의합니다.
   
 +makeExample('component-styles/ts/app/hero-app.component.ts')
   
 :marked
-  ### Template Inline Styles
+  ### 템플릿 인라인 스타일
   
-  We can embed styles directly into the HTML template by putting them
-  inside `<style>` tags.
+  `<style>` 태그 안에 스타일들을 놓아 HTML 템플릿 내에 직접 스타일들을 임베드할 수 있습니다.
   
 +makeExample('component-styles/ts/app/hero-controls.component.ts', 'inlinestyles')
 
 :marked
-  ### Style URLs in Metadata
-  
-  We can load styles from external CSS files by adding a `styleUrls` attribute
-  into a component's `@Component` #{_decorator}:
+  ### 메타데이터 내 Style URL
+ 
+  컴포넌트의 `@Component` #{_decorator} 내에 `styleUrls` 어트리뷰트를 추가하여 외부 CSS 파일들로부터 스타일을 로드할 수 있습니다:
   
 +makeExample('component-styles/ts/app/hero-details.component.ts', 'styleurls')
 
 block style-url
   .alert.is-important
     :marked
-      The URL is ***relative to the application root*** which is usually the
-      location of the `index.html` web page that hosts the application. 
-      The style file URL is *not* relative to the component file.
-      That's why the example URL begins `app/`.
-      See [Appendix 2](#relative-urls) to specify a URL relative to the 
-      component file.
+      URL은 보통 애플리케이션을 호스트하는 `index.html` 웹 페이지의 위치가 되는 ***애플리케이션 루트로부터 상대적입니다***.
+      스타일 파일의 URL은 컴포넌트 파일에 상대적이지 *않습니다*.
+      그것이 예제 URL이 `app/`으로 시작하는 이유입니다.
+      URL을 컴포넌트 파일에 상대적으로 지정하려면 [부록 2](#relative-urls)를 참고하시기 바랍니다.
 
 block module-bundlers
   .l-sub-section
     :marked
-      Users of module bundlers like Webpack may also use the `styles` attribute
-      to load styles from external files at build time. They could write:
+      Webpack과 같은 모듈 번들러 사용자들은 빌드 시에 외부 파일로부터 스타일을 로드하기 위해 `styles` 어트리뷰트를 사용할 수도 있습니다.
+      다음과 같이 작성할 수 있습니다:
 
       `styles: [require('my.component.css')]`
 
-      We set the `styles` property, **not** `styleUrls` property! The module 
-      bundler is loading the CSS strings, not Angular. 
-      Angular only sees the CSS strings *after* the bundler loads them. 
-      To Angular it is as if we wrote the `styles` array by hand. 
-      Refer to the module bundler's documentation for information on 
-      loading CSS in this manner.
+      `styleUrls` 프로퍼티가 **아닌** `styles` 프로퍼티에 설정해야 합니다!
+      모듈 번들러는 Angular가 아닌 CSS 문자열을 로딩합니다.
+      Angular는 번들러가 그것들을 로드한 *이후에* CSS 문자열만을 보게 됩니다.
+      Angular에게는 그것이 마치 우리가 `styles` 배열을 손으로 작성한 것처럼 보일 겁니다. 
+      이런 관점에서 CSS를 로딩하기 위한 정보를 얻으려면 모듈 번들러의 문서를 참조하기 바랍니다.
   
 :marked
-  ### Template Link Tags
+  ### 템플릿 링크 태그
   
-  We can also embed `<link>` tags into the component's HTML template. 
+  컴포넌트의 HTML 템플릿 안에 `<link>` 태그를 임베드할 수도 있습니다. 
   
-  As with `styleUrls`, the link tag's `href` URL is relative to the 
-  application root, not relative to the component file.
+  `styleUrls`을 이용했던 것처럼, 링크 태그의 `href` URL은 애플리케이션 루트에 상대적이며, 컴포넌트 파일에는 상대적이지 않습니다.
   
 +makeExample('component-styles/ts/app/hero-team.component.ts', 'stylelink')
   
 :marked
   ### CSS @imports
   
-  We can also import CSS files into our CSS files by using the standard CSS
-  [`@import` rule](https://developer.mozilla.org/en/docs/Web/CSS/@import).
+  표준 CSS [`@import` 규칙](https://developer.mozilla.org/en/docs/Web/CSS/@import)을 사용하여 CSS 파일 내로 CSS 파일들을 임포트 할 수도 있습니다.
   
 block css-import-url
   :marked
-    In *this* case the URL is relative to the CSS file into which we are importing.
+    *이런* 경우에 URL은 우리가 임포트하고 있는 CSS 파일에 상대적입니다.
   
 +makeExample('component-styles/ts/app/hero-details.component.css', 'import', 'app/hero-details.component.css (excerpt)')
 
 a#view-encapsulation
 .l-main-section
 :marked
-  ## Controlling View Encapsulation: Native, Emulated, and None
+  ## 뷰 캡슐화 제어: Native, Emulated, and None
   
-  As discussed above, component CSS styles are *encapsulated* into the component's own view and do
-  not affect the rest of the application.
+  위에서 언급했듯이, 컴포넌트 CSS 스타일들은 컴포넌트의 뷰 내에서 *캡슐화*되어 있으며 애플리케이션의 다른 부분에는 영향을 주지 않습니다.
   
-  We can control how this encapsulation happens on a *per
-  component* basis by setting the *view encapsulation mode* in the component metadata. There
-  are three modes to choose from:
+  이런 캡슐화가 컴포넌트 메타데이터 내에 *뷰 캡슐화 모드*를 설정하여 *컴포넌트 요소 별로* 일어나는 방식을 제어할 수 있습니다. 
+  다음 세 가지 중 하나의 모드를 고를 수 있습니다:
   
-  * `Native` view encapsulation uses the browser's native [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Shadow_DOM)
-    implementation to attach a Shadow DOM to the component's host element, and then puts the component
-    view inside that Shadow DOM. The component's styles are included within the Shadow DOM.
+  * `Native` 뷰 캡슐화는 컴포넌트 호스트 요소에 Shadow DOM을 붙이기 위해 브라우저의 네이티브
+    [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Shadow_DOM) 구현을 사용하며,
+    컴포넌트 뷰를 해당 Shadow DOM에 놓게 됩니다.
+    컴포넌트의 스타일은 Shadow DOM 사이에 포함됩니다.
     
-  * `Emulated` view encapsulation (**the default**) emulates the behavior of Shadow DOM by preprocessing
-    (and renaming) the CSS code to effectively scope the CSS to the component's view.
-    See [Appendix 1](#inspect-generated-css) for details.
+  * `Emulated` 뷰 캡슐화(기본값)은 컴포넌트의 뷰에 CSS를 효율적으로 스코프하기 위해 CSS 코드를 전처리하여 Shadow DOM의 동작을 모방합니다.
+    자세한 내용은 [부록 1](#inspect-generated-css)을 참고하시기 바랍니다.
     
-  * `None` means that Angular does no view encapsulation. 
-    Angular adds the CSS to the global styles. 
-    The scoping rules, isolations, and protections discussed earlier do not apply. 
-    This is essentially the same as pasting the component's styles into the HTML.
+  * `None`은 Angular가 뷰 캡슐화를 하지 않는다는 것을 의미합니다.
+    Angular는 글로벌 스타일에 CSS를 추가합니다.
+    초기에 언급한 규칙, 격리 그리고 보호 스코핑은 적용되지 않습니다. 
+    이것은 기본적으로 HTML 내에 컴포넌트의 스타일을 붙여넣는 것과 동일합니다.
     
-  Set the components encapsulation mode using the `encapsulation` property in the component metadata:
+  컴포넌트 메타데이터 내에 `encapsulation` 프로퍼티를 사용해 컴포넌트의 캡슐화 모드를 설정하시기 바랍니다:
   
 +makeExample('component-styles/ts/app/quest-summary.component.ts', 'encapsulation.native')(format='.')
 
 :marked
-  `Native` view encapsulation only works on [browsers that have native support
-  for Shadow DOM](http://caniuse.com/#feat=shadowdom). The support is still limited,
-  which is why `Emulated` view encapsulation is the default mode and recommended
-  in most cases.
+  `Native` 뷰 캡슐화는 [Shadow DOM을 네이티브하게 지원하는 브라우저](http://caniuse.com/#feat=shadowdom)에서만 동작합니다.
+  지원은 아직도 제한적인데, `Emulated` 뷰 캡슐화가 기본 모드이며 대부분의 경우에 추천되는 이유입니다.
 
 a#inspect-generated-css
 .l-main-section
 :marked
-  ## Appendix 1: Inspecting The CSS Generated in Emulated View Encapsulation
+  ## 부록 1: Emulated 뷰 캡슐화로 생성된 CSS 검사하기
   
-  When using the default emulated view encapsulation, Angular preprocesses
-  all component styles so that they approximate the standard Shadow CSS scoping rules.
+  기본값인 emulated 뷰 캡슐화를 사용할 경우, Angular는 모든 컴포넌트 스타일을 전처리하여 표준 Shadow CSS 스코핑 규칙을 흉내냅니다. 
   
-  When we inspect the DOM of a running Angular application with emulated view
-  encapsulation enabled, we see that each DOM element has some extra attributes
-  attached to it:
+  emulated 뷰 캡슐화가 활성화된 Angular 애플리케이션의 DOM을 검사할 때면, 각각의 DOM 요소가 그것에 붙여져 있는 어떤 여분의 어트리뷰트들을 보게 될 겁니다:
   
 code-example(format="").
   &lt;hero-details _nghost-pmm-5>
@@ -263,16 +235,15 @@ code-example(format="").
   &lt;/hero-detail>
 
 :marked
-  We see two kinds of generated attributes:
-  * An element that would be a Shadow DOM host in native encapsulation has a
-    generated `_nghost` attribute. This is typically the case for component host elements.
+  생성된 어트리뷰트에는 두 가지 종류가 있습니다:
+  * 네이티브 캡슐화 내에서 Shadow DOM 호스트가 될수도 있는 요소는 생성된 `_nghost` 어트리뷰트를 갖게 됩니다.
+   이것은 일반적으로 컴포넌트 호스트 요소의 경우입니다.
     
-  * An element within a component's view has a `_ngcontent` attribute 
-  that identifies to which host's emulated Shadow DOM this element belongs.
+  * 컴포넌트 뷰 내의 요소는 호스트의 모방된 Shadow DOM에 이 요소가 속하게 될지를 인식하는 `_ngcontent` 어트리뷰트를 갖습니다. 
   
-  The exact values of these attributes are not important. They are automatically
-  generated and we never refer to them in application code. But they are targeted
-  by the generated component styles, which we'll find in the `<head>` section of the DOM:
+  이 어트리뷰트들의 정확한 값은 중요하지 않습니다.
+  그것들은 자동으로 생성성되며 애플리케이션 코드 내에서는 그것들을 결코 참조하지 않습니다.
+  그러나 그것들은 DOM의 `<head>` 섹션에서 찾게 될, 생성된 컴포넌트 스타일의 타겟이 됩니다:
   
 code-example(format="").
   [_nghost-pmm-5] {
@@ -286,18 +257,17 @@ code-example(format="").
   }
   
 :marked
-  These are the styles we wrote, post-processed so that each selector is augmented
-  with `_nghost` or `_ngcontent` attribute selectors. 
-  These extra selectors enable the scoping rules described in this guide.
+  이 스타일들은 우리가 작성했던 스타일들을 후처리한 것으로 각각의 셀렉터는 `_nghost` 혹은 `_ngcontent` 어트리뷰트 셀렉터로 인자화되었습니다.
+  이런 특수한 셀렉터들은 이 가이드에서 설명한 스코핑 규칙을 활성시킵니다.
   
-  We'll likely live with *emulated* mode until shadow DOM gains traction.
+  Shadow DOM이 관심을 얻을 때까지는 *emulated* 모드를 이용해야 할 거 같습니다.
   
 a#relative-urls
 .l-main-section
 :marked
-  ## Appendix 2: Loading Styles with Relative URLs
+  ## 부록 2: 상대적 URL로 스타일 로딩하기
   
-  It's common practice to split a component's code, HTML, and CSS into three separate files in the same directory:
+  같은 디렉토리 안에 컴포넌트 코드, HTML 그리고 CSS를 각각의 파일로 나누는 것은 일반적인 관례입니다:
   
 code-example(format='').
   quest-summary.component.ts
@@ -305,15 +275,15 @@ code-example(format='').
   quest-summary.component.css
 
 :marked
-  We include the template and CSS files by setting the `templateUrl` and `styleUrls` metadata properties respectively.
-  Because these files are co-located with the component,
-  it would be nice to refer to them by name without also having to specify a path back to the root of the application.
+  `templateUrl` 과 `styleUrls` 메타데이터를 각각 설정하여 템플릿과 CSS 파일을 포함시킵니다.
+  왜냐하면 이 파일들은 컴포넌트와 같은 위치에 있기 때문에, 애플리케이션 루트까지의 되돌아 가는 경로를 지정하지 않고도 이름으로 그것들을 참조하는 것이 더 좋기 때문입니다.
 
 block module-id
   :marked
+    우리는 컴포넌트 메타데이터의 `moduleId` 프로퍼티를 `module.id`로 설정하여 Angular가 전체 URL을 계산하는 방법을 바꿀 수 있습니다. 
     We can change the way Angular calculates the full URL be setting the component metadata's `moduleId` property to `module.id`.
 
   +makeExample('component-styles/ts/app/quest-summary.component.ts','', 'app/quest-summary.component.ts')
   :marked
-    Learn more about `moduleId` in the [Component-Relative Paths](../cookbook/component-relative-paths.html) chapter.
+    [컴포넌트 상대 경로](../cookbook/component-relative-paths.html) 챕터에서 `moduleId`에 관해 좀 더 알아보시기 바랍니다.
 

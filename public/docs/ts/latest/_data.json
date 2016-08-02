@@ -1,9 +1,9 @@
 {
   "index": {
     "icon": "home",
-    "title": "Angular Docs",
-    "menuTitle": "Docs Home",
-    "banner": "Welcome to <b>Angular in TypeScript</b>! The current Angular 2 release is <b>rc.3</b>. Please consult the <a href='https://github.com/angular/angular/blob/master/CHANGELOG.md' target='_blank'>  Change Log</a> about recent enhancements, fixes, and breaking changes."
+    "title": "Angular 문서",
+    "menuTitle": "문서 홈",
+    "banner": "<b>TypeScript 기반의 Angular</b>에 오신걸 환영합니다! 현재 Angular 2 릴리즈는 <b>rc.3</b>입니다. 최근의 개선, 보완 그리고 급진적인 변화에 관한 <a href='https://github.com/angular/angular/blob/master/CHANGELOG.md' target='_blank'>  변경 로그</a>를 참고해 주세요."
   },
 
   "cli-quickstart": {
@@ -15,8 +15,8 @@
 
   "quickstart": {
     "icon": "query-builder",
-    "title": "5 Min Quickstart",
-    "description": "Get up and running with Angular 2"
+    "title": "5분 퀵스타트",
+    "description": "Angular2로 걸음마 떼기"
   },
 
   "tutorial": {
@@ -50,8 +50,8 @@
   },
 
   "glossary": {
-    "title": "Glossary",
-    "intro": "Brief definitions of the most important words in the Angular 2 vocabulary",
+    "title": "용어집",
+    "intro": "Angular 2 어휘에서 가장 중요한 단어들의 간단한 정의 모음",
     "reference": false
   },
 

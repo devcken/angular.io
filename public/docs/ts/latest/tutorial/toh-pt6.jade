@@ -1,318 +1,318 @@
 include ../_util-fns
 
 :marked
-  # Getting and Saving Data with HTTP
+  # HTTP로 데이터 가져오기 혹은 저장하기
+  
+  우리의 이해관계자들은 우리가 진행해온 것들을 고마워하고 있습니다.
+  이제 그들은 서버에서 영웅 데이터를 가져오고, 사용자는 영웅들을 추가, 수정, 그리고 삭제하며,
+  이런 변경사항들을 다시 서버에 저장하길 원하고 있습니다.
+  
+  이 챕터에서는 원격 서버의 웹 API에 대한 HTTP 요청을 만들도록 할 것입니다.
 
-  Our stakeholders appreciate our progress.
-  Now they want to get the hero data from a server, let users add, edit, and delete heroes,
-  and save these changes back to the server.
-
-  In this chapter we teach our application to make the corresponding http calls to a remote server's web api.
-
-p Run the #[+liveExampleLink2('', 'toh-6')] for this part.
+p 이 파트에 대한 #[+liveExampleLink2('', 'toh-6')]을 실행해 보세요.
 
 .l-main-section
 :marked
-  ## Where We Left Off
-  In the [previous chapter](toh-pt5.html), we learned to navigate between the dashboard and the fixed heroes list, editing a selected hero along the way.
-  That's our starting point for this chapter.
+  ## 어디서부터 시작할까요?
+  [이전 챕터](toh-pt5.html)에서 우리는 선택된 영웅을 수정하도록 대시보드와 고정된 영웅 목록 사이를 찾아 이동하는 것을 배웠습니다. 
+  그것이 바로 이 챕터에서 시작해야 할 부분입니다.
 
-  ### Keep the app transpiling and running
-  Open a terminal/console window and enter the following command to
-  start the TypeScript compiler, start the server, and watch for changes:
+  ### 앱 트랜스파일링과 실행을 유지하세요
+  TypeScript 컴파일러 시작, 변경을 위한 watch, 그리고 서버 시작을 원할 겁니다. 다음 명령어를 통해 이런 것들이 가능합니다.
 
 code-example(language="bash").
   npm start
 
 :marked
-  The application runs and updates automatically as we continue to build the Tour of Heroes.
+  이것은 Tour of Heroes을 빌드하는 내내 애플리케이션 실행을 유지시켜줄겁니다.
 
 .l-main-section
 :marked
- ## Prepare for Http
-
-  `Http` is ***not*** a core Angular module.
-  It's Angular's optional approach to web access and it exists as a separate add-on module called `@angular/http`,
-  shipped in a separate script file as part of the Angular npm package.
-
-  Fortunately we're ready to import from `@angular/http` because `systemjs.config` configured *SystemJS* to load that library when we need it.
+ ## Http 준비
+  
+  `Http`는 Angular의 핵심 모듈이 ***아닙니다***.
+  그것은 웹 억세스를 위한 부가적인 접근법이며 Angular의 npm 패키지 중 일부 스크립트 파일로 제공되는 `@angular/http`라고 불리는 개별적인 애드온 모듈 내에 존재합니다.
+  
+  운 좋게도 `systemj.config`가 우리가 필요로 할 때 그 라이브러리를 로드할 수 있도록 *SystemJS*를 설정해두었기에 `@angular/http`로부터 임포트할 준비가 되어 있습니다.
 
 :marked
-  ### Register (provide) *http* services
-  Our app will depend upon the Angular `http` service which itself depends upon other supporting services.
-  The `HTTP_PROVIDERS` array from `@angular/http` library holds providers for the complete set of http services.
-
-  We should be able to access these services from anywhere in the application.
-  So we register them in the `bootstrap` method of `main.ts` where we
-  launch the application and its root `AppComponent`.
-
+  ### *http* 서비스를 등록(제공)하세요
+  우리 앱은 다른 지원 서비스에 의존적인 Angular `http` 서비스에 의존하게 될 것입니다.
+  `@angular/http` 라이브러리의 `HTTP_PROVIDERS` 배열은 http 서비스의 전체 집합을 위한 제공자를 가지고 있습니다.
+  
+  앱의 어느 곳에서든지 이 서비스들에 접근할 수 있어야 합니다.
+  그러므로 우리가 애플리케이션과 최상위 컴포넌트인 `AppComponent`를 시작하는 `main.ts`의 `bootstrap` 메서드에 그 서비스들을 등록할 것입니다.
+  
 +makeExample('toh-6/ts/app/main.ts','v1','app/main.ts (v1)')(format='.')
 :marked
-  Notice that we supply the `HTTP_PROVIDERS` in an array as the second parameter to the `bootstrap` method.
-  This has the same effect the `providers` array in `@Component` metadata.
+  `bootstrap` 메서드에 두번째 파라메터를 배열로 하여 요소에 `HTTP_PROVIDERS`를 제공했다는 것을 알아두시기 바랍니다.
+   이것은 `@Component` 메타데이터에서 `providers` 배열과 동일한 효과를 제공합니다.
 
 .l-main-section
 :marked
-  ## Simulating the web api
+  ## 웹 API 시뮬레이션하기
 
-  We generally recommend registering application-wide services in the root `AppComponent` *providers*.
-  Here we're registering in `main` for a special reason.
-
-  Our application is in the early stages of development and far from ready for production.
-  We don't even have a web server that can handle requests for heroes.
-  Until we do, *we'll have to fake it*.
-
-  We're going to *trick* the http client into fetching and saving data from
-  a demo/development service, the *in-memory web api*.
-
-  The application itself doesn't need to know and shouldn't know about this.
-  So we'll slip the *in-memory web api* into the configuration *above* the `AppComponent`.
-
-  Here is a version of `main` that performs this trick
+  일반적으로 최상위 컴포넌트인 `AppComponent`의 *providers*에서 애플리케이션-와이드 서비스를 등록하길 추천합니다.
+  여기서 우리는 특별한 이유 때문에 `main`에서 등록하고 있습니다.
+  
+  우리 애플리케이션은 개발의 초기 스테이지에 있고 아직 완제품이 되려면 멀었습니다. 
+  우린 영웅에 대한 요청을 다룰 수 있는 웹 서버조차 가지고 있지 않습니다. 
+  그러기 전까지, *웹 서버를 흉내내도록 할 것입니다*.
+  
+  *인메모리 웹 API*인 데모/개발용 서비스로부터 데이터를 가져오고 저장하도록 HTTP 클라이언트를 *속이려고* 합니다.
+  
+  애플리케이션 자체는 이에 대해 알 필요도 없고 알아서도 안됩니다.
+  그러므로 `AppComponent`의 *상단* 설정 내로 *인메모리 웹 API*를 설정하려고 합니다. 
+  
+  다음은 이런 트릭을 실행하도록 만든 `main`의 버전입니다
 +makeExample('toh-6/ts/app/main.ts', 'final', 'app/main.ts (final)')(format=".")
 
 :marked
-  We're replacing the default `XHRBackend`, the service that talks to the remote server,
-  with the *in-memory web api* service after priming it with the following `in-memory-data.service.ts` file:
+  우리는 다음의 `in-memory-data.services.ts` 파일을 준비한 이후에, 원격 서버와의 통신을 담당하는 서비스인 `XHRBackend`를
+  *인메모리 웹 API* 서비스로 대체하는 중입니다:
 +makeExample('toh-6/ts/app/in-memory-data.service.ts', null, 'app/in-memory-data.service.ts')(format=".")
 :marked
-  This file replaces the `mock-heroes.ts` which is now safe to delete.
+  이 파일로 지워도 안전한 `mock-heroes.ts`를 대체합니다.
 
 .alert.is-helpful
   :marked
-    This chapter is an introduction to the Angular http client.
-    Please don't be distracted by the details of this backend substitution. Just follow along with the example.
-
-    Learn more later about the *in-memory web api* in the [Http chapter](../guide/server-communication.html#!#in-mem-web-api).
-    Remember, the *in-memory web api* is only useful in the early stages of development and for demonstrations such as this Tour of Heroes.
-    Skip it when you have a real web api server.
-
+    이 챕터는 Angular HTTP 클라이언트를 소개하는 자리입니다.
+    여기서의 백엔드 교체에 대한 세부적인 내용 때문에 혼란스러워 하지 마시기 바랍니다. 그냥 예제를 따라하시면 됩니다. 
+    
+    이후에 [Http 챕터](../guide/server-communication.html#!#in-mem-web-api)에서 *인메모리 웹 API*에 관해 좀 더 알아보시기 바랍니다.
+    기억해두세요, *인메모리 웹 API*는 Tour of Heroes처럼 개발 초기 스테이지와 데모의 과정에서만 유용합니다.
+    실제 웹 API 서버가 있다면 건너띄시기 바랍니다.
 
 .l-main-section
 :marked
-  ## Heroes and Http
-
-  Look at our current `HeroService` implementation
+  ## 영웅과 Http
+  
+  현재 `HeroService` 구현은 다음과 같습니다
 +makeExample('toh-4/ts/app/hero.service.ts', 'get-heroes', 'app/hero.service.ts (getHeroes - old)')(format=".")
 :marked
-  We returned a promise resolved with mock heroes.
-  It may have seemed like overkill at the time, but we were anticipating the
-  day when we fetched heroes with an http client and we knew that would have to be an asynchronous operation.
-
-  That day has arrived! Let's convert `getHeroes()` to use Angular's `Http` client:
-
+  가짜 영웅 목록을 가진 promise을 반환했습니다.
+  해당 시점에는 그것이 과다한 것 같았지만, HTTP 클라이언트로 영웅 목록을 가져오게 될 순간을 예상하고 있었으며,
+  그것이 비동기 동작이 될 것이라는 것을 알고 있기에 그렇게 한 것입니다. 
+  
+  그러한 날이 왔습니다! `getHeroes()`를 Angular의 `http` 클라이언트를 사용하도록 변경해보죠:
+  
 +makeExample('toh-6/ts/app/hero.service.ts', 'get-heroes', 'app/hero.service.ts (getHeroes using Http)')(format=".")
 
 :marked
   ### Http Promise
 
-  We're still returning a promise but we're creating it differently.
-
-  The Angular `http.get` returns an RxJS `Observable`.
-  *Observables* are a powerful way to manage asynchronous data flows.
-  We'll learn about `Observables` *later*.
-
-  For *now* we get back on familiar ground by immediately converting that `Observable` to a `Promise` using the `toPromise` operator.
+  여전히 promise를 반환하고 있지만 다른 방법으로 만들어내고 있습니다.
+  
+  Angular의 `http.get`은 RxJS의 `Observable`을 반환합니다.
+  *Observables*은 비동기 데이터 흐름을 제어하기에 강력한 방법입니다.
+  *나중에* `Observables`에 관해 좀 더 알아보겠습니다.
+  
+  *지금*은 `toPromise` 연산자를 사용하여 즉시 `Observable`을 `Promise`로 변환하여 좀 더 친숙한 것으로 돌아오도록 하겠습니다.
 +makeExample('toh-6/ts/app/hero.service.ts', 'to-promise')(format=".")
 :marked
-  Unfortunately, the Angular `Observable` doesn't have a `toPromise` operator ... not out of the box.
-  The Angular `Observable` is a bare-bones implementation.
-
-  There are scores of operators like `toPromise` that extend `Observable` with useful capabilities.
-  If we want those capabilities, we have to add the operators ourselves.
-  That's as easy as importing them from the RxJS library like this:
+  불행히도, Angular `Observable`은 `toPromise` 연산자를 가지고 있지 않습니다 ... 특별히 취급하지 않는거죠. 
+  Angular의 `Observable` 구현은 빈약합니다.  
+  
+  유용한 가용성과 함께 `Observable`을 확장한 `toPromise`와 같은 연산자를 모아놓은 집합이 있습니다.
+  그런 가용성을 원한다면 직접 그 연산자들을 추가해야 합니다.
+  그것은 다음과 같이 RxJS 라이브러리로부터 그것들을 임포트하는 것만큼 쉽습니다:
 +makeExample('toh-6/ts/app/hero.service.ts', 'rxjs')(format=".")
 
 :marked
-  ### Extracting the data in the *then* callback
-  In the *promise*'s `then` callback we call the `json` method of the http `Response` to extract the
-  data within the response.
+  ### *then* 콜백에서 데이터 추출하기 
+  *promise*의 `then` 콜백에서 응답 내의 데이터를 추출해내기 위해 http `Response`의 `json` 메서드를 호출하고 있습니다.
 +makeExample('toh-6/ts/app/hero.service.ts', 'to-data')(format=".")
 :marked
-  That object returned by `json` has a single `data` property.
-  The `data` property holds the array of *heroes* that the caller really wants.
-  So we grab that array and return it as the resolved promise value.
+  `json`에 의해 반환된 그 객체는 단일 `data` 프로퍼티입니다.
+  `data` 프로퍼티는 호출자가 실제로 원하는 *heroes* 배열을 가지고 있습니다. 
+  그러므로 그 배열을 가져와 그것을 해석된 promise의 값으로 반환하고 있습니다.
 
 .alert.is-important
   :marked
-    Pay close attention to the shape of the data returned by the server.
-    This particular *in-memory web api* example happens to return an object with a `data` property.
-    Your api might return something else.
-
-    Adjust the code to match *your web api*.
+    서버에 의해 반환된 데이터의 겉모습을 봐주시기 바랍니다.
+    이 특유의 *인메모리 웹 API* 예제는 `data` 프로퍼티를 지닌 객체를 반환하도록 되어 있습니다.
+    당신의 API는 어쩌면 다른 것들을 반환할지도 모릅니다.
+    
+    *당신의 웹 API*에 맞춰 코드를 조정하시기 바랍니다.
 :marked
-  The caller is unaware of these machinations. It receives a promise of *heroes* just as it did before.
-  It has no idea that we fetched the heroes from the server.
-  It knows nothing of the twists and turns required to turn the http response into heroes.
-  Such is the beauty and purpose of delegating data access to a service like this `HeroService`.
+  호출자는 이런 술책을 알지 못합니다. 전에 했던 것처럼 *heroes*를 지닌 promise를 수신하게 되죠.
+  서버로부터 영웅 목록을 가져오는지 아닌지에 대한 것도 모릅니다. 
+  HTTP 응답을 영웅 목록을 바꾸기 위해 필요로 하는 것을 조작하고 바꾸는 것에 대해서 전혀 모릅니다.
+  이런 것이 아름다운 것이고 `HeroService`와 같은 서비스가 데이터 접근을 대리하는 목적입니다.
 :marked
-  ### Error Handling
-
-  At the end of `getHeroes` we `catch` server failures and pass them to an error handler:
+  ### 오류 다루기
+  `getHeroes`의 끝에서 서버 오류를 `catch`했고 그것을 오류 핸들러로 전달했습니다:
 +makeExample('toh-6/ts/app/hero.service.ts', 'catch')(format=".")
 :marked
-  This is a critical step!
-  We must anticipate http failures as they happen frequently for reasons beyond our control.
+  이것은 중대한 단계입니다!
+  우리의 제어를 벗어나는 이유들로 인해 반복적으로 일어날 수 있는 HTTP 오류들을 예상해야 합니다.
 
 +makeExample('toh-6/ts/app/hero.service.ts', 'error-handler', 'app/hero.service.ts (Error handler)')(format=".")
 :marked
-  In this demo service we log the error to the console; we should do better in real life.
+  이 데모 서비스에서 오류를 콘솔에 기록하고 있습니다; 실제로는 좀 더 나은 방법으로 처리해야 합니다.
 
-  We've also decided to return a user friendly form of the error to
-  the caller in a rejected promise so that the caller can display a proper error message to the user.
-
-  ### Promises are Promises
-  Although we made significant *internal* changes to `getHeroes()`, the public signature did not change.
-  We still return a promise. We won't have to update any of the components that call `getHeroes()`.
+  우리는 호출자에게 거절된 promise 내로 오류에 대한 사용자 친화적인 형식을 반환하기로 결정했기에 호출자는 사용자가 오류메시지를 적당한 방법으로 디스플레이스할 수 있습니다.
+  
+  ### Promise는 Promise입니다
+  `getHeroes()`에 중대한 *내부* 변경을 가했더라도, public 시그니처는 변경되지 않았습니다. 
+  여전히 promise를 반환하고 있죠. `getHeroes()` 호출하는 어떤 컴포넌트도 변경할 필요가 없습니다.
 
 .l-main-section
 :marked
-  ## Add, Edit, Delete
-
-  Our stakeholders are incredibly pleased with the added flexibility from the api integration, but it doesn't stop there. Next we want to add the capability to add, edit and delete heroes.
-
-  We'll complete `HeroService` by creating `post`, `put` and `delete` http calls to meet our new requirements.
+  ## 추가, 수정, 삭제
+  
+  우리의 이해관계자들은 API 통합에서 오는 추가적인 유연성으로 점점 더 만족해하고 있습니다. 그러나 거기서 멈추지 않습니다.
+  이제 영웅들을 추가하고 수정하거나 삭제하는 능력을 얻길 바라고 있습니다.   
+  
+  `post`, `put` 그리고 `delete` HTTP 호출을 만들어 새로운 요구사항을 만족시키도록 `HeroService`를 마무리할 것입니다.
 
 :marked
   ### Post
-
-  We are using `post` to add new heroes. Post requests require a little bit more setup than Get requests, but the format is as follows:
-
+  
+  새로운 영웅을 추가하려고 `post`를 사용합니다. Post 요청은 Get 요청에 비해 약간 더 많은 준비과정을 필요로 하고, 그 형식은 다음과 같습니다:
+  
 +makeExample('toh-6/ts/app/hero.service.ts', 'post-hero', 'app/hero.service.ts (post hero)')(format=".")
 
 :marked
-  Now we create a header and set the content type to `application/json`. We'll call `JSON.stringify` before we post to convert the hero object to a string.
-
+  이제 헤더를 만들고 컨텐츠 타입으로 `application/json`을 설정합니다.
+  영웅 객체를 문자열로 변환하기 위해 포스트하기 전에  `JSON.stringify`를 호출할 것입니다.  
+  
   ### Put
-
-  `put` is used to edit a specific hero, but the structure is very similar to a `post` request. The only difference is that we have to change the url slightly by appending the id of the hero we want to edit.
+  `put`은 특정 영웅을 수정하기 위해 사용되지만 그 구조는 `post` 요청과 매우 흡사합니다.
+  유일한 차이점이라면 우리가 수정하고자 하는 영웅의 아이디를 덧붙여서 URL이 약간 변경된다는 것입니다.
 
 +makeExample('toh-6/ts/app/hero.service.ts', 'put-hero', 'app/hero.service.ts (put hero)')(format=".")
 
 :marked
   ### Delete
-  `delete` is used to delete heroes and the format is identical to `put` except for the function name.
+  `delete`는 영웅들을 지우기 위해 사용되며 그 형식은 함수 이름을 제외하고는 `put`과 동일합니다.
 
 +makeExample('toh-6/ts/app/hero.service.ts', 'delete-hero', 'app/hero.service.ts (delete hero)')(format=".")
 
 :marked
-  We add a `catch` to handle our errors for all three cases.
-
+  이 세 가지 경우에 대한 오류 핸들링을 위해 `catch`를 추가합니다.
+  
 :marked
-  ### Save
-
-  We combine the call to the private `post` and `put` methods in a single `save` method. This simplifies the public api and makes the integration with `HeroDetailComponent` easier. `HeroService` determines which method to call based on the state of the `hero` object. If the hero already has an id we know it's an edit. Otherwise we know it's an add.
+  ### 저장
+  
+  `post` 그리고 `put` 메서드 호출을 단일의 `save` 메서드로 합쳐보도록 하겠습니다.
+  이것은 public API를 단순화하고 `HeroDetailComponent`와 통합을 더욱 쉽게 만들어줍니다.
+  `HeroService`는 `hero` 객체의 상태에 따라 호출해야 하는 메서드가 어떤 것인지 결정하도록 합니다.
+  영웅이 이미 아이디를 가지고 있다면 그것이 수정되어야 한다는 것을 우리는 알고 있을 겁니다.
+  그렇지 않다면 새로이 추가되어야 한다는 것을 알고 있겠죠.
 
 +makeExample('toh-6/ts/app/hero.service.ts', 'save', 'app/hero.service.ts (save hero)')(format=".")
 
 :marked
-  After these additions our `HeroService` looks like this:
+  위와 같은 변경 이후, `HeroService`는 다음과 같을 겁니다:
 
 +makeExample('toh-6/ts/app/hero.service.ts', null, 'app/hero.service.ts')(format=".")
 
 .l-main-section
 :marked
-  ## Updating Components
+  ## 컴포넌트 갱신하기
+  
+  `Http`를 사용하여 영웅들을 로딩하는 것은 `HeroService` 외부의 변경을 필요로 하지는 않았습니다. 그러나 우리는 새로운 기능들도 역시 추가했죠.
+  다음의 섹션에서 영웅을 추가, 수정, 그리고 삭제하기 위한 새로운 메서드를 사용을 위해 컴포넌트를 갱신할 것입니다.
 
-  Loading heroes using `Http` required no changes outside of `HeroService`, but we added a few new features as well.
-  In the following section we will update our components to use our new methods to add, edit and delete heroes.
-
-  Before we can add those methods, we need to initialize some variables with their respective imports.
+  그 메서드들을 추가하기 전에, 그들 각각의 임포트의 몇 가지 변수들을 초기화해야 할 필요가 있습니다.  
 
 +makeExample('toh-6/ts/app/hero-detail.component.ts', 'variables-imports', 'app/hero-detail.component.ts')(format=".")
-
+ 
 :marked
-  ### Add/Edit in the *HeroDetailComponent*
-
-  We already have `HeroDetailComponent` for viewing details about a specific hero. 
-  Add and Edit are natural extensions of the detail view, so we are able to reuse `HeroDetailComponent` with a few tweaks. 
-  The original component was created to render existing data, but to add new data we have to initialize the `hero` property to an empty `Hero` object.
-
-+makeExample('toh-6/ts/app/hero-detail.component.ts', 'ngOnInit', 'app/hero-detail.component.ts (ngOnInit)')(format=".")
-
+  ### *HeroDetailComponent* 내에서 추가/수정하기
+  특정 영웅에 대한 상세 내용을 보기 위한 `HeroDetailComponent`를 이미 가지고 있습니다.
+  추가와 수정은 상세 뷰의 자연스러운 확장이므로 몇 가지 개조를 통해 `DetailHeroComponent`를 재사용할 수 있습니다.
+  원래의 컴포넌트는 데이터를 렌더링하기 위해 만들어졌지만, 새로운 데이터를 추가하기 위해 `hero` 프로퍼티를 비어있는 `Hero` 객체로 초기화해야 합니다.
+  
 :marked
-  In order to differentiate between add and edit we are adding a check to see if an id is passed in the url. If the id is absent we bind `HeroDetailComponent` to an empty `Hero` object. In either case, any edits made through the UI will be bound back to the same `hero` property.
+  추가와 수정을 구별시키기 위해, 아이디가 URL에 전달되어야 하는지를 알아보는 검사를 추가했습니다.
+  아이디가 없다면 `HeroDetailComponent`를 비어있는 `Hero` 객체에 바인딩해야 합니다.
+  그렇지 않다면, UI를 통해 이루어질 모든 수정들은 동일하게 `hero` 프로퍼티에 바인딩될 것입니다.
 
-  The next step is to add a save method to `HeroDetailComponent` and call the corresponding save method in `HeroesService`.
-
+  다음 단계는 `HeroDetailComponent`에 저장 메서드를 추가하고 그에 상응하는 `HeroesService` 내 저장 메서드를 호출하는 것입니다.
+  
 +makeExample('toh-6/ts/app/hero-detail.component.ts', 'save', 'app/hero-detail.component.ts (save)')(format=".")
 
 :marked
-  The same save method is used for both add and edit since `HeroService` will know when to call `post` vs `put` based on the state of the `Hero` object.
-
-  After we save a hero, we redirect the browser back to the previous page using the `goBack()` method.
-
+  추가와 수정 양쪽에서 동일한 저장 메서드가 사용되는데, 이는 `HeroService`가 `Hero` 객체의 상태에 따라 `post` 혹은 `put`을 호출해야 할 때를 알고 있기 때문입니다.
+  
+  영웅을 저장한 이후에는, `goBack()` 메서드를 사용해 이전 페이지로 돌아가도록 브라우저를 뒤로 리다이렉트시킵니다.
+  
 +makeExample('toh-6/ts/app/hero-detail.component.ts', 'goback', 'app/hero-detail.component.ts (goBack)')(format=".")
 
 :marked
-  Here we call `emit` to notify that we just added or modified a hero. `HeroesComponent` is listening for this notification and will automatically refresh the list of heroes to include our recent updates.
+  위에서, 영웅을 방금 전에 추가 혹은 수정했다는 것을 알리기 위해 `emit`을 호출하고 있습니다.
+  Here we call `emit` to notify that we just added or modified a hero.
+  `HeroesComponent`는 이런 알림을 리스닝하고 있으며 변경사항들을 포함시키기 위해 영웅 목록을 자동으로 리프레시할 겁니다.
 
 .l-sub-section
   :marked
-    The `emit` "handshake" between `HeroDetailComponent` and `HeroesComponent` is an example of component to component communication. This is a topic for another day, but we have detailed information in our <a href="/docs/ts/latest/cookbook/component-communication.html#!#child-to-parent">Component Interaction Cookbook</a>
+    `HeroDetailComponent`와 `HeroesComponent` 사이의 `emit` "핸드쉐이크"는 컴포넌트 간 커뮤니케이션의 예제입니다.
+    이것은 이후의 주제가 될 것이므로 <a href="/docs/ts/latest/cookbook/component-communication.html#!#child-to-parent">컴포넌트 상호작용 쿡북</a>에서 좀 더 자세한 내용을 읽어보시기 바랍니다.
 
 :marked
-  Here is `HeroDetailComponent` with its new save button.
-
+  다음은 새로이 저장 버튼이 추가된 `HeroDetailComponent`입니다.
+  
 figure.image-display
   img(src='/resources/images/devguide/toh/hero-details-save-button.png' alt="Hero Details With Save Button")
 
 :marked
-  ### Add/Delete in the *HeroesComponent*
+  ### *HeroesComponent` 내에서 추가/수정하기
+  
+  사용자는 버튼을 클릭하고 이름을 입력하여 새로운 영웅을 *추가*할 수 있습니다.
 
-  The user can *add* a new hero by clicking a button and entering a name.
-
-  When the user clicks the *Add New Hero* button, we display the `HeroDetailComponent`.
-  We aren't navigating to the component so it won't receive a hero `id`;
-  As we noted above, that is the component's cue to create and present an empty hero.
-
-  Add the following HTML to the `heroes.component.html`, just below the hero list (the `*ngFor`).
-+makeExample('toh-6/ts/app/heroes.component.html', 'add-hero', 'app/heroes.component.html (add)')(format=".")
+  사용자가 *새로운 영웅 추가* 버튼을 클릭하면, `HeroDetailComponent`를 디스플레이합니다.
+  컴포넌트로 찾아가지 않으므로 영웅의 `id`를 받지 않아도 됩니다;
+  위에서 언급했듯이, 그것은 비어있는 영웅을 만들고 표현하기 위한 컴포넌트 측의 신호입니다.
+  
+  영웅 목록(`*ngFor`) 바로 아래의 `heroes.component.html`에 다음 HTML을 추가해주세요.
++makeExample('toh-6/ts/app/heroes.component.html', 'add-hero', 'app/heroes.component.ts (add)')(format=".")
 :marked
-  The user can *delete* an existing hero by clicking a delete button next to the hero's name.
-
-  Add the following HTML to the `heroes.component.html` right after the name in the repeated `<li>` tag:
-+makeExample('toh-6/ts/app/heroes.component.html', 'delete-hero', 'app/heroes.component.html (delete)')(format=".")
+  사용자는 영웅 이름 옆에 있는 삭제 버튼을 클릭하여 영웅을 *삭제*할 수 있습니다.
+  
+  반복되는 `<li>` 태그 내 오른쪽의 `heroes.component.html`에 다음 HTML을 추가해주세요.
++makeExample('toh-6/ts/app/heroes.component.html', 'delete-hero', 'app/heroes.component.ts (delete)')(format=".")
 
 :marked
-  Now let's fix-up the `HeroesComponent` to support the *add* and *delete* actions in the template.
-  Let's start with *add*.
-
-  We're using the `HeroDetailComponent` to capture the new hero information.
-  We have to tell Angular about that by importing the `HeroDetailComponent` and referencing it in the component metadata `directives` array.
-+makeExample('toh-6/ts/app/heroes.component.ts', 'hero-detail-component', 'app/heroes.component.ts (HeroDetailComponent)')(format=".")
+  이제 템플릿 내에서 *추가*와 *삭제*를 지원하기 위해 'HeroesComponent'를 수정해보도록 하겠습니다.
+  *추가*부터 시작해보죠.
+  
+  우리는 새로운 영웅 정보를 캡쳐하기 위해 `HeroDetailComponent`를 사용하고 있습니다.
+  `HeroDetailComponent`를 임포트하고 컴포넌트 메타데이터 `directives` 배열 내로 참조시켜, 이러한 내용을 Angular에게 알려주어야 합니다.
++makeExample('toh-6/ts/app/heroes.component.ts', 'hero-detail-component', 'app/heroes.component.ts (HeroDetailComponent)')(format=".")  
 .l-sub-section
   :marked
-    These are the same lines that we removed in the previous [Routing](toh-pt5.html) chapter.
-    We didn't know at the time that we'd need the *HeroDetailComponent* again. So we tidied up.
-
-    Now we *must* put these lines back. If we don't, Angular will ignore the `<my-hero-detail>`
-    tag and pushing the *Add New Hero* button will have no visible effect.
+    이 내용들은 이전 [라우팅](toh-pt5.html) 챕터에서 제거했던 것과 동일한 라인들입니다. 
+    우린 그 때 당시 이 *HeroDetailComponent*가 다시 필요할지 몰랐습니다. 그래서 정리했습니다. 
+    
+    이제는 이 코드들이 *반드시* 필요합니다. 코드들을 되돌려 놓지 않으면, Anuglar는 `<my-hero-detail>` 태그를 무시할 것이고
+    *새로운 영웅 추가* 버튼을 누르면 아무런 효과도 나타나지 않을 겁니다.
 :marked
-  Next we implement the click handler for the *Add New Hero* button.
+  다음으로 *새로운 영웅 추가* 버튼을 위한 클릭 핸들러를 구현할 겁니다.
 
 +makeExample('toh-6/ts/app/heroes.component.ts', 'add', 'app/heroes.component.ts (add)')(format=".")
 :marked
-  The `HeroDetailComponent` does most of the work. All we do is toggle an `*ngIf` flag that
-  swaps it into the DOM when we add a hero and removes it from the DOM when the user is done.
-
-  The *delete* logic is a bit trickier.
+  `HeroDetailComponent`이 대부분의 일을 합니다. 우리가 영웅을 추가할 때 DOM 안으로 그것을 넣어주고
+  사용자가 할 일을 완료했을 때 DOM에서 그것을 제거하는 `*ngIf` 플래그를 토글하는 것이 우리가 할 일의 전부입니다.
+  
+  *삭제* 로직은 약간 더 교묘합니다.
 +makeExample('toh-6/ts/app/heroes.component.ts', 'delete', 'app/heroes.component.ts (delete)')(format=".")
 
 :marked
-  Of course we delegate the persistence of hero deletion to the `HeroService`.
-  But the component is still responsible for updating the display.
-  So the *delete* method removes the deleted hero from the list.
+  물론 영웅 삭제의 영속성을 `HeroService`에게 일임하는 것은 당연합니다.
+  그러나 컴포넌트는 여전히 디스플레이 갱신에 대해서 책임이 있습니다.
+  그러므로 *delete* 메서드는 목록으로부터 제거된 영웅을 제거하게 됩니다.
 
 :marked
-  ### Let's see it
-  Here are the fruits of labor in action:
+  ### 결과를 보죠
+  동작하는 노력의 결실을 보면:
 figure.image-display
   img(src='/resources/images/devguide/toh/toh-http.anim.gif' alt="Heroes List Editting w/ HTTP")
 
 :marked
-  ### Review the App Structure
-  Let’s verify that we have the following structure after all of our good refactoring in this chapter:
+  ### 앱 구조 검토하기
+  이 챕터에서 했던 리팩토링 이후의 구조에 대해서 검증해보도록 하죠:
 
 .filetree
   .file angular2-tour-of-heroes
@@ -346,17 +346,17 @@ figure.image-display
 
 .l-main-section
 :marked
-    ## Home Stretch
-
-    We are at the end of our journey for now, but we have accomplished a lot.
-    - We added the necessary dependencies to use Http in our application.
-    - We refactored HeroService to load heroes from an api.
-    - We extended HeroService to support post, put and delete calls.
-    - We updated our components to allow adding, editing and deleting of heroes.
-    - We configured an in-memory web api.
-
-    Below is a summary of the files we changed.
-
+    ## 마지막 코스
+    
+    이제 우리는 여행의 마지막에 와 있습니다. 그리고 많은 것을 달성했지요.
+    - 애플리케이션에서 Http를 사용하기 위해 필요한 의존성을 추가했습니다.
+    - API로부터 영웅을 로드하기 위해 HeroService를 리팩토링했습니다.
+    - post, put, delete 호출을 지원하기 위해 HeroService를 확장했습니다.
+    - 영웅의 추가, 수정, 삭제를 허용하기 위해 컴포넌트를 갱신했습니다.
+    - 인메모리 웹 API를 설정했습니다.
+    
+    아래는 변경했던 파일의 요약입니다.
+  
 +makeTabs(
   `toh-6/ts/app/app.component.ts,
    toh-6/ts/app/heroes.component.ts,

@@ -1,8 +1,8 @@
 {
   "index": {
-    "title": "Cookbook",
-    "navTitle": "Overview",
-    "description": "A collection of recipes for common Angular application scenarios"
+    "title": "쿡북",
+    "navTitle": "개요",
+    "description": "Angular 애플리케이션의 일반적인 시나리오를 위한 레시피 컬렉션"
   },
 
   "a1-a2-quick-reference": {

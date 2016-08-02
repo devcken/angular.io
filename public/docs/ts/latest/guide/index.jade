@@ -6,21 +6,19 @@ block includes
 figure
   img(src="/resources/images/devguide/intro/people.png" alt="Us" align="left" style="width:200px; margin-left:-40px;margin-right:10px" )
 :marked
-  This is a practical guide to Angular for experienced programmers who
-  are building client applications in HTML and #{langName}.
+  이 문서는 HTML과 #{langName}으로 클라이언트 애플리케이션을 만드는 숙달된 개발자를 위한 Angular에 대한 실용적인 가이드입니다.
 
-  We are on a journey together to understand how Angular works and, more importantly,
-  how to make it work for us.  This overview begins the journey.
+  Angular가 어떻게 동작하는지, 더 중요하게는, 그것이 동작하도록 만든 방법을 이용하기 위해 함께 여행을 떠날 것입니다.
+  이제 여행을 시작합니다.
   <br clear="all">
 // #enddocregion intro
 
 // #docregion how-to-read-1
 <a id="learning-path"></a>
 :marked
-  # Organization
+  # 편성
 
-  The documentation is divided into major thematic sections, each
-  a collection of chapters devoted to that theme.
+  이 문서는 주요 주제에 집중하는 챕터들의 컬렉션인 섹션으로 나누어져 있습니다.
 // #enddocregion how-to-read-1
 // #docregion how-to-read-2
 - var top="vertical-align:top"
@@ -28,102 +26,98 @@ table(width="100%")
   col(width="15%")
   col
   tr(style=top)
-    td <b>QuickStart</b>
+    td <b>퀵스타트</b>
     td
       :marked
-        The foundation for every chapter and sample in this documentation.
+        이 문서 내의 모든 챕터에 대한 기본적인 내용 그리고 샘플
   tr(style=top)
-    td <b>Tutorial</b>
+    td <b>튜토리얼</b>
     td
       :marked
-        A step-by-step, immersive approach to learning Angular that
-        introduces the major features of Angular in an application context.
+        애플리케이션 제작 과정의 흐름에 따라 Angular의 주요 기능들을 소개하는 Angular 학습에 대한 단계적이고 실습적인 접근법
   tr(style=top)
-    td <b>Basics</b>
+    td <b>기초</b>
     td
       :marked
-        The essential ingredients of Angular development.
+        Angular 개발에 있어 필수적이고 중요한 요소들
   tr(style=top)
-    td <b>Developer Guide</b>
+    td <b>개발자 가이드</b>
     td
       :marked
-        In-depth analysis of Angular features and development practices.
+        Angular 기능에 대한 면밀한 분석과 개발 프랙티스
   tr(style=top)
-    td <b>Cookbook</b>
+    td <b>쿡북</b>
     td
       :marked
-        Recipes for specific application challenges, mostly code snippets with a minimum of exposition.
+        최소한의 설명을 곁들여 대부분 코드 스니펫인 특정 애플리케이션 문제에 대한 레시피
   tr(style=top)
-    td <b>API Reference</b>
+    td <b>API 레퍼런스</b>
     td
       :marked
-        Authoritative details about each member of the Angular libraries.
+        Angular 라이브러리의 각각의 멤버들에 대한 정식 세부내용
 :marked
-  # Learning path
-  We don't have to read the guide straight through.  Most chapters stand on their own.
+  # 학습 경로
+  이 가이드를 곧장 쭉 읽어서는 안됩니다. 대부분의 챕터들은 독립적이죠.
 
-  We recommend a learning path for those new to Angular.
-  Most of that path runs through the *Basics* section:
+  Angular를 처음 공부하는 이들을 위해 다음의 학습 경로를 추천합니다.
+  대부분의 경로는 *기초* 섹션을 통해 진행합니다:
 
-  1. Read the [Architecture](architecture.html) overview to get the big picture.
+  1. 큰 그림을 그리기 위해 [구조](architecture.html) 개요를 읽도록 합니다.
 
-  1. Try the [QuickStart](../quickstart.html). The QuickStart is the "Hello, World" of Angular 2.
-  It shows us how to set up the libraries and tools we'll need to write *any* Angular app.
+  1. [퀵스타트](../quickstart.html)를 읽습니다. 퀵스타트는 Angular 2의 "Hello, World"입니다.
+  *어떤* Angular 앱을 작성하든지 필요로 하는 라이브러리와 도구들을 설치하는 방법을 알려줍니다. 
 
-  1. Take the *Tour of Heroes* [Tutorial](../tutorial), which picks up from where the QuickStart leaves off
-  and builds a simple data-driven app.
-  Simple, yes, but with the essential characteristics we'd expect of a professional application:
-  a sensible project structure, data binding, master/detail, services, dependency injection, navigation, and remote data access.
+  1. 퀵스타트가 끝난 지점으로부터 간단한 데이터-주도 앱을 만들어보는 *Tour of Heroes* [튜토리얼](../tutorial)을 진행합니다.
+  간단해요, 네, 그러나 필수적인 특성들은 전문가 애플리케이션에서도 기대되는 부분입니다:
+  실용적인 프로젝트 구조, 데이터 바인딩, 마스터/디테일, 서비스, 의존성 주입, 네비게이션 그리고 원격 데이터 접근까지.
 
-    Return to the *Basics* section and continue in the suggested order:
+    *기초* 섹션으로 돌아가 제안된 순서대로 계속 하사기 바랍니다:
 
-  1. [Displaying Data](displaying-data.html) explains how to get information on to the screen.
+  1. [데이터 디스플레이](displaying-data.html)는 스크린에 정보를 나타내는 방법에 대해 설명합니다.
 
-  1. [User Input](user-input.html) covers the basics of responding to user behavior.
+  1. [사용 입력](user-input.html)은 사용자 행위와 관련한 기초적인 내용을 다룹니다.
 
-  1. [Forms](forms.html) handle user data entry and validation within the UI.
+  1. [폼](forms.html)은 사용자 데이터 엔트리 그리고 UI 간의 유효성을 다룹니다.
 
-  1. [Dependency Injection](dependency-injection.html) is the way we build large, maintainable applications
-  from small, single-purpose parts.
+  1. [의존성 주입](dependency-injection.html)은 작고 단일 목적의 부분들로부터 크고 유지보수 가능한 애플리케이션을 빌드하는 방법입니다.
 
-  1. [Template Syntax](template-syntax.html) is a comprehensive study of Angular template HTML.
+  1. [템프릿 문법](template-syntax.html)은 Angular 템플릿 HTML에 대한 포괄적인 학습입니다.
 
-  With this foundation, we can read and understand any chapter in the guide.
+  이 기본 내용들로, 이 가이드 내 어떤 챕터든지 읽고 이해할 수 있을 겁니다.
 // #enddocregion how-to-read-2
 // #docregion the-rest
 :marked
-  # Code samples
+  # 코드 샘플
 
-  Every chapter includes code snippets that we can reuse in our own applications.
-  These snippets are excerpts from a sample application that accompanies the chapter.
+  모든 챕터는 우리의 애플리케이션에서 재사용할 수 있는 코드 스니펫들을 포함합니다.
+  이 스니펫들은 챕터에 수반되는 샘플 애플리케이션에서 발췌된 것입니다.
 
 block example-links
   :marked
-    Look for a link to a running version of that sample near the top of each page,
-    such as this [live example](/resources/live-examples/architecture/ts/plnkr.html) from the [Architecture](architecture.html) chapter.
+    [구조](architecture.html) 챕터의 [라이브 예제](/resources/live-examples/architecture/ts/plnkr.html)처럼
+    각 페이지의 상단 근처의 샘플에 대한 실행 버전으로 갈 수 있는 링크를 확인하세요.
 
-    The link launches a browser-based code editor where we can inspect, modify, save, and download the code.
+    해당 링크는 우리가 코드를 조사하고 수정하고 저장하며 다운로드할 수 있는 브라우저 기반의 코드 에디터를 열어줍니다.
 
 :marked
-  A few early chapters are written as tutorials and are clearly marked as such.
-  Most chapters are *not* tutorials.
-  They highlight key points in code rather than explain each step necessary to build the sample.
-  We can always get the full source by way of the #{_liveLink}.
+  이에 앞선 몇몇 챕터들은 튜토리얼로써 작성되었고 분명히 그렇게 표기해두었습니다.
+  대부분의 챕터들은 튜토리얼이 *아닙니다*.
+  그들은 샘플을 빌드하기 위해 필요로 하는 각 단계에 대해 설명하기 보다는 코드 내의 핵심 사항들을 조명합니다.
+  항상 #{_liveLink}을 이용해 전체 소스를 얻을 수 있습니다.
 
-  # Reference pages
+  # 레퍼런스 페이지
 
-  The [Cheat Sheet](cheatsheet.html) lists Angular syntax for common scenarios.
+  [치트 시트](cheatsheet.html)는 일반적인 시나리오에 대한 Angular 문법을 나열합니다.
 
-  The [Glossary](glossary.html) defines terms that Angular developers should know.
+  [Glossary](glossary.html)는 Angular 개발자가 알아야 하는 용어들을 정의합니다.
 
-  The [API Reference](../api/) is the authority on every public-facing member of the Angular libraries.
+  [API 레퍼런스](../api/)는 Angular 라이브러리의 모든 public 멤버에 대한 저작물입니다.
 
-  # Feedback
+  # 피드백
 
-  We welcome feedback! Leave a comment by clicking the icon in upper right corner of the banner.
+  우리는 피드백을 환영합니다! 배너의 오른쪽 상단 코너의 아이콘을 클릭하여 코멘트를 남겨주시기 바랍니다.
 
-  Post *documentation* issues and pull requests on the
-  [angular.io](https://github.com/angular/angular.io) github repository.
+  *문서* 이슈를 포스트해주시고 [angular.io](https://github.com/angular/angular.io) github 저장소에서 pull requests해주시기 바랍니다.
 
-  Post issues with *Angular 2 itself* to the [angular](https://github.com/angular/angular) github repository.
+  *Angular2 자체*에 대한 이슈는 [angular](https://github.com/angular/angular) github 저장소에 포스트해주시기 바랍니다.
 // #enddocregion the-rest

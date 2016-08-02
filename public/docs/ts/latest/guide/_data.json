@@ -1,37 +1,37 @@
 {
   "index": {
-    "title": "Documentation Overview",
-    "navTitle": "Overview",
-    "description": "How to read and use this documentation",
+    "title": "문서 개요",
+    "navTitle": "개요",
+    "description": "이 문서를 읽고 사용하는 방법",
     "nextable": true,
     "basics": true
   },
 
   "architecture": {
-    "title": "Architecture Overview",
-    "navTitle": "Architecture",
-    "intro": "The basic building blocks of Angular 2 applications",
+    "title": "아키텍쳐 개요",
+    "navTitle": "아키텍쳐",
+    "intro": "Angular 2 애플리케이션의 기본적인 빌딩 블록들",
     "nextable": true,
     "basics": true
   },
 
   "displaying-data": {
-    "title": "Displaying Data",
-    "intro": "Interpolation and other forms of property binding help us show app data in the UI.",
+    "title": "데이터 디스플레이",
+    "intro": "어구 삽입과 프로퍼티 바인딩의 다른 형식들이 UI 내에서 앱의 데이터를 보여주는데 도움을 줍니다.",
     "nextable": true,
     "basics": true
   },
 
   "user-input": {
-    "title": "User Input",
-    "intro": "User input triggers DOM events. We listen to those events with event bindings that funnel updated values back into our components and models.",
+    "title": "사용자 입력",
+    "intro": "사용자 입력은 DOM 이벤트를 일으킵니다. 업데이트 값을 컴포넌트와 모델로 되돌려보내는 이벤트 바인딩으로 그 이벤트들을 수신합니다.",
     "nextable": true,
     "basics": true
   },
 
   "forms": {
-    "title": "Forms",
-    "intro": "A form creates a cohesive, effective, and compelling data entry experience. An Angular form coordinates a set of data-bound user controls, tracks changes, validates input, and presents errors.",
+    "title": "폼",
+    "intro": "폼은 응집력있고 효과적이며 강제적인 데이터 엔트리 경험입니다. Angular 폼은 데이터 바인딩된 사용자 컨트롤, 변경 추적, 입력 검증 그리고 오류 표시의 집합을 통합 지원합니다.",
     "nextable": true,
     "basics": true,
     "hide": true
@@ -45,29 +45,29 @@
   },
 
   "dependency-injection": {
-    "title": "Dependency Injection",
-    "intro": "Angular's dependency injection system creates and delivers dependent services \"just-in-time\".",
+    "title": "의존성 주입",
+    "intro": "Angular의 의존성 주입 시스템은 의존하는 서비스들을 \"적시에\" 생성하여 전달합니다.",
     "nextable": true,
     "basics": true
   },
 
   "template-syntax": {
-    "title": "Template Syntax",
-    "intro": "Learn how to write templates that display data and consume user events with the help of data binding.",
+    "title": "템플릿 문법",
+    "intro": "데이터를 디스플레이하고 데이터 바인딩의 지원으로 사용자 이벤트를 다루는 템플릿을 작성하는 방법에 대해서 배워봅니다.",
     "nextable": true,
     "basics": true
   },
 
   "cheatsheet": {
-    "title": "Angular Cheat Sheet",
-    "intro": "A quick guide to Angular syntax.",
+    "title": "Angular 치트 시트",
+    "intro": "Angular 문법에 대한 빠른 가이드",
     "nextable": true,
     "basics": true
   },
 
   "style-guide": {
-    "title": "Style Guide",
-    "intro": "Write Angular 2 with style.",
+    "title": "스타일 가이드",
+    "intro": "Angular 2에서 스타일 작성하기.",
     "basics": true
   },
 
@@ -77,13 +77,13 @@
   },
 
   "attribute-directives": {
-    "title": "Attribute Directives",
-    "intro": "Attribute directives attach behavior to elements."
+    "title": "어트리뷰트 디렉티브",
+    "intro": "어트리뷰트는 요소에 동작을 부여합니다."
   },
 
   "component-styles": {
-    "title": "Component Styles",
-    "intro": "Learn how to apply CSS styles to components."
+    "title": "컴포넌트 스타일",
+    "intro": "컴포넌트에 CSS 스타일을 적용하는 방법에 대해 배워보겠습니다."
   },
 
   "hierarchical-dependency-injection": {
@@ -129,8 +129,8 @@
   },
 
   "structural-directives": {
-    "title": "Structural Directives",
-    "intro": "Angular has a powerful template engine that lets us easily manipulate the DOM structure of our elements."
+    "title": "구조적 디렉티브",
+    "intro": "Angular는 우리가 쉽게 요소의 DOM 구조를 다룰 수 있도록 해주는 강력한 템플릿 엔진을 가지고 있습니다."
   },
 
   "testing": {
@@ -151,5 +151,11 @@
   "webpack": {
     "title": "Webpack: an introduction",
     "intro": "Create your Angular 2 applications with a Webpack based tooling"
+  },
+
+  "glossary": {
+    "title": "용어집",
+    "intro": "Angular 2 어휘에서 가장 중요한 단어들의 간단한 정의 모음",
+    "basics": true
   }
 }
