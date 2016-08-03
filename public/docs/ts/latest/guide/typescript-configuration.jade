@@ -1,61 +1,58 @@
 include ../_util-fns
 
 :marked
-  TypeScript is a primary language for Angular application development.
+  TypeScript는 Angular 애플리케이션 개발을 위한 1순위 언어입니다.
   
-  TypeScript is a dialect of JavaScript with design-time support for type-safety and tooling.
+  TypeScript는 타입 안전과 도구 사용을 위한 디자인 타임 지원을 가진 JavaScript의 변형입니다.
   
-  Browsers can't execute TypeScript directly. It has to be "transpiled" into JavaScript with the *tsc* compiler
-  and that effort requires some configuration.
+  브라우저는 직접적으로 TypeScript를 실행할 수 없습니다. 그것은 *tsc* 컴파일러를 이용해 JavaScript로 "transpile"해야 하며
+  그러기 위해서는 몇 가지 설정이 필요합니다.
   
-  This chapter covers some aspects of TypeScript configuration and the TypeScript environment
-  that are important to Angular developers.
+  이 챕터는 Angular 개발자들에게 중요한 TypeScript 설정과 TypeScript 환경의 몇 가지 방향에 대해서 다루고 있습니다. 
   
-  * [tsconfig.json](#tsconfig) - TypeScript compiler configuration.
-  * [typings](#typings) - TypesScript declaration files.
+  * [tsconfig.json](#tsconfig) - TypeScript 컴파일러 설정
+  * [typings](#typings) - TypesScript 정의 파일.
 
 a(id="tsconfig")
 .l-main-section
 :marked
   ## *tsconfig.json*
-  We typically add a TypeScript configuration file (`tsconfig.json`) to our project to
-  guide the compiler as it generates JavaScript files.
+  JavaScript 파일들을 생성하도록 컴파일러를 가이드하기 위해 일반적으로 프로젝트에 TypeScript 설정 파일 (`tsconfig.json`)을 추가할 겁니다.
 .l-sub-section
   :marked
-    Get details about `tsconfig.json` from the official
-    [TypeScript wiki](https://github.com/Microsoft/TypeScript/wiki/tsconfig.json).
+    공식적인 [TypeScript wiki](https://github.com/Microsoft/TypeScript/wiki/tsconfig.json)로부터
+    `tsconfig.json`에 관한 자세한 내용을 참고하시기 바랍니다.
 :marked
-  We created the following `tsconfig.json` for the [QuickStart](../quickstart.html):
+  우리는 [퀵스타트](../quickstart.html)에서 다음의 `tsconfig.json`를 생성했습니다:
 +makeJson('quickstart/ts/tsconfig.1.json', null, 'tsconfig.json')(format=".")
 :marked
-  The options and flags in this file are essential for Angular 2 applications.
+  이 파일의 옵션들과 플래그들은 Angular 2 애플리케이션에서는 필수입니다.
   
   <a id="noImplicitAny"></a>
-  ### *noImplicitAny* and *suppressImplicitAnyIndexErrors*
+  ### *noImplicitAny*과 *suppressImplicitAnyIndexErrors*
 
-  TypeScript developers disagree about whether the `noImplicitAny` flag should be `true` or `false`.
-  There is no correct answer and we can change the flag later.
-  But our choice now can make a difference in larger projects so it merits discussion.
+  TypeScript 개발자들은 `noImplicitAny` 플래그는 `true` 혹은 `false`가 되어야 하는지에 대해서 동의하지 않습니다.
+  거기에는 정답이 없으며 후에 플래그를 변경할 수도 있습니다.
+  그러나 우리의 선택은 이제 더 큰 프로젝트에서 차이점을 만들어내기에 논의할 만합니다.
 
-  When the `noImplicitAny` flag is `false` (the default),
-  the compiler silently defaults the type of a variable to `any` if it cannot infer
-  the type based on how the variable is used. That's what we mean by *implicit `any`*.
+  `noImplicitAny` 플래그가 `false` (기본값)인 경우,
+  변수가 사용되는 방법에 근거하여 타입을 추론할 수 없는 경우,
+  컴파일러는 변수 타입을 `any`로 조용히 디폴트시킵니다.
+  그것이 우리가 *암묵적인 `any`*로 나타내고자 하는 바입니다.
 
-  We initialized the `noImplicitAny` flag to `false` in the QuickStart 
-  to make learning TypeScript development easier.
+  우리는 퀵스타트에서 TypeScript 개발에 대해 좀 더 쉽게 배울수 있도록 `noImplicitAny` 플래그를 `false`로 초기화했습니다.
   
-  When the `noImplicitAny` flag is `true` and the TypeScript compiler cannot infer
-  the type, it still generates the JavaScript files. But it also **reports an error**.
-  Many seasoned developers prefer this stricter setting because type checking catches more
-  unintentional errors at compile time.
+  `noImplicitAny` 플래그가 `true`고 TypeScript 컴파일러가 타입을 추론하지 못하는 경우에도,
+  여전히 JavaScript 파일을 생성하게 됩니다. 그러나 컴파일러는 **오류도 리포트**하게 됩니다.
   
-  We can set a variable's type to `any` even when the `noImplicitAny` flag is `true`.
-  We do so when that seems like the best choice for the situation, 
-  deliberately and explicitly, after giving the matter some thought.
+  많은 노련한 개발자들은 이런 좀 더 엄격한 설정을 선호하는데 타입 검사가 컴파일 시에 뜻하지 않은 오류를 잡아내기 때문입니다. 
+  
+  `noImplicitAny` 플래그가 `true`인 경우에 조차 변수 타입을 `any`로 설정할 수 있습니다.
+  우리는 그것이 해당 상황에서의 최선의 선택인 것처럼 보일 경우, 해당 문제에 대해 신중하게 생각해본 뒤에, 고의적이고 명시적으로 그렇게 하도록 합니다. 
 
-  If we set the `noImplicitAny` flag to `true`, we may get *implicit index errors* as well.
-  Most developers feel that *this particular error* is more annoying than helpful.
-  We can suppress them with the following additional flag.
+  `noImplicitAny` 플래그를 `true`로 설정한다면, *암묵적 인덱스 오류*가 발생할 수도 있습니다. 
+  대부분은 개발자들은 *이런 특수한 오류*가 도움이 된다기 보다는 짜증난다고 느낍니다.
+  우리는 다음의 추가적인 플래그로 그것들을 억누를 수 있습니다.
 code-example(format=".").
   "suppressImplicitAnyIndexErrors":true
 
@@ -64,68 +61,64 @@ a(id="typings")
 .l-main-section
 :marked
   ## TypeScript Typings
-  Many JavaScript libraries such as jQuery, the Jasmine testing library, and Angular itself,
-  extend the JavaScript environment with features and syntax
-  that the TypeScript compiler doesn't recognize natively.
-  When the compiler doesn't recognize something, it throws an error. 
+  jQuery, Jasmine 테스팅 라이브러리 그리고 Angular 등 많은 JavaScript 라이브러리들은
+  TypeScript 컴파일러가 네이티브로 인정하지 않는 기능과 문법을 지닌 JavaScript 환경을 확장합니다.
+  컴파일러가 무언가를 인정하지 않는 경우, 오류를 던지게 됩니다. 
   
-  We use [TypeScript type definition files](http://www.typescriptlang.org/Handbook#writing-dts-files)
-  &mdash; *d.ts files* &mdash; to tell the compiler about the libraries we load.
+  우리는 컴파일러에게 우리가 로드한 라이브러리에 관해 알려주기 위해 
+  [TypeScript 타입 정의 파일](http://www.typescriptlang.org/Handbook#writing-dts-files) &mdash; *d.ts files* &mdash;
+  을 사용하게 됩니다.
   
-  TypeScript-aware editors leverage these same definition files to display type information about library features.
+  TypeScript를 사용 가능한 에디터는 이런 동일한 정의 파일들을 라이브러리 기능에 관한 타입 정보를 디스플레이의 목적으로 활용합니다.
   
-  Many libraries include their definition files in their npm packages where both the TypeScript compiler and editors
-  can find them. Angular is one such library. 
-  Peek into the `node_modules/@angular/core/` folder of any Angular application to see several `...d.ts` files that describe parts of Angular.
+  많은 라이브러리들은 TypeScript 컴파일러와 에디터 모두가 그것들을 찾을 수 있는 npm 패키지 내에 라이브러리의 정의 파일들을 포함합니다.  
+  Angular도 그런 라이브러리 중 하나입니다.
+  Angular의 파트들을 설명하는 몇몇 `...d.ts`을 보려면 Angular 애플리케이션의 `node_modules/@angular/core/` 폴더 안을 들여다 보시기 바랍니다.
   
-  **We need do nothing to get *typings* files for library packages which include *d.ts* files &mdash; as all Angular packages do.**
+  **모든 Angular 패키지들이 그렇듯이 *d.ts* 파일들을 포함하는 라이브러리 패키지에 대한 *typings* 파일을 얻기 위해서 어떤 것도 할 필요가 없습니다.**
   
-  ### Installable typings files
-  Sadly, many libraries &mdash; jQuery, Jasmine, and Lodash among them &mdash; do *not* include `d.ts` files in their npm packages.
-  Fortunately, either their authors or community contributors have created separate *d.ts* files for these libraries and 
-  published them in well-known locations.
-  The *typings* tool can find and fetch these files for us.
+  ### 설치가능한 typings 파일들
+  슬프게도, 많은 라이브러리들 &mdash; 그 중에서도 jQuery, Jasmine, 그리고 Lodash &mdash; 은 그들의 npm 패키지 내에 `d.ts` 파일을 포함하고 있지 *않습니다*.
+  운좋게도, 제작자와 커뮤니티 기여자들 중 누군가가 이런 라이브러리들을 위해 각각의 *d.ts* 파일을 생성하여 잘 알려진 위치에 푸시해두었습니다.  
+  *typings* 도구가 우리를 위해 이런 파일을 찾아서 가져올 수 있습니다.
   
-  We installed the [typings](https://github.com/typings/typings/blob/master/README.md) tool 
-  with npm (it's listed among the *devDependencies* in the `package.json`) and added an npm script
-  to run that tool automatically after *npm* installation completes.
+  우리는 npm으로 [typings](https://github.com/typings/typings/blob/master/README.md) 도구 
+  (`package.json` 내에 *devDependencies* 내에 나열됩니다)를 설치했고 *npm* 설치가 끝난 뒤에 자동으로 해당 도구가 실행되도록
+  npm 스크립트를 추가해두었습니다.
 +makeJson('quickstart/ts/package.1.json', {paths: 'scripts.postinstall'}, 'package.json (postinstall)')(format=".")
 :marked
-  This *typings* tool command installs the *d.ts* files that we identify in a `typings.json` file into the **typings** folder.
-  We created a `typings.json` file in the [QuickStart](../quickstart.html):
+  이 *typings* 도구 명령은 `typings.json` 파일 안에서 식별되는 *d.ts* 파일들을 **typings** 폴더 내로 설치합니다. 
+  우리는 [퀵스타트](../quickstart.html)에서 `typings.json` 파일을 생성했었습니다:
 +makeJson('quickstart/ts/typings.1.json', null, 'typings.json')(format=".")
 :marked
-  We identified three *typings* file in the QuickStart, the *d.ts* files for
+  퀵스타트에서 세 개의 *typings* 파일, *d.ts* 파일을 가져왔습니다
   
-  * [core-js](https://github.com/zloirock/core-js/blob/master/README.md)
-  that brings ES2015/ES6 capabilities to our ES5 browsers
+  * ES5를 지원하는 브라우저에 ES2015/ES6 호환성을 부여하는 [core-js](https://github.com/zloirock/core-js/blob/master/README.md)
   
-  * [jasmine](http://jasmine.github.io/) typings for the Jasmine test framework
+  * Jasmine 테스트 프레임워크를 위한 [jasmine](http://jasmine.github.io/) typings
   
-  * [node](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/node/node.d.ts) for code that references objects in the nodejs environment; 
-  see the [webpack](./webpack.html) chapter for an example.
+  * nodejs 환경의 객체들을 참조하는 코드를 위한 [node](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/node/node.d.ts); 
+  [webpack](./webpack.html) 챕터에서 예제를 참고하시기 바랍니다.
   
-  QuickStart itself doesn't require these typings but many of the documentation samples do.
-  Most of us would be disappointed if we couldn't code against 
-  typical ES2015 features or support testing right out-of-the-box.
+  퀵스타트 자체는 이런 typings를 요구하지는 않지만 문서 내 많은 샘플들은 필요로 합니다.
+  우리 중 대부분은 우리가 전형적인 ES2015 기능에 맞춰 코드를 만들 수 없거나 즉시 사용 가능한 테스팅을 지원하지 않는다면 실망할 것입니다.
 
-  We can also run the *typings* tool ourselves.
-  The following command (re)installs the typings files, as is sometimes necessary when the `postInstall` hook fails to do so.
+  우리 스스로가 *typings* 도구를 실행할 수도 있습니다.
+  다음 명령은 `postIntall` 후크가 실패할 경우 때때로 필요에 의해, typings 파일들을 (재)설치합니다.
 code-example(format="").
   npm run typings install
 :marked
-  This command lists the installed typings files:
+  이 명령어는 설치된 typings 파일들을 나열합니다:
 code-example(format="").
   npm run typings list
 :marked
-  The following command installs or updates the typings file for the Jasmine test library from the *DefinitelyTyped* repository
-  and updates the `typings.config` so we that we get it automatically the next time we install typings.
+  다음 명령어는 *DefinitelyTyped* 저장소로부터 Jasmine 테스트 라이버러리를 위한 typings 파일을 설치하거나 갱신하며
+  `typings.config`을 갱신하여 typings을 설치하고 난 다음에 자동으로 그것을 가져오도록 해줍니다.
 code-example(format="").
   npm run typings -- install dt~jasmine --save --global
 .l-sub-section
   :marked
-    The [&ndash;&ndash; option](https://docs.npmjs.com/cli/run-script) is important; 
-    it tells npm to pass all arguments to the right of `--` to the *typings* command.
+    [&ndash;&ndash; 옵션](https://docs.npmjs.com/cli/run-script)은 중요합니다;
+    그것은 npm으로 하여금 *typings* 명령어에서 `--` 우측에 있는 모든 인자들을 전달하게 합니다. 
     
-    Learn about the features of the *typings* tool at its [site on github](https://github.com/typings/typings/blob/master/README.md).
-
+    typings [github](https://github.com/typings/typings/blob/master/README.md)에서 *typings* 도구의 기능에 관해 좀 더 알아보시기 바랍니다.

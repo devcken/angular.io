@@ -139,8 +139,8 @@
   },
 
   "typescript-configuration": {
-    "title": "TypeScript Configuration",
-    "intro": "TypeScript configuration for Angular 2 developers"
+    "title": "TypeScript 설정",
+    "intro": "Angular 2 개발자를 위한 TypeScript 설정"
   },
 
   "upgrade": {
