@@ -2,166 +2,176 @@ block includes
   include ../_util-fns
 
 :marked
-  We learned the basics of Angular Dependency injection in the
-  [Dependency Injection](./dependency-injection.html) chapter.
+  우리는 [의존성 주입](./dependency-injection.html) 챕터에서 Angular의 기초적인 의존성 주입를 배웠습니다.
 
-  Angular has a Hierarchical Dependency Injection system.
-  There is actually a tree of injectors
-  that parallel an application's component tree.
-  We can re-configure the injectors at any level of that component tree with
-  interesting and useful results.
+  Angular는 계층적 의존성 주입 시스템을 지니고 있습니다.
+  실제로는 애플리케이션의 컴포넌트 트리와 병행하는 주입자 트리가 존재합니다. 
+  우리는 흥미롭고 유용한 결과를 가진 컴포넌트 트리의 어떤 레벨에서든 주입자를 재설정할 수 있습니다.
 
-  In this chapter we explore these points and write some code.
+  이 챕터에서 우리는 이런 요점들을 살펴보고 몇 가지 코드를 작성해볼 겁니다.
 
-p Try the #[+liveExampleLink2()].
+p #[+liveExampleLink2()]을 실행해 보세요.
 
 .l-main-section
 :marked
-  ## The Injector Tree
+  ## 주입자 트리
 
-  In the [Dependency Injection](./dependency-injection.html) chapter
-  we learned how to configure a dependency injector and how to retrieve dependencies where we need them.
+  [의존성 주입](./dependency-injection.html) 챕터에서
+  의존성 주입을 설정하는 방법과 의존성을 필요로 하는 곳에 의존성들을 가져오는 방법에 대해서 배웠습니다.
 
-  We oversimplified. In fact, there is no such thing as ***the*** injector!
-  An application may have multiple injectors!
+  너무 간단하게 알아봤습니다. 사실, 주입자 같은게 없었죠! 
+  하나의 애플리케이션은 여러 주입자를 가지고 있을 겁니다!
 
-  An Angular application is a tree of components. Each component instance has its own injector!
-  The tree of components parallels the tree of injectors.
+  Angular 애플리케이션은 컴포넌트의 트리입니다. 각각의 컴포넌트 인스턴스는 자신의 주입자를 가지고 있죠!
+  컴포넌트의 트리는 주입자 트리와 병행합니다.
 
 
 .l-sub-section
   :marked
-    Angular doesn't *literally* create a separate injector for each component.
-    Every component doesn't need its own injector and it would be horribly inefficient to create
-    masses of injectors for no good purpose.
+    Angular는 *엄밀히 말해* 각 컴포넌트에 대한 별도의 주입자를 생성할 수 없습니다.  
+    모든 컴포넌트가 자신만의 주입자를 필요로 하지 않으며 올바르지 않은 목적을 위해 주입자 덩어리를 생성하는 것은 심각하게 비효율적입니다.
 
-    But it is true that every component ***has an injector*** (even if it shares that injector with another component)
-    and there may be many different injector instances operating at different levels of the component tree.
+    그러나 모든 컴포넌트가 ***주입자를 가지고 있다***는 것은 사실이며 (다른 컴포넌트가 지닌 주입자를 공유한다고 할지라도)
+    컴포넌트 트리의 서로 다른 계층에서 동작하는 많은 주입자 인스턴스가 있을 겁니다.
 
-    It is useful to pretend that every component has its own injector.
+    모든 컴포넌트가 자신의 주입자를 가지고 있다고 상상하는 것은 유용합니다.
 :marked
-  Consider a simple variation on the Tour of Heroes application consisting of three different components:
-  `HeroesApp`, `HeroesListComponent` and `HeroesCardComponent`.
-  The `HeroesApp` holds a single instance of `HeroesListComponent`.
-  The new twist is that the `HeroesListComponent` may hold and manage multiple instances of the `HeroesCardComponent`.
+  세 개의 서로 다른 컴포넌트로 구성되는 Tour of Heroes 애플리케이션의 간단한 변형을 생각해보죠.
+  `HeroesApp`, `HeroesListComponent` 그리고 `HeroesCardComponent`을 말이죠.
+  `HeroesApp`는 `HeroesListComponent`의 단일 인스턴스를 가지고 있습니다.
+  
+  새로운 전개는 `HeroesListComponent`가 `HeroesCardComponent`의 여러 인스턴스를 가지고 있으며 관리한다는 것입니다.
 
-  The following diagram represents the state of the component tree when there are three instances of `HeroesCardComponent`
-  open simultaneously.
+  다음 다이어그램은 `HeroesCardComponent`의 인스턴스 3개가 동시에 열렸을 때 컴포넌트 트리의 상태를 나타냅니다.
 
 figure.image-display
   img(src="/resources/images/devguide/dependency-injection/component-hierarchy.png" alt="injector tree" width="500")
 
 :marked
-  Each component instance gets its own injector and an injector at one level is a child injector of the injector above it in the tree.
+  각 컴포넌트 인스턴스는 자신의 주입자를 가지며 한 계층의 주입자는 트리 내에서 그것의 위에 있는 주입자의 하위 주입자입니다. 
 
-  When a component at the bottom requests a dependency, Angular tries to satisfy that dependency with a provider registered in that component's own injector.
-  If the component's injector lacks the provider, it passes the request up to its parent component's injector.
-  If that injector can't satisfy the request, it passes it along to *its* parent component's injector.
-  The requests keep bubbling up until we find an injector that can handle the request or run out of component ancestors.
-  If we run out of ancestors, Angular throws an error.
+  아래에 있는 컴포넌트가 의존성을 요청할 경우, Angular는 컴포넌트 자체 주입자 내에 등록된 프로바이더를 이용해 해당 의존성을 만족시키려고 시도합니다.
+  컴포넌트의 주입자는 프로바이더가 없을 경우, 그것의 상위 컴포넌트 주입자에게 요청을 전달합니다.
+  해당 주입자가 요청을 만족시킬 수 없는 경우, 해당 주입자의 상위 컴포넌트의 주입자에게 다시 전달됩니다.
+  요청은 요청을 다룰 수 있거나 더 이상의 상위 컴포넌트가 없을 때까지 버블링을 계속합니다.  
+  더 이상의 상위 컴포넌트가 없다면, Angular는 오류를 던집니다.
 
 .l-sub-section
   :marked
-    There's a third possibility. An intermediate component can declare that it is the "host" component.
-    The hunt for providers will climb no higher than the injector for this host component.
-     We'll reserve discussion of this option for another day.
+    세번째 가능이 존재합니다. 중간 컴포넌트는 자신이 "host" 컴포넌트라고 선언할 수 있습니다.
+    프로바이더 사냥꾼은 호스트 컴포넌트에 대한 주입자보다 더 높게 올라가지는 않을 겁니다.
+    다른 시간에 이 옵션에 대해 논의해보도록 할 겁니다.
 :marked
-  Such a proliferation of injectors makes little sense until we consider the possibility that injectors at different levels can be
-  configured with different providers. We don't *have* to re-configure providers at every level. But we *can*.
+  주입자의 이런 확산은 다른 계층에 있는 주입자가 다른 프로바이더와 함께 설정될 수 있다는 가능성을 고려할 때까지는 합리적일 수 없습니다.
+  모든 계층에서 프로바이더를 재설정*해서는* 안 됩니다. 그러나 우리는 그렇게 *할 수 있죠*.
 
-  If we don't re-configure, the tree of injectors appears to be flat. All requests bubble up to the root injector that we
-  configured with the `bootstrap` method.
+  재설정하지 않는다면, 주입자의 트리는 평평하게 나타날 겁니다. 모든 요청은 우리가 `bootstrap` 메서드를 설정한 루트 주입자까지 버블될 겁니다.
 
-  The ability to configure one or more providers at different levels opens up interesting and useful possibilities.
+  다른 계층에서 한 개 이상의 프로바이더를 설정하는 능력은 흥미롭고 유용한 가능성들을 열어줍니다.
 
-  Let’s return to our Car example.
-  Suppose we configured the root injector (marked as A) with providers for `Car`, `Engine` and `Tires`.
-  We create a child component (B) that defines its own providers for `Car` and `Engine`
-  This child is the parent of another component (C) that defines its own provider for `Car`.
+  Car 예제로 돌아가보죠.
+  `Car`, `Engine` 그리고 `Tires`를 위한 프로바이더로 최상위 주입자 (A라고 하죠)를 설정했다고 가정해보세요.
+  `Car` 그리고 `Engine`을 위한 자신의 프로바이더를 정의하는 하위 컴포넌트 (B)를 생성합니다.
+  이 하위 컴포넌트는 `Car`을 위한 프로바이더를 정의하는 또 다들 컴포넌트 (C)의 상위 컴포넌트입니다.
 
-  Behind the scenes each component sets up its own injector with one or more providers defined for that component itself.
+  뒤에서 각 컴포넌트는 해당 컴포넌트 자신을 위해 정의된 한 개 이상의 프로바이더와 함께 자신의 주입자를 설치하게 됩니다.
 
-  When we resolve an instance of `Car` at the deepest component (C),
-  its injector produces an instance of `Car` resolved by injector (C) with an `Engine` resolved by injector (B) and
-  `Tires` resolved by the root injector (A).
+  가장 아래에 있는 컴포넌트 (C)에 있는 `Car`의 인스턴스가 해석되면,
+  그것의 주입자는 주입자 (B)에 의해 해석된 `Engine` 그리고 루트 주입자 (A)에 의해 분석된 `Tires`와 함께 주입자 (C)에 의해 해석된 `Car` 인스턴스를 만들게 됩니다.
 
 figure.image-display
   img(src="/resources/images/devguide/dependency-injection/injector-tree.png" alt="injector tree" width="600")
 
 .l-main-section
 :marked
-  ## Component Injectors
+  ## 컴포넌트 주입자
 
-  In the previous section, we talked about injectors and how they are organized like a tree. Lookups follow the injector tree upwards until they find the requested thing to inject. But when do we actually want to provide providers on the root injector and when do we want to provide them on a child injector?
+  이전 섹션에서, 주입자와 주입자를 트리처럼 조직화시키는 방법에 대해 이야기했습니다.
+  주입하기 위해 요청된 것들을 찾을 때까지 주입자 트리를 타고 위로 따라 올라가 찾게 됩니다.
+  그러나 실제로 루트 주입자 상의 프로바이더를 제공받고자 할 때는 언제이며 하위 주입자에서 그것들을 제공받기 원하는 때는 언제일까요?
 
-  Consider you are building a component to show a list of super heroes that displays each super hero in a card with its name and superpower. There should also be an edit button that opens up an editor to change the name and superpower of our hero.
+  카드 내에서 슈퍼 영웅을 이름과 슈퍼파워와 함께 각각 디스플레이하는 슈퍼 영웅 목록을 보여주기 위한 컴포넌트를 만들고 있다고 가정해보죠.
+  영웅의 이름과 슈퍼파워를 변경하기 위해 에디터를 여는 수정 버튼도 존재할 겁니다.
 
-  One important aspect of the editing functionality is that we want to allow multiple heroes to be in edit mode at the same time and that one can always either commit or cancel the proposed changes.
+  수정 기능의 한 가지 중요한 면은 동일한 시간에 여러 영웅을 수정 모드에 두는 것이 가능해지길 원한다는 것이며 제안된 변경 내역이 항상 커밋 혹은 취소될 수 있어야 한다는 것입니다. 
 
-  Let’s take a look at the `HeroesListComponent` which is the root component for this example.
+  이 예제에서 루트 컴포넌트인 `HeroesListComponent`를 살펴보도록 하죠.
 
 +makeExample('hierarchical-dependency-injection/ts/app/heroes-list.component.ts', null, 'app/heroes-list.component.ts')
 
 :marked
-  Notice that it imports the `HeroService` that we’ve used before so we can skip its declaration. The only difference is that we’ve used a more formal approach for our `Hero`model and defined it upfront as such.
+  우리가 사용했던 `HeroService`를 임포트하고 있기에 그것의 선언을 건너띌 수 있다는 것을 알아두시기 바랍니다.
+  유일한 차이점은 `Hero` 모델에 대한 좀 더 관례적인 접근법을 사용하고 있다는 것과 그것을 명시적으로 정의했다는 것입니다.
 
 +makeExample('hierarchical-dependency-injection/ts/app/hero.ts', null, 'app/hero.ts')(format=".")
 
 :marked
-  Our `HeroesListComponent` defines a template that creates a list of `HeroCardComponent`s and `HeroEditorComponent`s, each bound to an instance of hero that is returned from the `HeroService`. Ok, that’s not entirely true. It actually binds to an `EditItem<Hero>` which is a simple generic datatype that can wrap any type and indicate if the item being wrapped is currently being edited or not.
+  `HeroesListComponent`은, `HeroService`로부터 반환되는 영웅의 인스턴스에 각각 바운드되는, `HeroCardComponent`와 `HeroEditorComponent`들의 목록을 생성하는 템플릿을 정의합니다.
+  맞아요, 그것은 전부 옳은 것은 아닙니다. 
+  그것은, 어떤 타입이든 감쌀 수 있는, 실제로 간단한 제네릭 데이터 타입인 `EditItem<Hero>`에 바인드하고 있으며 감싸진 아이템이 현재 수정되고 있는지 아닌지를 나타내고 있습니다.
 
 +makeExample('hierarchical-dependency-injection/ts/app/edit-item.ts', null, 'app/edit-item.ts')(format=".")
 
 :marked
-  But how is `HeroCardComponent` implemented? Let’s take a look.
+  그러나 `HeroCardComponent`가 어떻게 구현되었죠? 살펴보도록 하겠습니다.
 
 +makeExample('hierarchical-dependency-injection/ts/app/hero-card.component.ts', null, 'app/hero-card.component.ts')
 
 :marked
-  The `HeroCardComponent` is basically a component that defines a template to render a hero. Nothing more.
+  `HeroCardComponent`는 기본적으로 영웅을 렌더링하기 위한 템플릿을 정의하는 컴포넌트입니다. 그 외에는 아무것도 하지 않습니다.
 
-  Let’s get to the interesting part and take a look at the `HeroEditorComponent`
+  `HeroEditorComponent`에서 흥미로운 부분을 살펴보도록 하죠.
 
 +makeExample('hierarchical-dependency-injection/ts/app/hero-editor.component.ts', null, 'app/hero-editor.component.ts')
 
 :marked
-  Now here it’s getting interesting. The `HeroEditorComponent`defines a template with an input to change the name of the hero and a `cancel` and a `save` button. Remember that we said we want to have the flexibility to cancel our editing and restore the old value? This means we need to maintain two copies of our `Hero` that we want to edit. Thinking ahead, this is a perfect use case to abstract it into its own generic service since we have probably more cases like this in our app.
+  흥미로운 부분는 여기부터입니다.
+  `HeroEditorComponent`는 영웅의 이름 변경을 위한 입력과 `cancel` 그리고 `save` 버튼과 함게 템플릿을 정의하고 있습니다.
+  우리가 수정 중인 것을 취소하고 예전의 값을 복원하는 유연성을 가지길 원한다고 말했던 것을 기억하나요?
+  이것은 우리가 수정하려고 하는 `Hero`의 두 가지 복사본을 유지해야 할 필요가 있다는 것을 의미합니다.
+  앞서 생각해보면, 우리 앱에서 이와 같은 좀 더 많은 경우를 아마도 가질 것이기에, 제네릭 서비스 내로 추상화하는 것이 완벽한 유스케이스일 겁니다
 
-  And this is where the `RestoreService` enters the stage.
+  그리고 이것이 `RestoreService`가 처음 등장하는 부분입니다.
 
 +makeExample('hierarchical-dependency-injection/ts/app/restore.service.ts', null, 'app/restore.service.ts')
 
 :marked
-  All this tiny service does is define an API to set a value of any type which can be altered, retrieved or set back to its initial value. That’s exactly what we need to implement the desired functionality.
+  이 작은 서비스가 하는 일은 변경, 검색 혹은 초기값을 되돌릴 수 있는, 어떤 타입의 값을 설정하는 API를 정의하는 것이 전부입니다.
+  그것은 정확히 요구되는 기능을 구현하기 위해 우리가 필요로 하는 것입니다.
 
-  Our `HeroEditComponent` uses this services under the hood for its `hero` property. It intercepts the `get` and `set` method to delegate the actual work to our `RestoreService` which in turn makes sure that we won’t work on the original item but on a copy instead.
+  우리의 `HeroEditComponent`는 `hero` 프로퍼티을 위해 내부적으로 이 서비스를 사용합니다.
+  이 컴포넌트는 오리지널 아이템이 아닌 복사본을 가지고 차례차례 동작하는 것을 보장해주는 `RestoreService`에 실제 작업을 위임하기 위해 `get` 메서드와 `set` 메서드를 가로챕니다.
 
-  At this point we may be scratching our heads asking what this has to do with component injectors?
-  Look closely at the metadata for our `HeroEditComponent`. Notice the `providers` property.
+  이 시점에 컴포넌트 주입자를 가지고 해야만 하는 일이 무엇인지 궁금해서 머리를 긁적일지도 모릅니다.
+  `HeroEditComponent`의 메타데이터를 좀 더 자세히 살펴보세요.
+  `providers` 프로퍼티를 말이죠.
 
 +makeExample('hierarchical-dependency-injection/ts/app/hero-editor.component.ts', 'providers')
 :marked
-  This adds a `RestoreService` provider to the injector of the `HeroEditComponent`.
-  Couldn’t we simply alter our bootstrap call to this?
+  이것으로 `HeroEditComponent`의 주입자에 `RestoreService` 프로바이더가 추가됩니다.
+  이를 위해 bootstrap 호출을 변경할 수 있지 않을까요?
 
 +makeExample('hierarchical-dependency-injection/ts/app/main.ts', 'bad-alternative')
 :marked
-  Technically we could, but our component wouldn’t quite behave the way it is supposed to. Remember that each injector treats the services that it provides as singletons. However, in order to be able to have multiple instances of `HeroEditComponent` edit multiple heroes at the same time we need to have multiple instances of the `RestoreService`. More specifically, each instance of `HeroEditComponent` needs to be bound to its own instance of the `RestoreService`.
+  기술적으로 가능하나, 우리의 컴포넌트는 예상한 방법대로 동작하지 않을 수도 있습니다.
+  각각의 주입자는 서비스가 싱글턴으로 제공되도록 다룬다는 것을 기억하시기 바랍니다. 
+  하지만, `HeroEditComponent`의 여러 인스턴스가 동시에 여러 영웅들을 수정할 수 있도록 만들기 위해서는 `RestoreService`의 여러 인스턴스가 있어야 합니다.
+  좀 더 특별하게, 각각의 `HeroEditComponent` 인스턴스는 자신의 `RestoreService` 인스턴스에 바운드될 필요가 있습니다.
 
-  By configuring a provider for the `RestoreService` on the `HeroEditComponent`, we get exactly one new instance of the `RestoreService`per `HeroEditComponent`.
+  `HeroEditComponent` 상에서 `RestoreService`을 위한 프로바이더를 설정함으로써, 우리는 정확하게 `HeroEditComponent` 당 한 개의 새로운 `RestoreService` 인스턴스를 얻게 됩니다. 
 
-  Does that mean that services aren’t singletons anymore in Angular 2? Yes and no.
-  There can be only one instance of a service type in a particular injector.
-  But we've learned that we can have multiple injectors operating at different levels of the application's component tree.
-  Any of those injectors could have its own instance of the service.
+  그것은 서비스들이 Angular 2에서 더 이상 싱글턴이 아니라는 얘기일까요? 그렇기도 하고 아니기도 합니다. 
+  개별적인 주입자 내에서는 오직 한 개의 서비스 타입만이 있을 수 있습니다.
+  그러나 우리는 애플리케이션 컴포넌트 트리의 다른 계층에서 동작하는 여러 주입자들을 가질 수 있다고 배웠습니다.
+  그런 주입자들 중 누구든 자신의 서비스 인스턴스를 가질 수 있습니다.
 
-  If we defined a `RestoreService` provider only on the root component,
-  we would have exactly one instance of that service and it would be shared across the entire application.
+  만약 루트 컴포넌트에서만 `RestoreService` 프로바이더를 정의했다면,
+  해당 서비스의 인스턴스를 정확하게 한 개 가지게 되며, 전체 애플리케이션에 걸쳐 공유될 수 있을 겁니다.
 
-  That’s clearly not what we want in this scenario. We want each component to have its own instance of the `RestoreService`.
-  Defining (or re-defining) a provider at the component level creates a new instance of the service for each new instance
-  of that component. We've made the `RestoreService` a kind of "private" singleton for each `HeroEditComponent`,
-  scoped to that component instance and its child components.
+  그것이 이 시나리오 내에서 정확하게 우리가 원하는 것은 아닙니다. 우리는 각각의 컴폰넌트가 자신의 `RestoreService` 인스턴스를 갖기 원합니다.
+  컴포넌트 계층의 프로바이더 정의 (혹은 재정의)는 해당 컴포넌트의 각각의 새로운 인스턴스에 대해 서비스의 새로운 인스턴스를 생성합니다.
+  
+  우리는 `RestoreService`를 해당 컴포넌트의 인스턴스와 하위 컴포넌트에 한정되는 각각의 `HeroEditComponent`에 대한 "private" 싱글턴의 한 종류로 만들었습니다.
 
   <!--
     ## Advanced Dependency Injection in Angular 2
